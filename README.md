@@ -53,3 +53,7 @@ The idea is that you can be really creative in your implementation and your inte
 ## DEADLINE
 
 The deadline for this challenge is: **Monday the 8th of June (23:59)**
+
+## WARNING
+
+This challenge is a solo-challenge. While you can help someone by giving some pointers or explaining something, the repo's should not contain copy-pasted code from another student. This challenge is a big part of you grade for OOP3, so be sure to take this challenge serious.
