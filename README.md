@@ -50,6 +50,18 @@ The game should also introduce a difficulty that influences:
 
 The idea is that you can be really creative in your implementation and your interface. Use your creativity wisely to make this a fun and nice looking game.
 
+## SCREENCAST
+
+**Screencast**:
+
+* Make sure to provide a small screencast (couple of minutes) to clarify the following topics:
+  * Show the compilation proces and how it is compiled
+  * Show the application and explain how it works
+  * Conclusion: What went well, what was hard, special libraries you used, ...
+  * No code-scrolling ! If you wish, you can always show an overview of your classes using a UML-diagram.
+
+Use Kaltura or OBS Studio to make your screencast. Upload the video to YouTube and place a link in this README.
+
 ## DEADLINE
 
 The deadline for this challenge is: **Monday the 8th of June (23:59)**
