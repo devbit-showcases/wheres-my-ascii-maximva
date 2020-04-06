@@ -4,15 +4,9 @@
 
 using namespace MyAscii;
 
-int main(void) {
-
-    Tile tile;
-
-    std::cout << "Random ascii char: " << tile.getAsciiChar() << std::endl;
-    std::cout << "Random ascii char: " << tile.getAsciiChar() << std::endl;
+int main(void) {    
     
-    
-    PlayField playfield(3);
+    PlayField playfield(4);
     std::vector<Tile> playField = playfield.getPlayField();
 
     for (unsigned int c = 0; c < playField.size(); c++) {

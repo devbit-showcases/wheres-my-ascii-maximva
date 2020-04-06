@@ -2,8 +2,7 @@
 
 namespace MyAscii {
 
-    Tile::Tile(void) {
-        srand (time(NULL));
+    Tile::Tile() {
         asciiChar = rand() % ASCII_TABLE_RANGE + 1 + ASCII_TABLE_START;
 
     }

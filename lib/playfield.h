@@ -3,6 +3,7 @@
 #include <iostream>
 #include "tile.h"
 #include <vector>
+#include <time.h>
 
 namespace MyAscii {
 
@@ -17,6 +18,7 @@ namespace MyAscii {
         private:
             unsigned int fieldSize;
             std::vector<Tile> playField;
-            // Tile f[fieldSize * fieldSize];
+            time_t seed = time(NULL);
+
     };
 };

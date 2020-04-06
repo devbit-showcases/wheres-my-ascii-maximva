@@ -2,13 +2,12 @@
 
 #include <iostream>
 #include <time.h>
-// #include <stdlib.h>
 
 namespace MyAscii {
 
     class Tile {
         public:
-            Tile(void);
+            Tile();
             char getHiddenChar(void);
             char getAsciiChar(void);
 
