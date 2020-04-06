@@ -30,7 +30,6 @@ namespace MyAscii {
             playField.push_back( tiles[place] );
             tiles.erase(std::begin(tiles) + (place));
         }
-
     }
 
 }
