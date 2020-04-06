@@ -4,8 +4,7 @@
 #include "tile.h"
 #include <vector>
 #include <time.h>
-#include <algorithm>
-#include <random>
+#include <iterator>
 
 namespace MyAscii {
 
@@ -19,8 +18,8 @@ namespace MyAscii {
         
         private:
             unsigned int fieldSize;
-            std::vector<Tile> playField;
             unsigned int pair_size = 2;
+            std::vector<Tile> playField;
 
     };
 };

@@ -16,8 +16,8 @@ namespace MyAscii {
             unsigned int id = 0;
             char asciiChar;
             char hiddenChar = '?';
-            const unsigned int ASCII_TABLE_START = 'A';
-            const unsigned int ASCII_TABLE_END = 'Z';
-            const unsigned int ASCII_TABLE_RANGE = ASCII_TABLE_END - ASCII_TABLE_START;
+            unsigned int ASCII_TABLE_START = 'A';
+            unsigned int ASCII_TABLE_END = 'Z';
+            unsigned int ASCII_TABLE_RANGE = ASCII_TABLE_END - ASCII_TABLE_START;
     };
 };
