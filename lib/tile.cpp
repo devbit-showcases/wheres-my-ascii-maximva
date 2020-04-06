@@ -8,11 +8,11 @@ namespace MyAscii {
 
     }
 
-    char Tile::showHiddenChar(void) {
+    char Tile::getHiddenChar(void) {
         return hiddenChar;
     }
 
-    char Tile::showAsciiChar(void) {
+    char Tile::getAsciiChar(void) {
         return asciiChar;
     }
 

@@ -1,20 +1,22 @@
+#pragma once
+
 #include <iostream>
-#include "Tiles.h"
+#include "tile.h"
+#include <vector>
 
 namespace MyAscii {
 
     class PlayField {
         public:
-            PlayField(void);
-        
+            PlayField(unsigned int fieldSize);
+            std::vector<Tile> getPlayField(void);
+
+        private:
+            void generatePlayField(void);
         
         private:
             unsigned int fieldSize;
-            Tiles tiles[fieldsize * fieldsize];
-            
-
-
-
+            std::vector<Tile> playField;
+            // Tile f[fieldSize * fieldSize];
     };
-
 };
