@@ -18,7 +18,6 @@ namespace MyAscii {
         private:
             unsigned int fieldSize;
             std::vector<Tile> playField;
-            time_t seed = time(NULL);
 
     };
 };
