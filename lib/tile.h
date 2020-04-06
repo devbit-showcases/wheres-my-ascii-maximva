@@ -7,15 +7,17 @@ namespace MyAscii {
 
     class Tile {
         public:
-            Tile();
+            Tile(unsigned int id);
             char getHiddenChar(void);
             char getAsciiChar(void);
+            unsigned int getId(void);
 
         private:
+            unsigned int id = 0;
             char asciiChar;
             char hiddenChar = '?';
-            const unsigned int ASCII_TABLE_START = 65; // A in ASCII table
-            const unsigned int ASCII_TABLE_END = 90; // Z in ASCII table
+            const unsigned int ASCII_TABLE_START = 'A';
+            const unsigned int ASCII_TABLE_END = 'Z';
             const unsigned int ASCII_TABLE_RANGE = ASCII_TABLE_END - ASCII_TABLE_START;
     };
 };

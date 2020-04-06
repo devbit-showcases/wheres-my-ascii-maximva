@@ -13,16 +13,10 @@ int main(void) {
     std::vector<Tile> playField = playfield.getPlayField();
 
     for (unsigned int c = 0; c < playField.size(); c++) {
-        std::cout << playField[c].getAsciiChar() << " ";
-    }
-    std::cout << std::endl;
-
-
-    PlayField playfield2(4);
-    std::vector<Tile> playField2 = playfield2.getPlayField();
-
-    for (unsigned int c = 0; c < playField2.size(); c++) {
-        std::cout << playField2[c].getAsciiChar() << " ";
+        std::cout << playField[c].getAsciiChar() << "(" << playField[c].getId() << ")" << " ";
+        if ((c + 1) % 4 == 0) {
+            std::cout << std::endl;
+        }
     }
     std::cout << std::endl;
 
