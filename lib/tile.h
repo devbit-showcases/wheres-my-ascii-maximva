@@ -1,4 +1,6 @@
 #include <iostream>
+#include <time.h>
+// #include <stdlib.h>
 
 namespace MyAscii {
 
@@ -6,17 +8,17 @@ namespace MyAscii {
         public:
             Tile(void);
             char showHiddenChar(void);
+            char showAsciiChar(void);
 
 
 
         private:
             char asciiChar;
             char hiddenChar = '?';
-            const unsigned int ASCII_TABLE_RANGE = 26;
-            const unsigned int ASCII_TABLE_START = 65;
-            const unsigned int ASCII_TABLE_START = 90;
+
+            const unsigned int ASCII_TABLE_START = 65; // A in ASCII table
+            const unsigned int ASCII_TABLE_END = 90; // Z in ASCII table
+            const unsigned int ASCII_TABLE_RANGE = ASCII_TABLE_END - ASCII_TABLE_START;
 
     };
 };
-
-// CAP CASE characters from ascii [65 - 90] 
