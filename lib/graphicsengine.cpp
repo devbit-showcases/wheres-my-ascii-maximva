@@ -9,12 +9,11 @@ namespace MyAscii {
 
     GraphicsEngine::GraphicsEngine(std::string windowTitle) {
         this->windowTitle =  windowTitle;
-        setConsoleTitle();
+        setConsoleTitle(windowTitle);
     }
 
-    void GraphicsEngine::setConsoleTitle(void) {
-        LPCSTR text = windowTitle.c_str();
-	    SetConsoleTitleA(text);
+    void GraphicsEngine::setConsoleTitle(std::string windowTitle) {
+        SetConsoleTitleA(windowTitle.c_str());
     }
 
 

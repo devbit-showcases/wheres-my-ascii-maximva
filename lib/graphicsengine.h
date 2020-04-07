@@ -9,10 +9,10 @@ namespace MyAscii {
     class GraphicsEngine {
         public:
             GraphicsEngine(void);
-            GraphicsEngine(std::string title);
+            GraphicsEngine(std::string windowTitle);
 
-        private:
-            void setConsoleTitle(void);
+        public:
+            void setConsoleTitle(std::string windowTitle);
 
         private:
             std::string windowTitle = "New window";
