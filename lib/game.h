@@ -13,12 +13,10 @@ namespace MyAscii {
         
         public:
             Score start(void);
-        
-        // private:
-        //     void setGameParameters(void);
 
         private:
             Player * player;
+            unsigned int difficulty = 0;
 
             // {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
@@ -28,9 +26,6 @@ namespace MyAscii {
                 {8, 2},
                 {9, 3}
             };
-
-            unsigned int difficulty = 0;
-
     };
 
 };

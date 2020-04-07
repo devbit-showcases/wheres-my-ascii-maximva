@@ -30,11 +30,11 @@ namespace MyAscii {
             used_characters.push_back(tile.getAsciiChar()); // Store used chars to later check for doubles
         }
 
-        // Randomize the playfield positions
+        // Randomize the playfield tile positions
         for (unsigned int c = 0; c < fieldSize; c++) {
             unsigned int place = rand() % tiles.size();
             playField.push_back( tiles[place] );
-            tiles.erase(std::begin(tiles) + (place));
+            tiles.erase(std::begin(tiles) + place);
         }
     }
 

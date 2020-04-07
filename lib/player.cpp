@@ -18,5 +18,4 @@ namespace MyAscii {
         return name;
     }
 
-
 };
