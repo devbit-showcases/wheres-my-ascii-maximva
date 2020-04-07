@@ -9,10 +9,10 @@ namespace MyAscii {
 
     Score Game::start(void) {
         Score score;
-        unsigned int fieldEdgdeSize = gameParameters[difficulty][0];
+        unsigned int fieldEdgeSize = gameParameters[difficulty][0];
         unsigned int pairSize = gameParameters[difficulty][1];
 
-        PlayField playfield(fieldEdgdeSize, pairSize);
+        PlayField playfield(fieldEdgeSize, pairSize);
         std::vector<Tile> tiles = playfield.getPlayField();
 
         for (unsigned int c = 0; c < tiles.size(); c++) {
@@ -22,6 +22,8 @@ namespace MyAscii {
             }
         }
         std::cout << std::endl;
+
+        while (true);
         
         return score;
     }
