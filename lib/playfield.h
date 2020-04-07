@@ -11,6 +11,8 @@ namespace MyAscii {
     class PlayField {
         public:
             PlayField(unsigned int fieldSize);
+            
+        public:
             std::vector<Tile> getPlayField(void);
 
         private:

@@ -8,6 +8,8 @@ namespace MyAscii {
     class Tile {
         public:
             Tile(unsigned int id);
+        
+        public:
             char getHiddenChar(void);
             char getAsciiChar(void);
             unsigned int getId(void);

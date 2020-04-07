@@ -1,13 +1,19 @@
 #pragma once
 
-#include "time.h"
+#include "score.h"
+#include "player.h"
 
 namespace MyAscii {
 
     class Game {
         public:
-            Game(void);
+            Game(Player * player);
+        
+        public:
+            Score start(void);
 
+        private:
+            Player * player;
 
     };
 
