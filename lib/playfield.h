@@ -10,17 +10,19 @@ namespace MyAscii {
 
     class PlayField {
         public:
-            PlayField(unsigned int fieldSize);
+            PlayField(unsigned int fieldEdgeSize, unsigned int pairSize);
             
         public:
             std::vector<Tile> getPlayField(void);
+            unsigned int getFieldEdgeSize(void);
 
         private:
             void generatePlayField(void);
         
         private:
-            unsigned int fieldSize;
-            unsigned int pair_size = 2;
+            unsigned int fieldEdgeSize = 2;
+            unsigned int fieldSize = 4;
+            unsigned int pairSize = 2;
             std::vector<Tile> playField;
 
     };

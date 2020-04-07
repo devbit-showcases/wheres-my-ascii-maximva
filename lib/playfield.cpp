@@ -2,8 +2,10 @@
 
 namespace MyAscii {
 
-    PlayField::PlayField(unsigned int fieldEdge) {
-        fieldSize = fieldEdge * fieldEdge;
+    PlayField::PlayField(unsigned int fieldEdgeSize, unsigned int pairSize) {
+        this->fieldEdgeSize = fieldEdgeSize;
+        this->pairSize = pairSize;
+        fieldSize = fieldEdgeSize * fieldEdgeSize;
         generatePlayField();
     }
 
@@ -11,14 +13,18 @@ namespace MyAscii {
         return playField;
     }
 
+    unsigned int PlayField::getFieldEdgeSize(void) {
+        return fieldEdgeSize;
+    }
+
     void PlayField::generatePlayField(void) {
         std::vector<Tile> tiles;
         std::vector<char> used_characters;
 
         // Fill the playfield with tiles
-        for (unsigned int c = 0; c < fieldSize / pair_size; c++) {
+        for (unsigned int c = 0; c < fieldSize / pairSize; c++) {
             Tile tile(c);
-            for (unsigned int d = 0; d < pair_size; d++) {
+            for (unsigned int d = 0; d < pairSize; d++) {
                 tiles.push_back(tile);
             }
             used_characters.push_back(tile.getAsciiChar()); // Store used chars to later check for doubles
