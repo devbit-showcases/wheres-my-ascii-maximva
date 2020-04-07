@@ -17,7 +17,7 @@ int main(void) {
     GraphicsEngine engine("Where's my ASCII");
 
     Player player;
-    Game game(&player, 2);
+    Game game(&player, 0);
 
     game.start();
 
