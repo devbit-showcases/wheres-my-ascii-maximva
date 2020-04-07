@@ -15,15 +15,29 @@ namespace MyAscii {
         PlayField playfield(fieldEdgeSize, pairSize);
         std::vector<Tile> tiles = playfield.getPlayField();
 
-        for (unsigned int c = 0; c < tiles.size(); c++) {
-            std::cout << tiles[c].getAsciiChar() << "(" << tiles[c].getId() << ")" << " ";
-            if ((c + 1) % playfield.getFieldEdgeSize() == 0) {
-                std::cout << std::endl;
+        do {
+            for (unsigned int c = 0; c < tiles.size(); c++) {
+                char tileChar = ( tiles[c].isTurned() ? tiles[c].getAsciiChar() : tiles[c].getHiddenChar());
+                std::cout << tileChar << " ";
+                if ((c + 1) % playfield.getFieldEdgeSize() == 0) {
+                    std::cout << std::endl;
+                }
             }
-        }
-        std::cout << std::endl;
+            std::cout << std::endl;
 
-        while (true);
+            std::cout << "Please enter x coordinate: ";
+            int x;
+            std::cin >> x;
+
+            std::cout << "Please enter y coordinate: ";
+            int y;
+            std::cin >> y;
+
+            int position = (x-1) + ((y-1) * playfield.getFieldEdgeSize());
+            tiles[position].turnCard();
+            system("CLS");
+        } while (true);
+
         
         return score;
     }

@@ -13,9 +13,12 @@ namespace MyAscii {
             char getHiddenChar(void);
             char getAsciiChar(void);
             unsigned int getId(void);
+            void turnCard(void);
+            bool isTurned(void);
 
         private:
             unsigned int id = 0;
+            bool turned = false;
             char asciiChar;
             char hiddenChar = '?';
             unsigned int ASCII_TABLE_START = 'A';

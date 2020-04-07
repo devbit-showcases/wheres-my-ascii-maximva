@@ -19,4 +19,14 @@ namespace MyAscii {
         return id;
     }
 
+    void Tile::turnCard(void) {
+        turned = !turned;
+    }
+
+    bool Tile::isTurned(void) {
+        return turned;
+    }
+
+
+
 }

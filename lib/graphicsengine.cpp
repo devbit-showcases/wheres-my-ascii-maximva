@@ -4,7 +4,6 @@ namespace MyAscii {
 
     GraphicsEngine::GraphicsEngine(void)
     : GraphicsEngine("New window") {
-
     }
 
     GraphicsEngine::GraphicsEngine(std::string windowTitle) {
@@ -16,6 +15,9 @@ namespace MyAscii {
         SetConsoleTitleA(windowTitle.c_str());
     }
 
+    void GraphicsEngine::showPlayField(void) {
+
+    }
 
 
 }
