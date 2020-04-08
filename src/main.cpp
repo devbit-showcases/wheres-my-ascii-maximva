@@ -7,14 +7,14 @@
 #include "../lib/playfield.h"
 #include "../lib/game.h"
 #include "../lib/player.h"
-#include "../lib/graphicsengine.h"
+#include "../lib/Console.h"
 
 using namespace MyAscii;
 
 int main(void) {
     srand(time(NULL));
 
-    GraphicsEngine engine("Where's my ASCII");
+    Console console("Where's my ASCII");
 
     Player player;
     Game game(&player, 0);

@@ -8,10 +8,10 @@
 
 namespace MyAscii {
 
-    class GraphicsEngine {
+    class Console {
         public:
-            GraphicsEngine(void);
-            GraphicsEngine(std::string windowTitle);
+            Console(void);
+            Console(std::string windowTitle);
 
         public:
             void setConsoleTitle(std::string windowTitle);
