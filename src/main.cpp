@@ -15,6 +15,7 @@ int main(void) {
     srand(time(NULL));
 
     Console console("Where's my ASCII");
+    console.showPlayField();
 
     Player player;
     Game game(&player, 0);
