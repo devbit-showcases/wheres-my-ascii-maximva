@@ -2,8 +2,9 @@
 
 namespace MyAscii {
 
-    Game::Game(Player * player) {
+    Game::Game(Player * player, Console * console) {
         this->player = player;
+        this->console = console;
     }
 
 
@@ -20,8 +21,7 @@ namespace MyAscii {
         int secondGuessPosition = 0;
         int guessId = 0;
 
-        Console console("Where's my ASCII");
-        console.showPlayField(&tiles, fieldEdgeSize);
+        console->showPlayField(&tiles, fieldEdgeSize);
 
         do {
 
@@ -29,7 +29,7 @@ namespace MyAscii {
                 Sleep(1500);
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
-                console.showPlayField(&tiles, fieldEdgeSize);
+                console->showPlayField(&tiles, fieldEdgeSize);
                 correctGuess = true;
             }
 
@@ -72,7 +72,7 @@ namespace MyAscii {
                     }
                 }
             }
-            console.showPlayField(&tiles, fieldEdgeSize);
+            console->showPlayField(&tiles, fieldEdgeSize);
         } while (true);
 
         

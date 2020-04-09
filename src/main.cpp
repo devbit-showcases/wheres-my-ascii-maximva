@@ -14,8 +14,10 @@ using namespace MyAscii;
 int main(void) {
     srand(time(NULL));
 
+    Console console("Where's my ASCII");
+
     Player player;
-    Game game(&player);
+    Game game(&player, &console);
 
     game.start(4);
 

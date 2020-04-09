@@ -13,7 +13,7 @@ namespace MyAscii {
 
     class Game {
         public:
-            Game(Player * player);
+            Game(Player * player, Console * console);
         
         public:
             Score start(unsigned int difficulty);
@@ -21,6 +21,7 @@ namespace MyAscii {
 
         private:
             Player * player;
+            Console * console;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = gameParameters[difficulty][0];
             unsigned int pairSize = gameParameters[difficulty][1];

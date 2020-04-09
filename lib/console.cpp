@@ -36,12 +36,8 @@ namespace MyAscii {
                 // 1 tile is 9 vertical and 5 horizontal characters
                 const int MAP_SIZE = 45;
                 CHAR_INFO map[MAP_SIZE];
-
                 const int TILE_ARRAY_INDEX = x + (y * fieldEdgeSize);
-
                 const int TILE_CENTER = 22;
-
-                bool DEBUG = false;
 
                 // Display playfield on screen
                 for (int j = 0; j < 45; j++) {
@@ -79,7 +75,6 @@ namespace MyAscii {
         }
 
         SetConsoleActiveScreenBuffer(newScreenBuffer);
-
     }
 
 }
