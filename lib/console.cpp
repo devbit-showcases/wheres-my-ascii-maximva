@@ -99,4 +99,44 @@ namespace MyAscii {
         SetConsoleActiveScreenBuffer(newScreenBuffer);
     }
 
+    void Console::showScoreCard(void) {
+
+        COORD coordinateBufferSize;
+        COORD topLeftCoordinate;
+        SMALL_RECT srcWriteRect;
+        HANDLE currentScreenBuffer;
+        BOOL succes;
+
+        currentScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
+        
+        const int MAP_SIZE = 20;
+        CHAR_INFO map[MAP_SIZE];
+
+        map[0].Char.UnicodeChar = L'S';
+        map[1].Char.UnicodeChar = L'c';
+        map[2].Char.UnicodeChar = L'o';
+        map[3].Char.UnicodeChar = L'r';
+        map[4].Char.UnicodeChar = L'e';
+
+        coordinateBufferSize.Y = 1;
+        coordinateBufferSize.X = 20;
+        topLeftCoordinate.Y = 0;
+        topLeftCoordinate.X = 0;
+
+        (&srcWriteRect)->Top = 4;                            // Number of rows to the top
+        (&srcWriteRect)->Left = 200;             // Numbers of columns to the side
+        (&srcWriteRect)->Bottom = 5;
+        (&srcWriteRect)->Right = 220;
+
+        succes = WriteConsoleOutputW(
+            currentScreenBuffer,                    // The new ScreenBuffer
+            map,                                // The char array we want to display
+            coordinateBufferSize,               // 
+            topLeftCoordinate,
+            (&srcWriteRect)
+        );
+
+    }
+
+
 }

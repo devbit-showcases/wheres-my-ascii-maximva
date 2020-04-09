@@ -29,7 +29,7 @@ namespace MyAscii {
         do {
 
             if (!correctGuess) {
-                Sleep(1500);
+                Sleep(700);
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
                 console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
@@ -39,9 +39,7 @@ namespace MyAscii {
             COORD cursorPosition;
             cursorPosition.X = 100;
             cursorPosition.Y = 5;
-
-            SetConsoleCursorPosition(GetStdHandle(STD_INPUT_HANDLE), cursorPosition);
-
+            
             // Allow arrow/return key selection of tiles
             do {
                 system("pause>nul");    // pause after keystroke
@@ -58,7 +56,7 @@ namespace MyAscii {
                     selectedTileX++;
                     console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
                 }
-            } while (!GetAsyncKeyState(VK_RETURN));
+            } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
 
             int position = (selectedTileX) + (selectedTileY * playfield.getFieldEdgeSize());

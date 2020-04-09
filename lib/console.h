@@ -19,7 +19,7 @@ namespace MyAscii {
 
         public:
             void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
-
+            void showScoreCard(void);
         private:
             std::string windowTitle = "New window";
 
