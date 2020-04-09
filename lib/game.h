@@ -7,19 +7,24 @@
 #include <windows.h>
 #include "console.h"
 #include <stdio.h>
+#include <algorithm>
 
 namespace MyAscii {
 
     class Game {
         public:
-            Game(Player * player, unsigned int difficulty);
+            Game(Player * player);
         
         public:
-            Score start(void);
+            Score start(unsigned int difficulty);
+            void setDifficulty(unsigned int difficulty);
 
         private:
             Player * player;
             unsigned int difficulty = 0;
+            unsigned int fieldEdgeSize = gameParameters[difficulty][0];
+            unsigned int pairSize = gameParameters[difficulty][1];
+            std::vector<int> correctAnswers;
 
             // {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {

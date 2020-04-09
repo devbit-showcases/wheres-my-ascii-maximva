@@ -15,6 +15,7 @@ namespace MyAscii {
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize) {
+
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
@@ -38,15 +39,19 @@ namespace MyAscii {
 
                 const int TILE_ARRAY_INDEX = x + (y * fieldEdgeSize);
 
-                int TILE_CENTER = 22;
+                const int TILE_CENTER = 22;
+
+                bool DEBUG = false;
 
                 // Display playfield on screen
                 for (int j = 0; j < 45; j++) {
-                    char HIDDEN_CHAR = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar());
-                    int TILE_ATTRIBUTE = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? 0x31 : 0x20);
+                    const char CHAR_TO_GUESS = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar()); // ascii : hidden
+                    const int TILE_FLIPPED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharFlippedAttribute();
+                    const int TILE_COVERED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharCoveredAttribute();
+                    const int TILE_SHOW_ATTRIBUTE = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? TILE_FLIPPED_ATTRIBUTE : TILE_COVERED_ATTRIBUTE); // Flipped : Covered
 
-                    map[j].Char.UnicodeChar = (j == TILE_CENTER ? HIDDEN_CHAR : L' ');     // Use   L'▓' for unicode chars
-                    map[j].Attributes = TILE_ATTRIBUTE;
+                    map[j].Char.UnicodeChar = (j == TILE_CENTER ? CHAR_TO_GUESS : L' ');     // Use   L'▓' for unicode chars
+                    map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
                 coordinateBufferSize.Y = 5;
@@ -54,7 +59,7 @@ namespace MyAscii {
                 topLeftCoordinate.Y = 0;
                 topLeftCoordinate.X = 0;
 
-                // TODO CHECK MATH AND SIMPLIFY
+                // TODO CHECK MATH AND SIMPLIFY - make all of this depend on width/height/border of tiles
                 const int TILE_VERTICAL_WIDTH = 4;
                 const int TILE_VERTICAL_BORDER = 2;
 

@@ -2,9 +2,14 @@
 
 namespace MyAscii {
 
-    Tile::Tile(unsigned int id) {
-        asciiChar = rand() % ASCII_TABLE_RANGE + 1 + ASCII_TABLE_START;
+    Tile::Tile(unsigned int id, int charFlippedAttribute) {
+        setRandomChar();
         this->id = id;
+        this->charFlippedAttribute = charFlippedAttribute;
+    }
+
+    void Tile::setRandomChar(void) {
+        asciiChar = rand() % ASCII_TABLE_RANGE + 1 + ASCII_TABLE_START;
     }
 
     char Tile::getHiddenChar(void) {
@@ -25,6 +30,14 @@ namespace MyAscii {
 
     bool Tile::isTurned(void) {
         return turned;
+    }
+
+    int Tile::getCharFlippedAttribute(void) {
+        return charFlippedAttribute;
+    }
+
+    int Tile::getCharCoveredAttribute(void) {
+        return charCoveredAttribute;
     }
 
 

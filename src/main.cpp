@@ -15,9 +15,9 @@ int main(void) {
     srand(time(NULL));
 
     Player player;
-    Game game(&player, 2);
+    Game game(&player);
 
-    game.start();
+    game.start(4);
 
     return 0;
 }

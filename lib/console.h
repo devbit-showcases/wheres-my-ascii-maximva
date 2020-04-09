@@ -19,15 +19,6 @@ namespace MyAscii {
 
         public:
             void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize);
-            // void updatePlayField(void);
-
-            // void showScoreCard(void);
-            // void updateScoreCard(void);
-
-            // void showScoreBoard(void);
-            // void updateScoreBoard(void);
-
-
 
         private:
             std::string windowTitle = "New window";

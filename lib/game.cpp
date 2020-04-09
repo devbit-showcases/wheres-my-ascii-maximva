@@ -2,17 +2,16 @@
 
 namespace MyAscii {
 
-    Game::Game(Player * player, unsigned int difficulty) {
+    Game::Game(Player * player) {
         this->player = player;
-        this->difficulty = difficulty;
     }
 
-    Score Game::start(void) {
-        Score score;
-        unsigned int fieldEdgeSize = gameParameters[difficulty][0];
-        unsigned int pairSize = gameParameters[difficulty][1];
 
-        PlayField playfield(fieldEdgeSize, pairSize);
+    Score Game::start(unsigned int difficulty) {
+        Score score; // Doesn't do anything right now
+        setDifficulty(difficulty);
+
+        PlayField playfield(fieldEdgeSize, pairSize, difficulty);
         std::vector<Tile> tiles = playfield.getPlayField();
 
         bool firstGuess = true;
@@ -30,9 +29,7 @@ namespace MyAscii {
                 Sleep(1500);
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
-
                 console.showPlayField(&tiles, fieldEdgeSize);
-
                 correctGuess = true;
             }
 
@@ -41,6 +38,7 @@ namespace MyAscii {
             cursorPosition.Y = 5;
 
             SetConsoleCursorPosition(GetStdHandle(STD_INPUT_HANDLE), cursorPosition);
+
             std::cout << "Please enter x coordinate: ";
             int x;
             std::cin >> x;
@@ -51,20 +49,27 @@ namespace MyAscii {
 
             int position = (x-1) + ((y-1) * playfield.getFieldEdgeSize());
 
-            if (firstGuess) {
-                guessId = tiles[position].getId();
-                firstGuessPosition = position;
-                firstGuess = !firstGuess;
-                tiles[position].turnCard();
+            bool allreadyCorrect = std::find(correctAnswers.begin(), correctAnswers.end(), tiles[position].getId()) != correctAnswers.end();
+
+            if (allreadyCorrect) {
+                // maybe do something if player clicks on allready guesse tile
             } else {
-                if (tiles[position].getId() == guessId) {
-                    tiles[position].turnCard();
+                if (firstGuess) {
+                    guessId = tiles[position].getId();
+                    firstGuessPosition = position;
                     firstGuess = !firstGuess;
+                    tiles[position].turnCard();
                 } else {
-                    tiles[position].turnCard();
-                    secondGuessPosition = position;
-                    firstGuess = !firstGuess;
-                    correctGuess = false;
+                    if (tiles[position].getId() == guessId) {
+                        tiles[position].turnCard();
+                        firstGuess = !firstGuess;
+                        correctAnswers.push_back(guessId);
+                    } else {
+                        tiles[position].turnCard();
+                        secondGuessPosition = position;
+                        firstGuess = !firstGuess;
+                        correctGuess = false;
+                    }
                 }
             }
             console.showPlayField(&tiles, fieldEdgeSize);
@@ -74,4 +79,9 @@ namespace MyAscii {
         return score;
     }
 
+    void Game::setDifficulty(unsigned int difficulty) {
+        this->difficulty = difficulty;
+        fieldEdgeSize = gameParameters[difficulty][0];
+        pairSize = gameParameters[difficulty][1];
+    }
 }
