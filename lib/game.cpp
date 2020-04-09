@@ -21,8 +21,10 @@ namespace MyAscii {
         int secondGuessPosition = 0;
         int guessId = 0;
 
-        do {
+        Console console;
+        console.showPlayField(tiles);
 
+        do {
 
             for (unsigned int c = 0; c < tiles.size(); c++) {
                 char tileChar = ( tiles[c].isTurned() ? tiles[c].getAsciiChar() : tiles[c].getHiddenChar());

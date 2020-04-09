@@ -5,6 +5,7 @@
 #include "playfield.h"
 #include <iostream>
 #include <windows.h>
+#include "console.h"
 
 namespace MyAscii {
 

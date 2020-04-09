@@ -6,6 +6,10 @@
 #include "playfield.h"
 #include "tile.h"
 
+// To try and display UNICODE chars
+#include <io.h>
+#include <fcntl.h>
+
 namespace MyAscii {
 
     class Console {
@@ -17,6 +21,7 @@ namespace MyAscii {
             void setConsoleTitle(std::string windowTitle);
 
             void showPlayField(void);
+            void showPlayField(std::vector<Tile> tiles);
             // void updatePlayField(void);
 
             // void showScoreCard(void);
