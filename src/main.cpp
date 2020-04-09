@@ -19,7 +19,7 @@ int main(void) {
     Player player;
     Game game(&player, &console);
 
-    game.start(4);
+    game.start(1);
 
     return 0;
 }

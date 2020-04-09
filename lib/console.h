@@ -18,7 +18,7 @@ namespace MyAscii {
             Console(std::string windowTitle);
 
         public:
-            void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize);
+            void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
 
         private:
             std::string windowTitle = "New window";

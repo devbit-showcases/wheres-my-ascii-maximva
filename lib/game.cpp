@@ -21,7 +21,10 @@ namespace MyAscii {
         int secondGuessPosition = 0;
         int guessId = 0;
 
-        console->showPlayField(&tiles, fieldEdgeSize);
+        int selectedTileX = 0;
+        int selectedTileY = 0;
+
+        console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
 
         do {
 
@@ -29,7 +32,7 @@ namespace MyAscii {
                 Sleep(1500);
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
-                console->showPlayField(&tiles, fieldEdgeSize);
+                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
                 correctGuess = true;
             }
 
@@ -39,17 +42,28 @@ namespace MyAscii {
 
             SetConsoleCursorPosition(GetStdHandle(STD_INPUT_HANDLE), cursorPosition);
 
-            std::cout << "Please enter x coordinate: ";
-            int x;
-            std::cin >> x;
+            // Allow arrow/return key selection of tiles
+            do {
+                system("pause>nul");    // pause after keystroke
+                if (GetAsyncKeyState(VK_UP) && selectedTileY != 0) {
+                    selectedTileY--;
+                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                } else if (GetAsyncKeyState(VK_DOWN) && selectedTileY < (fieldEdgeSize - 1)) {
+                    selectedTileY++;
+                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                } else if (GetAsyncKeyState(VK_LEFT) && selectedTileX != 0) {
+                    selectedTileX--;
+                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                } else if (GetAsyncKeyState(VK_RIGHT) && selectedTileX < (fieldEdgeSize - 1)) {
+                    selectedTileX++;
+                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                }
+            } while (!GetAsyncKeyState(VK_RETURN));
 
-            std::cout << "Please enter y coordinate: ";
-            int y;
-            std::cin >> y;
 
-            int position = (x-1) + ((y-1) * playfield.getFieldEdgeSize());
-
+            int position = (selectedTileX) + (selectedTileY * playfield.getFieldEdgeSize());
             bool allreadyCorrect = std::find(correctAnswers.begin(), correctAnswers.end(), tiles[position].getId()) != correctAnswers.end();
+
 
             if (allreadyCorrect) {
                 // maybe do something if player clicks on allready guesse tile
@@ -72,7 +86,7 @@ namespace MyAscii {
                     }
                 }
             }
-            console->showPlayField(&tiles, fieldEdgeSize);
+            console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         } while (true);
 
         

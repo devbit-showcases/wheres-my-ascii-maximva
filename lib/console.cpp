@@ -14,7 +14,7 @@ namespace MyAscii {
         ShowWindow(console, SW_MAXIMIZE);
     }
 
-    void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize) {
+    void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
 
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
@@ -41,12 +41,34 @@ namespace MyAscii {
 
                 // Display playfield on screen
                 for (int j = 0; j < 45; j++) {
+
                     const char CHAR_TO_GUESS = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar()); // ascii : hidden
                     const int TILE_FLIPPED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharFlippedAttribute();
                     const int TILE_COVERED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharCoveredAttribute();
                     const int TILE_SHOW_ATTRIBUTE = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? TILE_FLIPPED_ATTRIBUTE : TILE_COVERED_ATTRIBUTE); // Flipped : Covered
 
-                    map[j].Char.UnicodeChar = (j == TILE_CENTER ? CHAR_TO_GUESS : L' ');     // Use   L'▓' for unicode chars
+                    if (x == selectedTileX && y == selectedTileY) {
+                        if (j == 11) {
+                            map[j].Char.UnicodeChar = L'┌';
+                        } else if ((j > 11 && j < 15) || (j > 29 && j < 33)){
+                            map[j].Char.UnicodeChar = L'─';
+                        } else if (j == 15) {
+                            map[j].Char.UnicodeChar = L'┐';
+                        } else if (j == 20 || j == 24) {
+                            map[j].Char.UnicodeChar = L'│';
+                        } else if (j == 29) {
+                            map[j].Char.UnicodeChar = L'└';
+                        } else if (j == 33) {
+                            map[j].Char.UnicodeChar = L'┘';
+                        } else if (j == TILE_CENTER) {
+                            map[j].Char.UnicodeChar = CHAR_TO_GUESS;
+                        } else {
+                            map[j].Char.UnicodeChar = L' ';
+                        }
+                    } else {
+                        map[j].Char.UnicodeChar = (j == TILE_CENTER ? CHAR_TO_GUESS : L' ');     // Use   L'▓' for unicode chars
+                    }
+
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
