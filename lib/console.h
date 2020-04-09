@@ -18,10 +18,7 @@ namespace MyAscii {
             Console(std::string windowTitle);
 
         public:
-            void setConsoleTitle(std::string windowTitle);
-
-            void showPlayField(void);
-            void showPlayField(std::vector<Tile> tiles);
+            void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize);
             // void updatePlayField(void);
 
             // void showScoreCard(void);

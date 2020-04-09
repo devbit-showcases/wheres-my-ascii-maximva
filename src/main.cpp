@@ -14,11 +14,8 @@ using namespace MyAscii;
 int main(void) {
     srand(time(NULL));
 
-    Console console("Where's my ASCII");
-    // console.showPlayField();
-
     Player player;
-    Game game(&player, 0);
+    Game game(&player, 2);
 
     game.start();
 

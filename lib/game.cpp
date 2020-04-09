@@ -21,38 +21,26 @@ namespace MyAscii {
         int secondGuessPosition = 0;
         int guessId = 0;
 
-        Console console;
-        console.showPlayField(tiles);
+        Console console("Where's my ASCII");
+        console.showPlayField(&tiles, fieldEdgeSize);
 
         do {
 
-            for (unsigned int c = 0; c < tiles.size(); c++) {
-                char tileChar = ( tiles[c].isTurned() ? tiles[c].getAsciiChar() : tiles[c].getHiddenChar());
-                std::cout << tileChar << " ";
-                if ((c + 1) % playfield.getFieldEdgeSize() == 0) {
-                    std::cout << std::endl;
-                }
-            }
-
             if (!correctGuess) {
-                Sleep(2000);
+                Sleep(1500);
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
 
-                system("CLS");
+                console.showPlayField(&tiles, fieldEdgeSize);
 
-                for (unsigned int c = 0; c < tiles.size(); c++) {
-                    char tileChar = ( tiles[c].isTurned() ? tiles[c].getAsciiChar() : tiles[c].getHiddenChar());
-                    std::cout << tileChar << " ";
-                    if ((c + 1) % playfield.getFieldEdgeSize() == 0) {
-                        std::cout << std::endl;
-                    }
-                }
                 correctGuess = true;
             }
 
-            std::cout << std::endl;
+            COORD cursorPosition;
+            cursorPosition.X = 100;
+            cursorPosition.Y = 5;
 
+            SetConsoleCursorPosition(GetStdHandle(STD_INPUT_HANDLE), cursorPosition);
             std::cout << "Please enter x coordinate: ";
             int x;
             std::cin >> x;
@@ -79,7 +67,7 @@ namespace MyAscii {
                     correctGuess = false;
                 }
             }
-            system("CLS");
+            console.showPlayField(&tiles, fieldEdgeSize);
         } while (true);
 
         

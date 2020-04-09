@@ -6,6 +6,7 @@
 #include <iostream>
 #include <windows.h>
 #include "console.h"
+#include <stdio.h>
 
 namespace MyAscii {
 
