@@ -76,8 +76,6 @@ namespace MyAscii {
 
         static int TILE_CENTER = 22;
 
-        int something = 233;
-
         // Display playfield on screen
         for (static int j = 0; j < 45; j++) {
             map[j].Char.UnicodeChar = (j == TILE_CENTER ? tiles[0].getAsciiChar() : L' ');     // Use   L'▓' for unicode chars
