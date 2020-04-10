@@ -20,16 +20,20 @@ namespace MyAscii {
         int firstGuessPosition = 0;
         int secondGuessPosition = 0;
         int guessId = 0;
+        int number_of_pairs = tiles.size() / pairSize;
+        int correct_guesses = 0;
 
         int selectedTileX = 0;
         int selectedTileY = 0;
 
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        console->showScoreCard(number_of_pairs, correct_guesses);
 
         do {
 
             if (!correctGuess) {
-                Sleep(700);
+                Sleep(700);     // Or system pause... don't now what feels better...
+                // system("pause>nul"); 
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
                 console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
@@ -76,6 +80,8 @@ namespace MyAscii {
                         tiles[position].turnCard();
                         firstGuess = !firstGuess;
                         correctAnswers.push_back(guessId);
+                        correct_guesses++;
+                        console->showScoreCard(number_of_pairs, correct_guesses);
                     } else {
                         tiles[position].turnCard();
                         secondGuessPosition = position;

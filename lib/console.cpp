@@ -12,6 +12,26 @@ namespace MyAscii {
         SetConsoleTitleA(windowTitle.c_str());
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xEC);
         ShowWindow(console, SW_MAXIMIZE);
+        createGameScreenBuffer();
+        createMenuScreenBuffer();
+    }
+
+    void Console::createGameScreenBuffer(void) {
+        gameScreenBuffer = CreateConsoleScreenBuffer(
+            GENERIC_READ | GENERIC_WRITE,
+            FILE_SHARE_READ | FILE_SHARE_WRITE,
+            NULL,
+            CONSOLE_TEXTMODE_BUFFER,
+            NULL);
+    }
+
+    void Console::createMenuScreenBuffer(void) {
+        menuScreenBuffer = CreateConsoleScreenBuffer(
+            GENERIC_READ | GENERIC_WRITE,
+            FILE_SHARE_READ | FILE_SHARE_WRITE,
+            NULL,
+            CONSOLE_TEXTMODE_BUFFER,
+            NULL);
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
@@ -19,17 +39,9 @@ namespace MyAscii {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
-        HANDLE oldScreenBuffer, newScreenBuffer;
         BOOL succes;
 
-        oldScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
-        newScreenBuffer = CreateConsoleScreenBuffer(
-            GENERIC_READ | GENERIC_WRITE,
-            FILE_SHARE_READ | FILE_SHARE_WRITE,
-            NULL,
-            CONSOLE_TEXTMODE_BUFFER,
-            NULL);
-
+        const int START_POSITION = (117 - (fieldEdgeSize * 9) - ((fieldEdgeSize - 1) * 2)) / 2;
 
         for (int y = 0; y < fieldEdgeSize; y++) {
             for (int x = 0; x < fieldEdgeSize; x++) {
@@ -81,62 +93,158 @@ namespace MyAscii {
                 const int TILE_VERTICAL_WIDTH = 4;
                 const int TILE_VERTICAL_BORDER = 2;
 
-                (&srcWriteRect)->Top = ((TILE_VERTICAL_WIDTH + TILE_VERTICAL_BORDER) * y) + TILE_VERTICAL_WIDTH;               // Number of rows to the top                                          4
-                (&srcWriteRect)->Left = 10 + (x * 11);             // Numbers of columns to the side                                    21
+                (&srcWriteRect)->Top = ((TILE_VERTICAL_WIDTH + TILE_VERTICAL_BORDER) * y) + TILE_VERTICAL_WIDTH;
+                (&srcWriteRect)->Left = START_POSITION + (x * 11);          // Beginning of centered tile field
                 (&srcWriteRect)->Bottom = (6 * y) + 8;
-                (&srcWriteRect)->Right = 18 + (x * 11);
+                (&srcWriteRect)->Right = START_POSITION + 8 + (x * 11);     // End of centered tile field
 
                 succes = WriteConsoleOutputW(
-                    newScreenBuffer,                    // The new ScreenBuffer
-                    map,                                // The char array we want to display
-                    coordinateBufferSize,               // 
+                    gameScreenBuffer,
+                    map,
+                    coordinateBufferSize,
                     topLeftCoordinate,
                     (&srcWriteRect)
                 );
             }
         }
 
-        SetConsoleActiveScreenBuffer(newScreenBuffer);
+        SetConsoleActiveScreenBuffer(gameScreenBuffer);
     }
 
-    void Console::showScoreCard(void) {
-
+    void Console::showScoreCard(int number_of_pairs, int correct_guesses) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
-        HANDLE currentScreenBuffer;
         BOOL succes;
 
-        currentScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
+        const int NUMBER_OF_ROWS = 10;
+        const int NUMBER_OF_COLUMNS = 50;
         
-        const int MAP_SIZE = 20;
-        CHAR_INFO map[MAP_SIZE];
+        const int START_X_POSITION = 117;
+        const int START_Y_POSITION = 4;
 
-        map[0].Char.UnicodeChar = L'S';
-        map[1].Char.UnicodeChar = L'c';
-        map[2].Char.UnicodeChar = L'o';
-        map[3].Char.UnicodeChar = L'r';
-        map[4].Char.UnicodeChar = L'e';
+        const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
+        CHAR_INFO map[SCORECARD_SIZE];
 
-        coordinateBufferSize.Y = 1;
-        coordinateBufferSize.X = 20;
+        // Draw the empty scorecard box
+        drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+        for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
+            drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
+        }
+
+        // Draw the score
+        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2, correct_guesses, number_of_pairs);
+
+        // Get ready to write it to the console screenBuffer
+        coordinateBufferSize.Y = NUMBER_OF_ROWS;
+        coordinateBufferSize.X = NUMBER_OF_COLUMNS;
         topLeftCoordinate.Y = 0;
         topLeftCoordinate.X = 0;
 
-        (&srcWriteRect)->Top = 4;                            // Number of rows to the top
-        (&srcWriteRect)->Left = 200;             // Numbers of columns to the side
-        (&srcWriteRect)->Bottom = 5;
-        (&srcWriteRect)->Right = 220;
+        (&srcWriteRect)->Top = START_Y_POSITION;
+        (&srcWriteRect)->Left = START_X_POSITION;
+        (&srcWriteRect)->Bottom = START_Y_POSITION + NUMBER_OF_ROWS;
+        (&srcWriteRect)->Right = START_X_POSITION + NUMBER_OF_COLUMNS;
 
+        // Write it to the console screenBuffer
         succes = WriteConsoleOutputW(
-            currentScreenBuffer,                    // The new ScreenBuffer
-            map,                                // The char array we want to display
-            coordinateBufferSize,               // 
+            gameScreenBuffer,
+            map,
+            coordinateBufferSize,
             topLeftCoordinate,
             (&srcWriteRect)
         );
-
     }
 
+    void Console::drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int SCORE, int MAX_SCORE) {
+        const char * max_score = std::to_string(MAX_SCORE).c_str();
+        const char * score = std::to_string(SCORE).c_str();
+
+        const int LEFT_MARGIN = 4; // 1 for border + actual margin
+        const int RIGHT_MARGIN = 1; // 1 for border + actual margin
+        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
+        const int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
+
+        int count = 0;
+        
+        for (int i = START_POSITION; i < END_OF_LINE; i++) {
+            if (!(count > sizeof(score)/sizeof(int))) {
+                map[i].Char.UnicodeChar = score[count];
+                map[i].Attributes = 0xEC;
+                count++;
+            } else {
+                map[i].Char.UnicodeChar = L' ';
+                map[i].Attributes = 0xEC;
+            }
+        }
+    }
+
+
+    void Console::drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
+        for (int y = 0; y < NUMBER_OF_ROWS; y++) {
+            for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
+                
+                const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
+
+                if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'║';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
+                    map[MAP_POSITION].Char.UnicodeChar = L' ';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'║';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                }
+        
+            }
+        }
+    }
+
+    void Console::drawScorecardTopAndBottom(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS) {
+        const int FIRST_ROW_START = 0;
+        const int FIRST_ROW_END = (NUMBER_OF_COLUMNS - 1);
+        const int FINAL_ROW_START = (NUMBER_OF_COLUMNS * (NUMBER_OF_ROWS - 1));
+        const int FINAL_ROW_END = (NUMBER_OF_COLUMNS * NUMBER_OF_ROWS) - 1;
+
+        // Used Unicode chars for reference
+        //╔═══════════════╗
+        //║               ║
+        //╟───────────────╢
+        //╠═══════════════╣
+        //╚═══════════════╝
+
+        for (int y = 0; y < NUMBER_OF_ROWS; y++) {
+            for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
+
+                const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
+
+                // Draw first row of scorecard
+                if (MAP_POSITION == FIRST_ROW_START) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'╔';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if (MAP_POSITION > FIRST_ROW_START && MAP_POSITION < FIRST_ROW_END) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'═';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if(MAP_POSITION == FIRST_ROW_END) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'╗';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                }
+
+                // Draw final row of scorecard
+                if (MAP_POSITION == FINAL_ROW_START) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'╚';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if (MAP_POSITION > FINAL_ROW_START && MAP_POSITION < FINAL_ROW_END) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'═';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                } else if(MAP_POSITION == FINAL_ROW_END) {
+                    map[MAP_POSITION].Char.UnicodeChar = L'╝';
+                    map[MAP_POSITION].Attributes = 0xEC;
+                }
+                
+            }
+        }
+    }
 
 }
