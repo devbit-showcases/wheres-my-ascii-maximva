@@ -34,6 +34,78 @@ namespace MyAscii {
             NULL);
     }
 
+    void Console::showMenu(std::string items[], int items_size, int current_menu_item) {
+
+        CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
+        GetConsoleScreenBufferInfo(menuScreenBuffer, &menuBufferInfo);
+
+        COORD coordinateBufferSize;
+        COORD topLeftCoordinate;
+        SMALL_RECT srcWriteRect;
+        BOOL succes;
+
+
+        for (int y = 0; y < items_size; y++) {
+            const int TOP_MENU_MARGIN = 10;
+            const int MENU_ITEM_HEIGHT = 3;
+            const int MENU_ITEM_WIDTH = 75;
+            const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
+            CHAR_INFO map[MENU_SIZE];
+
+            // Get center of screen to center menu
+            int bufferWidth = menuBufferInfo.dwSize.X;
+            const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
+
+        
+
+            for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
+
+                if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
+                    const char * menu_item_string = items[y].c_str();
+
+                    for (int j = 0; j < MENU_ITEM_WIDTH - 1; j++) {
+                        map[i].Char.UnicodeChar = menu_item_string[j];
+                        map[i].Attributes = 0x20;
+                    }
+                } else {
+                    map[i].Char.UnicodeChar = L' ';
+                    map[i].Attributes = 0x20;
+                }
+
+                if (y == current_menu_item) {
+                    if (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH ) {
+                        map[i].Char.UnicodeChar = L' ';
+                        map[i].Attributes = 0x40;
+                    }
+                }
+            }
+
+
+            coordinateBufferSize.Y = MENU_ITEM_HEIGHT;
+            coordinateBufferSize.X = MENU_ITEM_WIDTH;
+            topLeftCoordinate.Y = 0;
+            topLeftCoordinate.X = 0;
+
+            (&srcWriteRect)->Top = TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
+            (&srcWriteRect)->Left = START_POSITION;
+            (&srcWriteRect)->Bottom = TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
+            (&srcWriteRect)->Right = (START_POSITION + MENU_ITEM_WIDTH);
+
+            succes = WriteConsoleOutputW(
+                menuScreenBuffer,
+                map,
+                coordinateBufferSize,
+                topLeftCoordinate,
+                (&srcWriteRect)
+            );
+        }
+
+
+        SetConsoleActiveScreenBuffer(menuScreenBuffer);
+
+
+    }
+
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
 
         COORD coordinateBufferSize;
@@ -228,6 +300,26 @@ namespace MyAscii {
     void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
         map[position].Attributes = attribute;
+    }
+
+    void Console::showMenuItem(CHAR_INFO map[], int position, std::string menu_item) {
+
+        const int MENU_ITEM_WIDTH = 50;
+        const int MENU_ITEM_HEIGHT = 3;
+
+        const int MENU_LEFT_START = (100 - MENU_ITEM_WIDTH ) / 2;
+
+        for (int y = 4 + (position * (MENU_ITEM_HEIGHT + 1)); y < MENU_ITEM_HEIGHT; y++) {
+            for (int x = MENU_LEFT_START; x < MENU_LEFT_START + MENU_ITEM_WIDTH; x++) {
+
+                const int POSITION = x + (y * MENU_ITEM_WIDTH);
+
+                map[POSITION].Char.UnicodeChar = L'┌';
+                map[POSITION].Attributes = 0x20;
+            }
+        }
+            
+
     }
 
 }

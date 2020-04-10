@@ -8,6 +8,7 @@
 #include "../lib/game.h"
 #include "../lib/player.h"
 #include "../lib/Console.h"
+#include "../lib/menu.h"
 
 using namespace MyAscii;
 
@@ -16,10 +17,17 @@ int main(void) {
 
     Console console("Where's my ASCII");
 
-    Player player;
-    Game game(&player, &console);
+    Menu menu(&console);
+    int chosen_menu_item = menu.show();
 
-    game.start(1);
+    if (chosen_menu_item == 0) {
+        Player player;
+        Game game(&player, &console);
+        game.start(1);
+    } else {
+        return 0;
+    }
+
 
     return 0;
 }
