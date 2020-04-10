@@ -34,9 +34,13 @@ int main(void) {
 
 
     if (chosen_menu_item == 0) {
+        int difficulty;
+        std::cout << "Difficulty between 0 and 4: ";
+        std::cin >> difficulty;
+
         Player player;
         Game game(&player, &console);
-        game.start(1);
+        game.start(difficulty);
     } else {
         return 0;
     }
