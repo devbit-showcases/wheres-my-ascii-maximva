@@ -20,7 +20,6 @@ namespace MyAscii {
         public:
             void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
             void showScoreCard(int number_of_pairs, int correct_guesses);
-
             void showMenu(std::string items[], int items_size, int current_menu_item);
 
         private:

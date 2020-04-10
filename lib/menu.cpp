@@ -16,6 +16,7 @@ namespace MyAscii {
         std::string menu_items[] = {
             "Play a game",
             "Close application",
+            "Menu test"
         };
 
         console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item);
@@ -30,6 +31,7 @@ namespace MyAscii {
                 console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item);
             }
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
+
 
         return current_menu_item;
 

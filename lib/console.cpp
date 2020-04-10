@@ -14,6 +14,12 @@ namespace MyAscii {
         ShowWindow(console, SW_MAXIMIZE);
         createGameScreenBuffer();
         createMenuScreenBuffer();
+
+        // Hide the cursor on the game window
+        CONSOLE_CURSOR_INFO     cursorInfo;
+        GetConsoleCursorInfo(gameScreenBuffer, &cursorInfo);
+        cursorInfo.bVisible = false; // set the cursor visibility
+        SetConsoleCursorInfo(gameScreenBuffer, &cursorInfo);
     }
 
     void Console::createGameScreenBuffer(void) {
@@ -35,7 +41,6 @@ namespace MyAscii {
     }
 
     void Console::showMenu(std::string items[], int items_size, int current_menu_item) {
-
         CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
         GetConsoleScreenBufferInfo(menuScreenBuffer, &menuBufferInfo);
 
@@ -56,15 +61,20 @@ namespace MyAscii {
             int bufferWidth = menuBufferInfo.dwSize.X;
             const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
 
-        
-
             for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
+
 
                 if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
                     const char * menu_item_string = items[y].c_str();
 
-                    for (int j = 0; j < MENU_ITEM_WIDTH - 1; j++) {
-                        map[i].Char.UnicodeChar = menu_item_string[j];
+                    int size = 0;
+                    while (menu_item_string[size] != '\0') size++;
+
+                    if (i - MENU_ITEM_WIDTH - 2 < size) {
+                        map[i].Char.UnicodeChar =  menu_item_string[i - MENU_ITEM_WIDTH - 2];
+                        map[i].Attributes = 0x20;
+                    } else {
+                        map[i].Char.UnicodeChar =  L' ';
                         map[i].Attributes = 0x20;
                     }
                 } else {
@@ -98,12 +108,12 @@ namespace MyAscii {
                 topLeftCoordinate,
                 (&srcWriteRect)
             );
+
+
         }
 
-
         SetConsoleActiveScreenBuffer(menuScreenBuffer);
-
-
+  
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {

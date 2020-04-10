@@ -15,10 +15,23 @@ using namespace MyAscii;
 int main(void) {
     srand(time(NULL));
 
+    // crashes the menu when using arrows ...
+
+    // std::string player_name = "";
+    // std::cout << "Please choose a name: ";
+    // std::cin >> player_name;
+
+    // int difficulty = 0;
+    // std::cout << "Please select a dificulty between 1 and 5: ";
+    // std::cin >> difficulty;
+    
+
+
     Console console("Where's my ASCII");
 
     Menu menu(&console);
     int chosen_menu_item = menu.show();
+
 
     if (chosen_menu_item == 0) {
         Player player;

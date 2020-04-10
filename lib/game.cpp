@@ -68,7 +68,7 @@ namespace MyAscii {
 
 
             if (allreadyCorrect) {
-                // maybe do something if player clicks on allready guesse tile
+                // maybe do something if player clicks on allready guessed tile
             } else {
                 if (firstGuess) {
                     guessId = tiles[position].getId();
@@ -76,7 +76,9 @@ namespace MyAscii {
                     firstGuess = !firstGuess;
                     tiles[position].turnCard();
                 } else {
-                    if (tiles[position].getId() == guessId) {
+                    if (position == firstGuessPosition) {
+                        // maybe do something if tile is played twice
+                    } else if (tiles[position].getId() == guessId) {
                         tiles[position].turnCard();
                         firstGuess = !firstGuess;
                         correctAnswers.push_back(guessId);
