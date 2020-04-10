@@ -119,10 +119,8 @@ namespace MyAscii {
 
         const int NUMBER_OF_ROWS = 10;
         const int NUMBER_OF_COLUMNS = 50;
-        
         const int START_X_POSITION = 117;
         const int START_Y_POSITION = 4;
-
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
 
@@ -159,7 +157,6 @@ namespace MyAscii {
     void Console::drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int SCORE, int MAX_SCORE) {
         const char * max_score = std::to_string(MAX_SCORE).c_str();
         const char * score = std::to_string(SCORE).c_str();
-
         const int LEFT_MARGIN = 4; // 1 for border + actual margin
         const int RIGHT_MARGIN = 1; // 1 for border + actual margin
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
@@ -169,34 +166,25 @@ namespace MyAscii {
         
         for (int i = START_POSITION; i < END_OF_LINE; i++) {
             if (!(count > sizeof(score)/sizeof(int))) {
-                map[i].Char.UnicodeChar = score[count];
-                map[i].Attributes = 0xEC;
+                addCharToMap(map, i, score[count], scoreCardAttribute);
                 count++;
             } else {
-                map[i].Char.UnicodeChar = L' ';
-                map[i].Attributes = 0xEC;
+                addCharToMap(map, i, L' ', scoreCardAttribute);
             }
         }
     }
 
-
     void Console::drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-                
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'║';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'║', scoreCardAttribute);
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    map[MAP_POSITION].Char.UnicodeChar = L' ';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L' ', scoreCardAttribute);
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'║';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'║', scoreCardAttribute);
                 }
-        
             }
         }
     }
@@ -216,35 +204,30 @@ namespace MyAscii {
 
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-
                 // Draw first row of scorecard
                 if (MAP_POSITION == FIRST_ROW_START) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'╔';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'╔', scoreCardAttribute);
                 } else if (MAP_POSITION > FIRST_ROW_START && MAP_POSITION < FIRST_ROW_END) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'═';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
                 } else if(MAP_POSITION == FIRST_ROW_END) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'╗';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'╗', scoreCardAttribute);
                 }
-
                 // Draw final row of scorecard
                 if (MAP_POSITION == FINAL_ROW_START) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'╚';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'╚', scoreCardAttribute);
                 } else if (MAP_POSITION > FINAL_ROW_START && MAP_POSITION < FINAL_ROW_END) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'═';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
                 } else if(MAP_POSITION == FINAL_ROW_END) {
-                    map[MAP_POSITION].Char.UnicodeChar = L'╝';
-                    map[MAP_POSITION].Attributes = 0xEC;
+                    addCharToMap(map, MAP_POSITION, L'╝', scoreCardAttribute);
                 }
-                
             }
         }
+    }
+
+    void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
+        map[position].Char.UnicodeChar = character;
+        map[position].Attributes = attribute;
     }
 
 }

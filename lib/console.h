@@ -27,11 +27,13 @@ namespace MyAscii {
             void drawScorecardTopAndBottom(CHAR_INFO map[], int number_of_columns, int number_of_rows);
             void drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int score, int max_score);
+            void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             
         private:
             std::string windowTitle = "New window";
             HANDLE gameScreenBuffer;
             HANDLE menuScreenBuffer;
+            int scoreCardAttribute = 0xEC;   // EC
 
     };
 };
