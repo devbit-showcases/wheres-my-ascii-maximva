@@ -25,14 +25,12 @@ namespace MyAscii {
         for (unsigned int c = 0; c < fieldSize / pairSize; c++) {
             int attributeNumber = rand() % possibleCharAttributes.size();
             
-            // deleting the used attribute values from the vector doesn't seem to work
-            // possibleCharAttributes.erase(std::begin(possibleCharAttributes) + attributeNumber);
-
             Tile tile(c, possibleCharAttributes[attributeNumber]);
             int charAlphabetPosition = tile.getAsciiChar() - 'A';
             charCount[charAlphabetPosition]++;
+            possibleCharAttributes.erase(std::begin(possibleCharAttributes) + attributeNumber); // Erase attribute from vector
 
-            // Make sure there's no double characters below sertain level
+            // Make sure there's no double characters below certain level
             while (difficulty < 3 && charCount[charAlphabetPosition] > 1) {
                 charCount[charAlphabetPosition]--;
                 tile.setRandomChar();
