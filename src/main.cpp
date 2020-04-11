@@ -25,7 +25,7 @@ int main(void) {
 
         Player player;
         player.set_name(userName);
-        
+
         Game game(&player, &console);
         game.start(difficulty);
     } else {

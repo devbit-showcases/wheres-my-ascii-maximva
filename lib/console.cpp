@@ -15,7 +15,6 @@ namespace MyAscii {
 
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
         createGameScreenBuffer();
-        createMenuScreenBuffer();
 
         // Hide the cursor on the game window
         CONSOLE_CURSOR_INFO     cursorInfo;
@@ -33,97 +32,36 @@ namespace MyAscii {
             NULL);
     }
 
-    void Console::createMenuScreenBuffer(void) {
-        menuScreenBuffer = CreateConsoleScreenBuffer(
-            GENERIC_READ | GENERIC_WRITE,
-            FILE_SHARE_READ | FILE_SHARE_WRITE,
-            NULL,
-            CONSOLE_TEXTMODE_BUFFER,
-            NULL);
-    }
-
     int Console::getDifficulty(void) {
-        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
-
-        int difficulty;
-        std::cout << "Difficulty between 0 and 4: ";
-        std::cin >> difficulty;
-
         return difficulty;
     }
 
     std::string Console::getUserName(void) {
-        CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &menuBufferInfo);
-        int bufferWidth = menuBufferInfo.dwSize.X;
-        const int START_POSITION = (bufferWidth - 100) / 2;
-
-
-
-        COORD coordinateBufferSize;
-        COORD topLeftCoordinate;
-        SMALL_RECT srcWriteRect;
-        BOOL succes;
-        CHAR_INFO map[10];
-
-        map[0].Char.UnicodeChar = L'A';
-        map[0].Attributes = 0x31;
-        map[1].Char.UnicodeChar = L'L';
-        map[1].Attributes = 0x31;
-        map[2].Char.UnicodeChar = L'O';
-        map[2].Attributes = 0x31;
-
-        coordinateBufferSize.Y = 1;
-        coordinateBufferSize.X = 10;
-        topLeftCoordinate.Y = 0;
-        topLeftCoordinate.X = 0;
-
-        (&srcWriteRect)->Top = 4;
-        (&srcWriteRect)->Left = 9;
-        (&srcWriteRect)->Bottom = 5;
-        (&srcWriteRect)->Right = 19;
-
-        succes = WriteConsoleOutputW(
-            defaultScreenBuffer,
-            map,
-            coordinateBufferSize,
-            topLeftCoordinate,
-            (&srcWriteRect)
-        );
-
-
-        COORD cursorCoord;
-        cursorCoord.X = START_POSITION;
-        cursorCoord.Y = 10;
-        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-
-        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
-
-        std::string userName;
-        std::cout << "Enter your username: ";
-        std::cin >> userName;
-
         return userName;
     }
 
-    void Console::showMenu(std::string items[], int items_size, int current_menu_item) {
-        CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
-        GetConsoleScreenBufferInfo(menuScreenBuffer, &menuBufferInfo);
+    void Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
+        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
+        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
-        for (int y = 0; y < items_size; y++) {
-            const int TOP_MENU_MARGIN = 10;
-            const int MENU_ITEM_HEIGHT = 3;
-            const int MENU_ITEM_WIDTH = 75;
-            const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
-            CHAR_INFO map[MENU_SIZE];
+        if (user_input_needed) {
+            system("CLS");
+        }
 
-            // Get center of screen to center menu
-            int bufferWidth = menuBufferInfo.dwSize.X;
-            const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
+        const int TOP_MENU_MARGIN = 10;
+        const int MENU_ITEM_HEIGHT = 3;
+        const int MENU_ITEM_WIDTH = 75;
+        const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
+        int bufferWidth = defaultBufferInfo.dwSize.X;
+        int bufferHeight = defaultBufferInfo.dwSize.Y;
+        const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
+
+        for (int y = 0; y < items_size; y++) {
+            CHAR_INFO map[MENU_SIZE];
 
             for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
 
@@ -153,25 +91,44 @@ namespace MyAscii {
                 }
             }
 
+            const int USER_INPUT_SPACER = ((user_input_needed) && (y == 1 || y == 2) ? 5 : 0);
+
             coordinateBufferSize.Y = MENU_ITEM_HEIGHT;
             coordinateBufferSize.X = MENU_ITEM_WIDTH;
             topLeftCoordinate.Y = 0;
             topLeftCoordinate.X = 0;
 
-            (&srcWriteRect)->Top = TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
+            (&srcWriteRect)->Top = USER_INPUT_SPACER + TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
             (&srcWriteRect)->Left = START_POSITION;
-            (&srcWriteRect)->Bottom = TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
+            (&srcWriteRect)->Bottom = USER_INPUT_SPACER + TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
             (&srcWriteRect)->Right = (START_POSITION + MENU_ITEM_WIDTH);
 
             succes = WriteConsoleOutputW(
-                menuScreenBuffer,
+                defaultScreenBuffer,
                 map,
                 coordinateBufferSize,
                 topLeftCoordinate,
                 (&srcWriteRect)
             );
         }
-        SetConsoleActiveScreenBuffer(menuScreenBuffer);
+
+        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+        if (user_input_needed) {
+            COORD cursorCoord;
+            cursorCoord.X = START_POSITION + 1;
+            cursorCoord.Y = 14;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+
+            std::cout << "Who's playing? ";
+            std::cin >> userName;
+
+            cursorCoord.X = START_POSITION + 1;
+            cursorCoord.Y = 16;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+
+            std::cout << "What can you handle (0 - 4)? ";
+            std::cin >> difficulty;
+        }
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
