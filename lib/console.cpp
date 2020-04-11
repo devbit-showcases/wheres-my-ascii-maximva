@@ -107,9 +107,7 @@ namespace MyAscii {
                 (&srcWriteRect)
             );
         }
-
         SetConsoleActiveScreenBuffer(menuScreenBuffer);
-  
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
@@ -117,36 +115,41 @@ namespace MyAscii {
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
-        const int START_POSITION = (117 - (fieldEdgeSize * 9) - ((fieldEdgeSize - 1) * 2)) / 2;
+
+        const int TILE_WIDTH =17;   // Has to be an uneven number  9, 13 (no exact center with even number)
+        const int TILE_HEIGHT = 9;  // Has to be an uneven number  5, 7
+        const int MAP_SIZE = TILE_WIDTH * TILE_HEIGHT;
+        const int TILE_CENTER = (MAP_SIZE - 1) / 2;
+        const int TOP_MARGIN = 4;
+        const int VERTICAL_SPACING = 1;
+        const int HORIZONTAL_SPACING = 2;
+        const int COLUMN_START_OF_MENU = 117;
+        const int START_POSITION = (COLUMN_START_OF_MENU - (fieldEdgeSize * TILE_WIDTH) - ((fieldEdgeSize - 1) * 2)) / 2;
 
         for (int y = 0; y < fieldEdgeSize; y++) {
             for (int x = 0; x < fieldEdgeSize; x++) {
-                // 1 tile is 9 vertical and 5 horizontal characters
-                const int MAP_SIZE = 45;
                 CHAR_INFO map[MAP_SIZE];
                 const int TILE_ARRAY_INDEX = x + (y * fieldEdgeSize);
-                const int TILE_CENTER = 22;
 
                 // Display playfield on screen
-                for (int j = 0; j < 45; j++) {
-
+                for (int j = 0; j < MAP_SIZE; j++) {
                     const char CHAR_TO_GUESS = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar()); // ascii : hidden
                     const int TILE_FLIPPED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharFlippedAttribute();
                     const int TILE_COVERED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharCoveredAttribute();
                     const int TILE_SHOW_ATTRIBUTE = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? TILE_FLIPPED_ATTRIBUTE : TILE_COVERED_ATTRIBUTE); // Flipped : Covered
 
                     if (x == selectedTileX && y == selectedTileY) {
-                        if (j == 11) {
+                        if (j == (TILE_WIDTH + 2)) {
                             map[j].Char.UnicodeChar = L'┌';
-                        } else if ((j > 11 && j < 15) || (j > 29 && j < 33)){
+                        } else if ((j > TILE_WIDTH + 2 && j < (2 * TILE_WIDTH) - 3) || (j > MAP_SIZE - (2 * TILE_WIDTH) + 2) && j < (MAP_SIZE - TILE_WIDTH - 3)){
                             map[j].Char.UnicodeChar = L'─';
-                        } else if (j == 15) {
-                            map[j].Char.UnicodeChar = L'┐';
-                        } else if (j == 20 || j == 24) {
+                        } else if (j == (2 * TILE_WIDTH) - 3) {
+                            map[j].Char.UnicodeChar = L'┐';  // || j % (2 * TILE_WIDTH) - 3)
+                        } else if (j > ((2 * TILE_WIDTH) - 3 ) && j < (MAP_SIZE - (2 * TILE_WIDTH) + 2) && ((j - 2) % (TILE_WIDTH) == 0 || (j + 3) % TILE_WIDTH == 0)) {   
                             map[j].Char.UnicodeChar = L'│';
-                        } else if (j == 29) {
+                        } else if (j == MAP_SIZE - (2 * TILE_WIDTH) + 2) {
                             map[j].Char.UnicodeChar = L'└';
-                        } else if (j == 33) {
+                        } else if (j == MAP_SIZE - TILE_WIDTH - 3) {
                             map[j].Char.UnicodeChar = L'┘';
                         } else if (j == TILE_CENTER) {
                             map[j].Char.UnicodeChar = CHAR_TO_GUESS;
@@ -160,19 +163,19 @@ namespace MyAscii {
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
-                coordinateBufferSize.Y = 5;
-                coordinateBufferSize.X = 9;
+                coordinateBufferSize.Y = TILE_HEIGHT;
+                coordinateBufferSize.X = TILE_WIDTH;
                 topLeftCoordinate.Y = 0;
                 topLeftCoordinate.X = 0;
 
                 // TODO CHECK MATH AND SIMPLIFY - make all of this depend on width/height/border of tiles
-                const int TILE_VERTICAL_WIDTH = 4;
-                const int TILE_VERTICAL_BORDER = 2;
+                const int TILE_VERTICAL_WIDTH = 5;
+                const int TILE_VERTICAL_BORDER = 1;
 
-                (&srcWriteRect)->Top = ((TILE_VERTICAL_WIDTH + TILE_VERTICAL_BORDER) * y) + TILE_VERTICAL_WIDTH;
-                (&srcWriteRect)->Left = START_POSITION + (x * 11);          // Beginning of centered tile field
-                (&srcWriteRect)->Bottom = (6 * y) + 8;
-                (&srcWriteRect)->Right = START_POSITION + 8 + (x * 11);     // End of centered tile field
+                (&srcWriteRect)->Top = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
+                (&srcWriteRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
+                (&srcWriteRect)->Bottom = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
+                (&srcWriteRect)->Right = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING)) + TILE_WIDTH;
 
                 succes = WriteConsoleOutputW(
                     gameScreenBuffer,
