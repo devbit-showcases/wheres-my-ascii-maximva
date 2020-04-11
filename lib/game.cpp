@@ -38,6 +38,8 @@ namespace MyAscii {
             COORD cursorPosition;
             cursorPosition.X = 100;
             cursorPosition.Y = 5;
+
+            GetAsyncKeyState(VK_RETURN); // Clear any remaining RETURNs
             
             // Allow arrow/return key selection of tiles
             do {

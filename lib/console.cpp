@@ -53,6 +53,50 @@ namespace MyAscii {
     }
 
     std::string Console::getUserName(void) {
+        CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
+        GetConsoleScreenBufferInfo(defaultScreenBuffer, &menuBufferInfo);
+        int bufferWidth = menuBufferInfo.dwSize.X;
+        const int START_POSITION = (bufferWidth - 100) / 2;
+
+
+
+        COORD coordinateBufferSize;
+        COORD topLeftCoordinate;
+        SMALL_RECT srcWriteRect;
+        BOOL succes;
+        CHAR_INFO map[10];
+
+        map[0].Char.UnicodeChar = L'A';
+        map[0].Attributes = 0x31;
+        map[1].Char.UnicodeChar = L'L';
+        map[1].Attributes = 0x31;
+        map[2].Char.UnicodeChar = L'O';
+        map[2].Attributes = 0x31;
+
+        coordinateBufferSize.Y = 1;
+        coordinateBufferSize.X = 10;
+        topLeftCoordinate.Y = 0;
+        topLeftCoordinate.X = 0;
+
+        (&srcWriteRect)->Top = 4;
+        (&srcWriteRect)->Left = 9;
+        (&srcWriteRect)->Bottom = 5;
+        (&srcWriteRect)->Right = 19;
+
+        succes = WriteConsoleOutputW(
+            defaultScreenBuffer,
+            map,
+            coordinateBufferSize,
+            topLeftCoordinate,
+            (&srcWriteRect)
+        );
+
+
+        COORD cursorCoord;
+        cursorCoord.X = START_POSITION;
+        cursorCoord.Y = 10;
+        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
 
         std::string userName;
