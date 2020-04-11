@@ -168,10 +168,6 @@ namespace MyAscii {
                 topLeftCoordinate.Y = 0;
                 topLeftCoordinate.X = 0;
 
-                // TODO CHECK MATH AND SIMPLIFY - make all of this depend on width/height/border of tiles
-                const int TILE_VERTICAL_WIDTH = 5;
-                const int TILE_VERTICAL_BORDER = 1;
-
                 (&srcWriteRect)->Top = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
                 (&srcWriteRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
                 (&srcWriteRect)->Bottom = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
@@ -197,6 +193,7 @@ namespace MyAscii {
         BOOL succes;
 
         const int NUMBER_OF_ROWS = 10;
+        const int SCORE_ROW_NUMBER = 2;
         const int NUMBER_OF_COLUMNS = 50;
         const int START_X_POSITION = 117;
         const int START_Y_POSITION = 4;
@@ -210,7 +207,7 @@ namespace MyAscii {
         }
 
         // Draw the score
-        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2, correct_guesses, number_of_pairs);
+        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
 
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
