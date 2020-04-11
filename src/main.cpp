@@ -14,23 +14,24 @@ using namespace MyAscii;
 
 int main(void) {
     srand(time(NULL));
+    do {
+        Console console("Where's my ASCII");
+        Menu menu(&console);
+        int chosen_menu_item = menu.show();
 
-    Console console("Where's my ASCII");
-    Menu menu(&console);
-    int chosen_menu_item = menu.show();
+        if (chosen_menu_item == 0) {
+            std::string userName = console.getUserName();
+            int difficulty = console.getDifficulty();
 
-    if (chosen_menu_item == 0) {
-        std::string userName = console.getUserName();
-        int difficulty = console.getDifficulty();
+            Player player;
+            player.set_name(userName);
 
-        Player player;
-        player.set_name(userName);
-
-        Game game(&player, &console);
-        game.start(difficulty);
-    } else {
-        return 0;
-    }
+            Game game(&player, &console);
+            game.start(difficulty);
+        } else {
+            return 0;
+        }
+    } while (true);
 
     return 0;
 }

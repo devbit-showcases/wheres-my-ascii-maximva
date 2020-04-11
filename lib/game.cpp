@@ -14,9 +14,12 @@ namespace MyAscii {
         std::vector<Tile> tiles = playfield.getPlayField();
 
         bool firstGuess = true;
+        bool secondGuess = false;
         bool correctGuess = true;
+        bool stay_in_game = true;
         int firstGuessPosition = 0;
         int secondGuessPosition = 0;
+        int thirdGuessPosition = 0;
         int guessId = 0;
         int number_of_pairs = tiles.size() / pairSize;
         int correct_guesses = 0;
@@ -56,6 +59,9 @@ namespace MyAscii {
                 } else if (GetAsyncKeyState(VK_RIGHT) && selectedTileX < (fieldEdgeSize - 1)) {
                     selectedTileX++;
                     console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                } else if (GetAsyncKeyState(VK_ESCAPE)) {
+                    stay_in_game = !stay_in_game;
+                    break;
                 }
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
@@ -70,6 +76,9 @@ namespace MyAscii {
                     firstGuessPosition = position;
                     firstGuess = !firstGuess;
                     tiles[position].turnCard();
+                } else if (difficulty == 4) {
+                    // 3 tile logic
+
                 } else {
                     if (position == firstGuessPosition) {
                         // maybe do something if tile is played twice
@@ -88,7 +97,7 @@ namespace MyAscii {
                 }
             }
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-        } while (true);
+        } while (stay_in_game);
 
         return score;
     }

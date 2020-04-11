@@ -128,6 +128,8 @@ namespace MyAscii {
 
             std::cout << "What can you handle (0 - 4)? ";
             std::cin >> difficulty;
+
+            system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
         }
     }
 
