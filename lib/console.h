@@ -35,6 +35,7 @@ namespace MyAscii {
             std::string windowTitle = "New window";
             HANDLE gameScreenBuffer;
             HANDLE menuScreenBuffer;
+            HANDLE defaultScreenBuffer;
             int scoreCardAttribute = 0xEC;   // EC
 
     };

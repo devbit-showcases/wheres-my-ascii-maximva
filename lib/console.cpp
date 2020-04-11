@@ -12,6 +12,7 @@ namespace MyAscii {
         SetConsoleTitleA(windowTitle.c_str());
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xEC);
         ShowWindow(console, SW_MAXIMIZE);
+        defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
         createGameScreenBuffer();
         createMenuScreenBuffer();
 
