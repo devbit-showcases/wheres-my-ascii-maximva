@@ -17,5 +17,4 @@ namespace MyAscii {
     std::string Player::get_name() {
         return name;
     }
-
 };

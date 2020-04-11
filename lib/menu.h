@@ -13,7 +13,5 @@ namespace MyAscii {
 
         private:
             Console * console;
-
     };
-
 };

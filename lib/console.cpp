@@ -12,6 +12,7 @@ namespace MyAscii {
         SetConsoleTitleA(windowTitle.c_str());
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xEC);
         ShowWindow(console, SW_MAXIMIZE);
+
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
         createGameScreenBuffer();
         createMenuScreenBuffer();
@@ -44,12 +45,10 @@ namespace MyAscii {
     void Console::showMenu(std::string items[], int items_size, int current_menu_item) {
         CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
         GetConsoleScreenBufferInfo(menuScreenBuffer, &menuBufferInfo);
-
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
-
 
         for (int y = 0; y < items_size; y++) {
             const int TOP_MENU_MARGIN = 10;
@@ -63,7 +62,6 @@ namespace MyAscii {
             const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
 
             for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
-
 
                 if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
                     const char * menu_item_string = items[y].c_str();
@@ -91,7 +89,6 @@ namespace MyAscii {
                 }
             }
 
-
             coordinateBufferSize.Y = MENU_ITEM_HEIGHT;
             coordinateBufferSize.X = MENU_ITEM_WIDTH;
             topLeftCoordinate.Y = 0;
@@ -109,8 +106,6 @@ namespace MyAscii {
                 topLeftCoordinate,
                 (&srcWriteRect)
             );
-
-
         }
 
         SetConsoleActiveScreenBuffer(menuScreenBuffer);
@@ -118,12 +113,10 @@ namespace MyAscii {
     }
 
     void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
-
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
-
         const int START_POSITION = (117 - (fieldEdgeSize * 9) - ((fieldEdgeSize - 1) * 2)) / 2;
 
         for (int y = 0; y < fieldEdgeSize; y++) {
@@ -279,11 +272,11 @@ namespace MyAscii {
         const int FINAL_ROW_END = (NUMBER_OF_COLUMNS * NUMBER_OF_ROWS) - 1;
 
         // Used Unicode chars for reference
-        //╔═══════════════╗
-        //║               ║
-        //╟───────────────╢
-        //╠═══════════════╣
-        //╚═══════════════╝
+        // ╔═══════════════╗
+        // ║               ║
+        // ╟───────────────╢
+        // ╠═══════════════╣
+        // ╚═══════════════╝
 
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
@@ -314,10 +307,8 @@ namespace MyAscii {
     }
 
     void Console::showMenuItem(CHAR_INFO map[], int position, std::string menu_item) {
-
         const int MENU_ITEM_WIDTH = 50;
         const int MENU_ITEM_HEIGHT = 3;
-
         const int MENU_LEFT_START = (100 - MENU_ITEM_WIDTH ) / 2;
 
         for (int y = 4 + (position * (MENU_ITEM_HEIGHT + 1)); y < MENU_ITEM_HEIGHT; y++) {
@@ -329,8 +320,6 @@ namespace MyAscii {
                 map[POSITION].Attributes = 0x20;
             }
         }
-            
-
     }
 
 }

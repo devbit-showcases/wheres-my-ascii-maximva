@@ -53,5 +53,5 @@ namespace MyAscii {
             tiles.erase(std::begin(tiles) + place);
         }
     }
-
+    
 }

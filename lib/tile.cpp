@@ -39,7 +39,5 @@ namespace MyAscii {
     int Tile::getCharCoveredAttribute(void) {
         return charCoveredAttribute;
     }
-
-
-
+    
 }

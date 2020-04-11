@@ -32,11 +32,10 @@ namespace MyAscii {
             void showMenuItem(CHAR_INFO map[], int position, std::string menu_item);
             
         private:
-            std::string windowTitle = "New window";
             HANDLE gameScreenBuffer;
             HANDLE menuScreenBuffer;
             HANDLE defaultScreenBuffer;
+            std::string windowTitle = "New window";
             int scoreCardAttribute = 0xEC;   // EC
-
     };
 };

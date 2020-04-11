@@ -7,11 +7,9 @@ namespace MyAscii {
         this->console = console;
     }
 
-
     Score Game::start(unsigned int difficulty) {
         Score score; // Doesn't do anything right now
         setDifficulty(difficulty);
-
         PlayField playfield(fieldEdgeSize, pairSize, difficulty);
         std::vector<Tile> tiles = playfield.getPlayField();
 
@@ -22,7 +20,6 @@ namespace MyAscii {
         int guessId = 0;
         int number_of_pairs = tiles.size() / pairSize;
         int correct_guesses = 0;
-
         int selectedTileX = 0;
         int selectedTileY = 0;
 
@@ -30,10 +27,8 @@ namespace MyAscii {
         console->showScoreCard(number_of_pairs, correct_guesses);
 
         do {
-
             if (!correctGuess) {
-                Sleep(700);     // Or system pause... don't now what feels better...
-                // system("pause>nul"); 
+                Sleep(700);     // Or system("pause>nul");  ... don't now what feels better...
                 tiles[firstGuessPosition].turnCard();
                 tiles[secondGuessPosition].turnCard();
                 console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
@@ -62,10 +57,8 @@ namespace MyAscii {
                 }
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
-
             int position = (selectedTileX) + (selectedTileY * playfield.getFieldEdgeSize());
             bool allreadyCorrect = std::find(correctAnswers.begin(), correctAnswers.end(), tiles[position].getId()) != correctAnswers.end();
-
 
             if (allreadyCorrect) {
                 // maybe do something if player clicks on allready guessed tile
@@ -95,7 +88,6 @@ namespace MyAscii {
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         } while (true);
 
-        
         return score;
     }
 

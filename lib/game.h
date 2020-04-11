@@ -36,5 +36,4 @@ namespace MyAscii {
                 {9, 3}
             };
     };
-
 };

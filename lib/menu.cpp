@@ -7,10 +7,8 @@ namespace MyAscii {
     }
 
     int Menu::show(void) {
-
         const int MENU_WIDTH = 100;  // In columns
         const int MENU_HEIGHT = 40;  // In rows
-
         int current_menu_item = 0;
 
         std::string menu_items[] = {
@@ -32,9 +30,6 @@ namespace MyAscii {
             }
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
-
         return current_menu_item;
-
     }
-
 }
