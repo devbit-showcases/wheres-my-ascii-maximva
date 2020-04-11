@@ -15,36 +15,22 @@ using namespace MyAscii;
 int main(void) {
     srand(time(NULL));
 
-    // crashes the menu when using arrows ...
-
-    // std::string player_name = "";
-    // std::cout << "Please choose a name: ";
-    // std::cin >> player_name;
-
-    // int difficulty = 0;
-    // std::cout << "Please select a dificulty between 1 and 5: ";
-    // std::cin >> difficulty;
-    
-
-
     Console console("Where's my ASCII");
-
     Menu menu(&console);
     int chosen_menu_item = menu.show();
 
-
     if (chosen_menu_item == 0) {
-        int difficulty;
-        std::cout << "Difficulty between 0 and 4: ";
-        std::cin >> difficulty;
+        std::string userName = console.getUserName();
+        int difficulty = console.getDifficulty();
 
         Player player;
+        player.set_name(userName);
+        
         Game game(&player, &console);
         game.start(difficulty);
     } else {
         return 0;
     }
-
 
     return 0;
 }

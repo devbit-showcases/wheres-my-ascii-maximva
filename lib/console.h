@@ -22,6 +22,9 @@ namespace MyAscii {
             void showScoreCard(int number_of_pairs, int correct_guesses);
             void showMenu(std::string items[], int items_size, int current_menu_item);
 
+            int getDifficulty(void);
+            std::string getUserName(void);
+
         private:
             void createGameScreenBuffer(void);
             void createMenuScreenBuffer(void);

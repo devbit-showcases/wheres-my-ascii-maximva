@@ -42,6 +42,26 @@ namespace MyAscii {
             NULL);
     }
 
+    int Console::getDifficulty(void) {
+        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+
+        int difficulty;
+        std::cout << "Difficulty between 0 and 4: ";
+        std::cin >> difficulty;
+
+        return difficulty;
+    }
+
+    std::string Console::getUserName(void) {
+        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+
+        std::string userName;
+        std::cout << "Enter your username: ";
+        std::cin >> userName;
+
+        return userName;
+    }
+
     void Console::showMenu(std::string items[], int items_size, int current_menu_item) {
         CONSOLE_SCREEN_BUFFER_INFO menuBufferInfo;
         GetConsoleScreenBufferInfo(menuScreenBuffer, &menuBufferInfo);
@@ -116,8 +136,8 @@ namespace MyAscii {
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
-        const int TILE_WIDTH =17;   // Has to be an uneven number  9, 13 (no exact center with even number)
-        const int TILE_HEIGHT = 9;  // Has to be an uneven number  5, 7
+        const int TILE_WIDTH = 9;   // Has to be an uneven number  9 (min), 13, 17 (no exact center with even number)
+        const int TILE_HEIGHT = 5;  // Has to be an uneven number  5 (min), 7, 9
         const int MAP_SIZE = TILE_WIDTH * TILE_HEIGHT;
         const int TILE_CENTER = (MAP_SIZE - 1) / 2;
         const int TOP_MARGIN = 4;
