@@ -77,10 +77,9 @@ namespace MyAscii {
                 if (cards_turned == 1) {
                     guessId = tiles[current_selected_tile].getId();
                     guess_possitions.push_back(current_selected_tile);
-                } else if (cards_turned > 1 && cards_turned < pair_size && guessId == tiles[current_selected_tile].getId()) {
+                } else if (cards_turned < pair_size && guessId == tiles[current_selected_tile].getId()) {
                     guess_possitions.push_back(current_selected_tile);
                 } else if (cards_turned == pair_size && guessId == tiles[current_selected_tile].getId()) {
-                    correctAnswers.push_back(guessId);
                     correct_guesses++;
                     console->showScoreCard(number_of_pairs, correct_guesses);
                     // Reset for next try
