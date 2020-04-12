@@ -24,7 +24,7 @@ namespace MyAscii {
             Console * console;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = gameParameters[difficulty][0];
-            unsigned int pairSize = gameParameters[difficulty][1];
+            unsigned int pair_size = gameParameters[difficulty][1];
             std::vector<int> correctAnswers;
 
             // {fieldEdgeSize, pairSize}

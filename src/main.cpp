@@ -13,13 +13,16 @@
 using namespace MyAscii;
 
 int main(void) {
+    // Menu item numbers
+    const int PLAY_GAME = 0;
+
     srand(time(NULL));
     do {
         Console console("Where's my ASCII");
         Menu menu(&console);
         int chosen_menu_item = menu.show();
 
-        if (chosen_menu_item == 0) {
+        if (chosen_menu_item == PLAY_GAME) {
             std::string userName = console.getUserName();
             int difficulty = console.getDifficulty();
 
