@@ -9,14 +9,6 @@
 | 3 | Sith Lord | 6 x 6 | 3 | ❌ | ✅ |
 | 4 | Darth Sidious | 9 x 9 | 3 | ❌ | ❌ |
 
-1. Battle Droid
-    - A '4 x 4' grid with 2 tiles to turn for a correct guess and unique colors for each set.
-2. Strom Trooper
-    - A '6 x 6' grid with 3 tiles to turn for a correct guess and unique colors for each set.
-3. Sith Lord
-    - A '6 x 6' grid with 3 tiles to turn for a correct guess with only the characters changing color.
-4. Darth Sidious
-    - A '9 x 9' grid with 3 tiles to turn and only the characters changes color on selection. But watch out... the same ASCII character can appear in multiple sets, but they all have the same color when turned ... It's crazy!!
 
 Screenshots
 

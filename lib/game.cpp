@@ -61,7 +61,7 @@ namespace MyAscii {
                     selectedTileX++;
                     console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
                 } else if (GetAsyncKeyState(VK_ESCAPE)) {
-                    stay_in_game = !stay_in_game; // Escape to main menu with ESC key
+                    stay_in_game = false; // Escape to main menu with ESC key
                     break;
                 }
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
@@ -93,6 +93,10 @@ namespace MyAscii {
             }
 
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+            if (correct_guesses == number_of_pairs) {
+                break;
+            }
+
         } while (stay_in_game);
 
         return score;

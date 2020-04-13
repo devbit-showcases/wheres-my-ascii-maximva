@@ -5,10 +5,8 @@
 #include <iostream>
 #include "playfield.h"
 #include "tile.h"
-
-// To try and display UNICODE chars
-#include <io.h>
-#include <fcntl.h>
+#include "score.h"
+#include "player.h"
 
 namespace MyAscii {
 

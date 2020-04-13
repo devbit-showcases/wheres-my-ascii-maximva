@@ -12,6 +12,7 @@
 #include "../lib/player.h"
 #include "../lib/Console.h"
 #include "../lib/menu.h"
+#include "../lib/score.h"
 
 using namespace MyAscii;
 
@@ -34,9 +35,8 @@ int main(void) {
 
             Game game(&player, &console);
             PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-            game.start(difficulty);
+            Score score = game.start(difficulty);
             PlaySound(NULL, 0, 0); // Stops the music
-
         } else {
             return 0;
         }
