@@ -29,6 +29,7 @@ namespace MyAscii {
             void drawScorecardTopAndBottom(CHAR_INFO map[], int number_of_columns, int number_of_rows);
             void drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int score, int max_score);
+            void drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void showMenuItem(CHAR_INFO map[], int position, std::string menu_item);
             

@@ -29,11 +29,10 @@ namespace MyAscii {
 
             // {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
-                {2, 2},
                 {4, 2},
-                {6, 2},
-                {8, 2},
-                {9, 3}
+                {6, 3},
+                {6, 3}, // Same as before but with possible double characters  AND TIMER
+                {9, 3}  // Insane, large, tripple tile and possible double characters  AND TIMER
             };
     };
 };

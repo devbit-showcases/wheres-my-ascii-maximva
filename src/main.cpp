@@ -1,3 +1,6 @@
+// Try sound
+#pragma comment(lib, "winmm.lib")
+
 #include <iostream>
 #include "time.h"
 #include <windows.h>
@@ -30,7 +33,10 @@ int main(void) {
             player.set_name(userName);
 
             Game game(&player, &console);
+            PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
             game.start(difficulty);
+            PlaySound(NULL, 0, 0); // Stops the music
+
         } else {
             return 0;
         }

@@ -21,17 +21,27 @@ namespace MyAscii {
     void PlayField::generatePlayField(void) {
         std::vector<Tile> tiles;
 
+        const bool MONOCHROME_TILES = (difficulty == 2 || difficulty == 3);
+        const int GREEN_BACK_WHITE_FRONT = 3;
+        int attributeNumber = GREEN_BACK_WHITE_FRONT;
+
         // Fill the playfield with tiles
         for (unsigned int c = 0; c < fieldSize / pairSize; c++) {
-            int attributeNumber = rand() % possibleCharAttributes.size();
+
+            if (!MONOCHROME_TILES) {
+                attributeNumber = rand() % possibleCharAttributes.size();
+            }
             
             Tile tile(c, possibleCharAttributes[attributeNumber]);
             int charAlphabetPosition = tile.getAsciiChar() - 'A';
             charCount[charAlphabetPosition]++;
-            possibleCharAttributes.erase(std::begin(possibleCharAttributes) + attributeNumber); // Erase attribute from vector
 
-            // Make sure there's no double characters below certain level
-            while (difficulty < 3 && charCount[charAlphabetPosition] > 1) {
+            if (!MONOCHROME_TILES) {
+                possibleCharAttributes.erase(std::begin(possibleCharAttributes) + attributeNumber); // Erase attribute from vector
+            }
+
+            const bool PREVENT_DUPLICATE_CHARS = (difficulty < 3);
+            while (PREVENT_DUPLICATE_CHARS && charCount[charAlphabetPosition] > 1) {
                 charCount[charAlphabetPosition]--;
                 tile.setRandomChar();
                 charAlphabetPosition = tile.getAsciiChar() - 'A';

@@ -117,18 +117,20 @@ namespace MyAscii {
             COORD cursorCoord;
             cursorCoord.X = START_POSITION + 1;
             cursorCoord.Y = 14;
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-
-            std::cout << "Who's playing? ";
-            std::cin >> userName;
+            do {
+                SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+                std::cout << "Who's playing? ";
+                std::getline(std::cin, userName);
+            } while (userName.length() == 0);
 
             cursorCoord.X = START_POSITION + 1;
             cursorCoord.Y = 16;
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-
-            std::cout << "What can you handle (0 - 4)? ";
-            std::cin >> difficulty;
-
+            do {
+                SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+                std::cout << "What can you handle (1 - 4)? ";
+                std::cin >> difficulty;  
+            } while (difficulty == 0 || difficulty > 4);
+            difficulty--; // Zero indexed for internal use
             system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
         }
     }
@@ -215,8 +217,10 @@ namespace MyAscii {
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
+        const int PLAYER_NAME_ROW_NUMBER = 2;
+        const int SCORE_ROW_NUMBER = 3;
+
         const int NUMBER_OF_ROWS = 10;
-        const int SCORE_ROW_NUMBER = 2;
         const int NUMBER_OF_COLUMNS = 50;
         const int START_X_POSITION = 117;
         const int START_Y_POSITION = 4;
@@ -230,6 +234,7 @@ namespace MyAscii {
         }
 
         // Draw the score
+        drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
         drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
 
         // Get ready to write it to the console screenBuffer
@@ -266,6 +271,25 @@ namespace MyAscii {
         for (int i = START_POSITION; i < END_OF_LINE; i++) {
             if (!(count > sizeof(score)/sizeof(int))) {
                 addCharToMap(map, i, score[count], scoreCardAttribute);
+                count++;
+            } else {
+                addCharToMap(map, i, L' ', scoreCardAttribute);
+            }
+        }
+    }
+    
+    void Console::drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
+        const int LEFT_MARGIN = 4;
+        const int RIGHT_MARGIN = 1;
+        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
+        const int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
+        const char * PLAYER_NAME = userName.c_str();
+
+        int count = 0;
+
+        for (int i = START_POSITION; i < END_OF_LINE; i++) {
+            if (!(count > sizeof(PLAYER_NAME)/sizeof(char))) {
+                addCharToMap(map, i, PLAYER_NAME[count], scoreCardAttribute);
                 count++;
             } else {
                 addCharToMap(map, i, L' ', scoreCardAttribute);
