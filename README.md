@@ -2,7 +2,7 @@
 
 ## Difficulty levels
 
-| | Level name | grid size | tiles in set | unique color for each set | unique ASCII char |
+| | Level name | Grid size | Tiles in set | Unique color for each set | Unique ASCII char for each set |
 |:-:|---|:-:|:-:|:-:|:-:|
 | 1 | Battle Droid | 4 x 4 | 2 | ✅ | ✅ |
 | 2 | Storm Trooper | 6 x 6 | 3 | ✅ | ✅ |
