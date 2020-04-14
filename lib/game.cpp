@@ -26,6 +26,9 @@ namespace MyAscii {
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
 
+        double end_time;
+        double start_time = GetTickCount();
+
         do {
             // Flipping back wrong guess and resetting
             if (!correct_guess) {
@@ -115,6 +118,13 @@ namespace MyAscii {
             }
 
         } while (stay_in_game);
+
+        // Save the end-game score and player info
+        end_time = GetTickCount();
+        double elapsed_time = (end_time - start_time) / 1000;
+        score.set_score((*player).get_name(), difficulty, correct_guesses, number_of_pairs, elapsed_time);
+        ScoreCard scorecard;
+        scorecard.save_score(&score);
 
         // Will show the end-game score card
         console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);

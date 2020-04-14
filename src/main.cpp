@@ -19,6 +19,7 @@ using namespace MyAscii;
 int main(void) {
     // Menu item numbers
     const int PLAY_GAME = 0;
+    const int SHOW_SCORES = 1;
 
     srand(time(NULL));
     do {
@@ -37,6 +38,8 @@ int main(void) {
             PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
             Score score = game.start(difficulty);
             PlaySound(NULL, 0, 0); // Stops the music
+        } else  if (chosen_menu_item == SHOW_SCORES) {
+            console.showScoreTable();
         } else {
             return 0;
         }

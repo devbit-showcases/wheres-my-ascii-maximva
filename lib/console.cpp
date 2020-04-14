@@ -211,6 +211,20 @@ namespace MyAscii {
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
     }
 
+    void Console::showScoreTable(void) {
+        system("CLS");
+
+        std::vector<Score> scores;
+        ScoreCard scorecard;
+        scorecard.get_scoretable(&scores);
+
+
+        for (int i = 0; i < scores.size(); i++) {
+            std::cout << "Name: " << scores[i].get_name() << " Difficulty: " << scores[i].get_difficulty() << " number of guesses: " << scores[i].get_correct_guesses() << " of " << scores[i].get_number_of_sets() << ". In " << scores[i].get_elapsed_time() << "sec." << std::endl;
+        }
+
+    }
+
     void Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);

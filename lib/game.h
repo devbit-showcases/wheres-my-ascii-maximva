@@ -8,6 +8,8 @@
 #include "console.h"
 #include <stdio.h>
 #include <algorithm>
+#include "scorecard.h"
+#include <time.h>
 
 namespace MyAscii {
 

@@ -11,7 +11,9 @@ namespace MyAscii {
 
         std::string menu_items[] = {
             "Play a game",
-            "Close application"        };
+            "Show the high scores",
+            "Close application"
+        };
 
         console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item, false);
 

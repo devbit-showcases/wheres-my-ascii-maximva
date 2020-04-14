@@ -7,6 +7,7 @@
 #include "tile.h"
 #include "score.h"
 #include "player.h"
+#include "scorecard.h"
 
 namespace MyAscii {
 
@@ -19,6 +20,7 @@ namespace MyAscii {
             void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
             void showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
             void showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
+            void showScoreTable(void);
             int getDifficulty(void);
             std::string getUserName(void);
 
