@@ -263,10 +263,10 @@ namespace MyAscii {
             );
         } else {
             const int SCORE_CARD_WIDTH = 70;
-            const int SCORE_CARD_HEIGHT = 20;
+            const int SCORE_CARD_HEIGHT = 16;
             const int TOP_MARGIN = 15;
             const int LEFT_PADDING = 10;
-            const int TOP_PADDING = 8;
+            const int TOP_PADDING = 5;
             const int HORIZONTAL_BORDER = 1;
             const int VERTICAL_BORDER = 2;
             const int MAP_SIZE = SCORE_CARD_WIDTH * SCORE_CARD_HEIGHT;
@@ -313,8 +313,9 @@ namespace MyAscii {
                 "try harder next time?",
                 "nice job!"
             };
-            std::string sets_plural = (correct_guesses == 1 ? " set!": " sets!");
+
             std::string found_plural = (correct_guesses == number_of_pairs ? " You found all " : " You found ");
+            std::string out_of_plural = (correct_guesses == number_of_pairs ? "" : " out of " + std::to_string(number_of_pairs));
 
             int game_score_level;
             if (correct_guesses == number_of_pairs) {
@@ -335,7 +336,7 @@ namespace MyAscii {
 
             cursorCoord.Y += 1;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << game_over_text[game_score_level] << found_plural << std::to_string(correct_guesses) << sets_plural;
+            std::cout << game_over_text[game_score_level] << found_plural << std::to_string(correct_guesses) << out_of_plural << " sets!";
 
             cursorCoord.Y += 2;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);

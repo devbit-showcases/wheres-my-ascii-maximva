@@ -1,5 +1,15 @@
 # Where's My ASCII
 
+## Welcome screen
+
+## Gameplay
+
+## Game over screen
+
+![zero tiles found](./img/zero-tiles-found.png)
+![some tiles found](./img/some-tiles-found.png)
+![all tiles found](./img/all-tiles-found.png)
+
 ## Difficulty levels
 
 | | Level name | Grid size | Tiles in set | Unique color for each set | Unique ASCII char for each set |

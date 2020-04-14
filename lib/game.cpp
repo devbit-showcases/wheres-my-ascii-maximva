@@ -64,6 +64,22 @@ namespace MyAscii {
                     stay_in_game = false; // Escape to main menu with ESC key
                     break;
                 }
+
+                // Now come the cheats / powerups
+                if (GetKeyState(79) & 8000) {
+                    system("pause>nul");
+                    if (GetKeyState(79) & 8000) {
+                        system("pause>nul");
+                        if (GetKeyState(80) & 8000) {
+                            system("pause>nul");
+                            if (GetKeyState(51) & 8000 || GetKeyState(99) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
+                                selectedTileY--;
+                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                            }
+                        }
+                    }
+                }
+                
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
             int current_selected_tile = (selectedTileX) + (selectedTileY * playfield.getFieldEdgeSize());
