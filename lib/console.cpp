@@ -211,51 +211,163 @@ namespace MyAscii {
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
     }
 
-    void Console::showScoreCard(int number_of_pairs, int correct_guesses) {
+    void Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
+        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
+        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
+        int bufferWidth = defaultBufferInfo.dwSize.X;
+
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
-        const int PLAYER_NAME_ROW_NUMBER = 2;
-        const int SCORE_ROW_NUMBER = 3;
+        if (stay_in_game) {
+            const int PLAYER_NAME_ROW_NUMBER = 2;
+            const int SCORE_ROW_NUMBER = 3;
 
-        const int NUMBER_OF_ROWS = 10;
-        const int NUMBER_OF_COLUMNS = 50;
-        const int START_X_POSITION = 117;
-        const int START_Y_POSITION = 4;
-        const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
-        CHAR_INFO map[SCORECARD_SIZE];
+            const int NUMBER_OF_ROWS = 10;
+            const int NUMBER_OF_COLUMNS = 50;
+            const int START_X_POSITION = 117;
+            const int START_Y_POSITION = 4;
+            const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
+            CHAR_INFO map[SCORECARD_SIZE];
 
-        // Draw the empty scorecard box
-        drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
-        for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
-            drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
+            // Draw the empty scorecard box
+            drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+            for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
+                drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
+            }
+
+            // Draw the score
+            drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
+            drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
+
+            // Get ready to write it to the console screenBuffer
+            coordinateBufferSize.Y = NUMBER_OF_ROWS;
+            coordinateBufferSize.X = NUMBER_OF_COLUMNS;
+            topLeftCoordinate.Y = 0;
+            topLeftCoordinate.X = 0;
+
+            (&srcWriteRect)->Top = START_Y_POSITION;
+            (&srcWriteRect)->Left = START_X_POSITION;
+            (&srcWriteRect)->Bottom = START_Y_POSITION + NUMBER_OF_ROWS;
+            (&srcWriteRect)->Right = START_X_POSITION + NUMBER_OF_COLUMNS;
+
+            // Write it to the console screenBuffer
+            succes = WriteConsoleOutputW(
+                gameScreenBuffer,
+                map,
+                coordinateBufferSize,
+                topLeftCoordinate,
+                (&srcWriteRect)
+            );
+        } else {
+            const int SCORE_CARD_WIDTH = 70;
+            const int SCORE_CARD_HEIGHT = 20;
+            const int TOP_MARGIN = 15;
+            const int LEFT_PADDING = 10;
+            const int TOP_PADDING = 8;
+            const int HORIZONTAL_BORDER = 1;
+            const int VERTICAL_BORDER = 2;
+            const int MAP_SIZE = SCORE_CARD_WIDTH * SCORE_CARD_HEIGHT;
+            const int START_POSITION = (bufferWidth - SCORE_CARD_WIDTH) / 2;
+
+            COORD horizontal_buffer_size;
+            horizontal_buffer_size.X = SCORE_CARD_WIDTH;
+            horizontal_buffer_size.Y = HORIZONTAL_BORDER;
+
+            COORD vertical_buffer_size;
+            vertical_buffer_size.X = VERTICAL_BORDER;
+            vertical_buffer_size.Y = SCORE_CARD_HEIGHT;
+
+            topLeftCoordinate.Y = 0;
+            topLeftCoordinate.X = 0;
+
+            SMALL_RECT topRect;
+            SMALL_RECT bottomRect;
+            SMALL_RECT leftRect;
+            SMALL_RECT rightRect;
+
+            (&topRect)->Top = TOP_MARGIN;
+            (&topRect)->Left = START_POSITION;
+            (&topRect)->Bottom = TOP_MARGIN;
+            (&topRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+
+            (&bottomRect)->Top = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
+            (&bottomRect)->Left = START_POSITION;
+            (&bottomRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
+            (&bottomRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+
+            (&leftRect)->Top = TOP_MARGIN;
+            (&leftRect)->Left = START_POSITION;
+            (&leftRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
+            (&leftRect)->Right = START_POSITION + 1;
+
+            (&rightRect)->Top = TOP_MARGIN;
+            (&rightRect)->Left = START_POSITION + SCORE_CARD_WIDTH - 1;
+            (&rightRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
+            (&rightRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+
+            CHAR_INFO top[SCORE_CARD_WIDTH];
+            CHAR_INFO left[SCORE_CARD_HEIGHT * 2];
+
+            SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+
+            // Print game summary inside box
+            COORD cursorCoord;
+            cursorCoord.X = START_POSITION + LEFT_PADDING;
+            cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << "Hi " << userName << ", nice job! You found " << std::to_string(correct_guesses) << " sets!";
+
+
+            GetAsyncKeyState(VK_ESCAPE); // Catch any remaining escape key presses
+
+            // Show sparcles
+            do {
+                    for (int x = 0; x < SCORE_CARD_WIDTH; x++) {
+                            top[x].Attributes = (rand() % 0xEE) + 10;
+                            top[x].Char.UnicodeChar = L' ';
+                    }
+
+                    for (int x = 0; x < (SCORE_CARD_HEIGHT * 2); x++) {
+                            left[x].Attributes = (rand() % 0xEE) + 10;
+                            left[x].Char.UnicodeChar = L' ';
+                    }
+
+
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    top,
+                    horizontal_buffer_size,
+                    topLeftCoordinate,
+                    (&topRect)
+                );
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    top,
+                    horizontal_buffer_size,
+                    topLeftCoordinate,
+                    (&bottomRect)
+                );
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    left,
+                    vertical_buffer_size,
+                    topLeftCoordinate,
+                    (&leftRect)
+                );
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    left,
+                    vertical_buffer_size,
+                    topLeftCoordinate,
+                    (&rightRect)
+                );
+                
+                Sleep(50);
+            } while (true);
         }
-
-        // Draw the score
-        drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
-        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
-
-        // Get ready to write it to the console screenBuffer
-        coordinateBufferSize.Y = NUMBER_OF_ROWS;
-        coordinateBufferSize.X = NUMBER_OF_COLUMNS;
-        topLeftCoordinate.Y = 0;
-        topLeftCoordinate.X = 0;
-
-        (&srcWriteRect)->Top = START_Y_POSITION;
-        (&srcWriteRect)->Left = START_X_POSITION;
-        (&srcWriteRect)->Bottom = START_Y_POSITION + NUMBER_OF_ROWS;
-        (&srcWriteRect)->Right = START_X_POSITION + NUMBER_OF_COLUMNS;
-
-        // Write it to the console screenBuffer
-        succes = WriteConsoleOutputW(
-            gameScreenBuffer,
-            map,
-            coordinateBufferSize,
-            topLeftCoordinate,
-            (&srcWriteRect)
-        );
     }
 
     void Console::drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int SCORE, int MAX_SCORE) {

@@ -24,7 +24,7 @@ namespace MyAscii {
         int cards_turned = 0;
 
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-        console->showScoreCard(number_of_pairs, correct_guesses);
+        console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
 
         do {
             // Flipping back wrong guess and resetting
@@ -81,7 +81,7 @@ namespace MyAscii {
                     guess_possitions.push_back(current_selected_tile);
                 } else if (cards_turned == pair_size && guessId == tiles[current_selected_tile].getId()) {
                     correct_guesses++;
-                    console->showScoreCard(number_of_pairs, correct_guesses);
+                    console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
                     // Reset for next try
                     cards_turned = 0;
                     guessId = 0;
@@ -94,10 +94,14 @@ namespace MyAscii {
 
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
             if (correct_guesses == number_of_pairs) {
-                break;
+                stay_in_game = false;
+                break; // For some reason just setting stay_in_game to be false doesn't work
             }
 
         } while (stay_in_game);
+
+        // Will show the end-game score card
+        console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
 
         return score;
     }

@@ -17,7 +17,7 @@ namespace MyAscii {
 
         public:
             void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
-            void showScoreCard(int number_of_pairs, int correct_guesses);
+            void showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
             void showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             int getDifficulty(void);
             std::string getUserName(void);
