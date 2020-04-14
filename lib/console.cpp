@@ -272,6 +272,9 @@ namespace MyAscii {
             const int MAP_SIZE = SCORE_CARD_WIDTH * SCORE_CARD_HEIGHT;
             const int START_POSITION = (bufferWidth - SCORE_CARD_WIDTH) / 2;
 
+            topLeftCoordinate.Y = 0;
+            topLeftCoordinate.X = 0;
+
             COORD horizontal_buffer_size;
             horizontal_buffer_size.X = SCORE_CARD_WIDTH;
             horizontal_buffer_size.Y = HORIZONTAL_BORDER;
@@ -280,29 +283,23 @@ namespace MyAscii {
             vertical_buffer_size.X = VERTICAL_BORDER;
             vertical_buffer_size.Y = SCORE_CARD_HEIGHT;
 
-            topLeftCoordinate.Y = 0;
-            topLeftCoordinate.X = 0;
-
+            // Set position of all frame edges on screen
             SMALL_RECT topRect;
-            SMALL_RECT bottomRect;
-            SMALL_RECT leftRect;
-            SMALL_RECT rightRect;
-
             (&topRect)->Top = TOP_MARGIN;
             (&topRect)->Left = START_POSITION;
             (&topRect)->Bottom = TOP_MARGIN;
             (&topRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
-
+            SMALL_RECT bottomRect;
             (&bottomRect)->Top = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
             (&bottomRect)->Left = START_POSITION;
             (&bottomRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
             (&bottomRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
-
+            SMALL_RECT leftRect;
             (&leftRect)->Top = TOP_MARGIN;
             (&leftRect)->Left = START_POSITION;
             (&leftRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
             (&leftRect)->Right = START_POSITION + 1;
-
+            SMALL_RECT rightRect;
             (&rightRect)->Top = TOP_MARGIN;
             (&rightRect)->Left = START_POSITION + SCORE_CARD_WIDTH - 1;
             (&rightRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
@@ -311,31 +308,54 @@ namespace MyAscii {
             CHAR_INFO top[SCORE_CARD_WIDTH];
             CHAR_INFO left[SCORE_CARD_HEIGHT * 2];
 
-            SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+            std::string game_over_text[] = {
+                "you didn't even try ...",
+                "try harder next time?",
+                "nice job!"
+            };
+            std::string sets_plural = (correct_guesses == 1 ? " set!": " sets!");
+            std::string found_plural = (correct_guesses == number_of_pairs ? " You found all " : " You found ");
 
-            // Print game summary inside box
+            int game_score_level;
+            if (correct_guesses == number_of_pairs) {
+                game_score_level = 2;
+            } else if (correct_guesses == 0) {
+                game_score_level = 0;
+            } else {
+                game_score_level = 1;
+            }
+
+            // Output game summary to console screen
             COORD cursorCoord;
             cursorCoord.X = START_POSITION + LEFT_PADDING;
             cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
+
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << "Hi " << userName << ", nice job! You found " << std::to_string(correct_guesses) << " sets!";
+            std::cout << "Hi " << userName << ",";
 
+            cursorCoord.Y += 1;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << game_over_text[game_score_level] << found_plural << std::to_string(correct_guesses) << sets_plural;
 
-            GetAsyncKeyState(VK_ESCAPE); // Catch any remaining escape key presses
+            cursorCoord.Y += 2;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << "Press [ENTER] to go back to the main menu.";
 
-            // Show sparcles
+            // Show border
+            SetConsoleActiveScreenBuffer(defaultScreenBuffer);
             do {
-                    for (int x = 0; x < SCORE_CARD_WIDTH; x++) {
-                            top[x].Attributes = (rand() % 0xEE) + 10;
-                            top[x].Char.UnicodeChar = L' ';
-                    }
+                // Set color of frame to sparkle or black depending if game was successfull
+                for (int x = 0; x < SCORE_CARD_WIDTH; x++) {
+                        top[x].Attributes = (correct_guesses == number_of_pairs ? (rand() % 0xEE) + 10 : 0x01);
+                        top[x].Char.UnicodeChar = L' ';
+                }
 
-                    for (int x = 0; x < (SCORE_CARD_HEIGHT * 2); x++) {
-                            left[x].Attributes = (rand() % 0xEE) + 10;
-                            left[x].Char.UnicodeChar = L' ';
-                    }
+                for (int x = 0; x < (SCORE_CARD_HEIGHT * 2); x++) {
+                        left[x].Attributes = (correct_guesses == number_of_pairs ? (rand() % 0xEE) + 10 : 0x01);
+                        left[x].Char.UnicodeChar = L' ';
+                }
 
-
+                // Write all score-card frame sides to the console
                 succes = WriteConsoleOutputW(
                     defaultScreenBuffer,
                     top,
@@ -364,8 +384,17 @@ namespace MyAscii {
                     topLeftCoordinate,
                     (&rightRect)
                 );
+
+                // Makes sure any remaining RETURNS are discarded
+                GetAsyncKeyState(VK_RETURN);
+                GetAsyncKeyState(VK_RETURN);
+
+                if (GetAsyncKeyState(VK_RETURN)) {
+                    system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
+                    break;
+                }
                 
-                Sleep(50);
+                Sleep(50); // Without this the colors in sparkle mode look dull
             } while (true);
         }
     }
