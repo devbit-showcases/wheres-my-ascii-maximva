@@ -32,6 +32,7 @@ namespace MyAscii {
             void drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void showMenuItem(CHAR_INFO map[], int position, std::string menu_item);
+            void drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             
         private:
             HANDLE gameScreenBuffer;

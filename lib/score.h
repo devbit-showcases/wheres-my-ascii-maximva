@@ -20,7 +20,9 @@ namespace MyAscii {
 
             bool operator < (const Score& str) const
             {
-                return (correct_guesses > str.correct_guesses && number_of_sets > str.number_of_sets && elapsed_time > str.elapsed_time);
+                if( correct_guesses != str.correct_guesses)
+                    return (correct_guesses > str.correct_guesses);
+                return (elapsed_time < str.elapsed_time);
             }
 
         private:
