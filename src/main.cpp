@@ -1,6 +1,3 @@
-// Try sound
-#pragma comment(lib, "winmm.lib")
-
 #include <iostream>
 #include "time.h"
 #include <windows.h>

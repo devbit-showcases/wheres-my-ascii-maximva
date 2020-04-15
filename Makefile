@@ -2,7 +2,8 @@
 CC=g++
 
 # Compiler flags (iets aan/uit uiteztten met een optie van een command)
-CFLAGS=-c -Wall -lgdi32 -lwinmm
+CFLAGS=-c -Wall
+LDFLAGS=-lgdi32 -lwinmm
 	# -c: Compile do not link
 	# -Wall: All warnings
 
@@ -15,7 +16,7 @@ EXECUTABLE=main
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o
-	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o -o $(EXECUTABLE)
+	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o -o $(EXECUTABLE) $(LDFLAGS)
 
 main.o: ./src/main.cpp
 	$(CC) $(CFLAGS) ./src/main.cpp

@@ -16,12 +16,12 @@ namespace MyAscii {
         bool correct_guess = true;
         bool stay_in_game = true;
         std::vector<int> guess_possitions;
-        int guessId = 0;
+        unsigned int guessId = 0;
         int number_of_pairs = tiles.size() / pair_size;
         int correct_guesses = 0;
-        int selectedTileX = 0;
-        int selectedTileY = 0;
-        int cards_turned = 0;
+        unsigned int selectedTileX = 0;
+        unsigned int selectedTileY = 0;
+        unsigned int cards_turned = 0;
 
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
@@ -33,7 +33,7 @@ namespace MyAscii {
             // Flipping back wrong guess and resetting
             if (!correct_guess) {
                 system("pause>nul");
-                for (int i = 0; i < guess_possitions.size(); i++) {
+                for (unsigned int i = 0; i < guess_possitions.size(); i++) {
                     tiles[guess_possitions[i]].turnCard();
                 }
                 console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
