@@ -20,7 +20,7 @@ int main(void) {
 
     srand(time(NULL));
     do {
-        Console console("Where's my ASCII");
+        Console console("ASCII Adventure");
         Menu menu(&console);
         int chosen_menu_item = menu.show();
 

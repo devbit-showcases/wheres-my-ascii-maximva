@@ -25,6 +25,7 @@ namespace MyAscii {
             std::string getUserName(void);
             void toggleHiddenCharSecret(void);
             bool hiddenCharState(void);
+            void showTitle(void);
 
         private:
             void createGameScreenBuffer(void);
@@ -45,5 +46,8 @@ namespace MyAscii {
             int difficulty = 0;
             std::string userName = "guest-player";
             bool hidden_char_secret = false;
+
+            std::vector<std::string> title;
+            std::wstring try_title = L" █████╗ ███████╗ ██████╗██╗██╗     █████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗██╗   ██╗██████╗ ███████╗";
     };
 };

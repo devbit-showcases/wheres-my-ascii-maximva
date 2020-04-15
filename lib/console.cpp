@@ -48,7 +48,17 @@ namespace MyAscii {
         return hidden_char_secret;
     }
 
-    bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
+    void Console::showTitle(void) {
+        std::ifstream title_file;
+        title_file.open("title.txt");
+
+        if (title_file.is_open()) {
+            std::string part_title;
+            while (getline(title_file, part_title)){
+                title.push_back(part_title);
+            }
+        }
+
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
@@ -56,17 +66,79 @@ namespace MyAscii {
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
+        int bufferWidth = defaultBufferInfo.dwSize.X;
+        int title_card_attribute = 0xEC;
+        const int TITLE_CARD_WIDTH = 130;
+        const int TITLE_CARD_HEIGHT = 16;
+        const int TITLE_CARD_START_POSITION = (bufferWidth - TITLE_CARD_WIDTH) / 2;
+        const int TOP_MARGIN = 2;
+
+        // Show welcome and how-to info
+        CHAR_INFO title_card[TITLE_CARD_WIDTH * TITLE_CARD_HEIGHT];
+        for (unsigned int y = 0; y < TITLE_CARD_HEIGHT; y++) {
+            for (unsigned int x = 0; x < TITLE_CARD_WIDTH; x++) {
+                if (x == 0 || x == 1 || x == TITLE_CARD_WIDTH - 2 || x == TITLE_CARD_WIDTH - 1 || y == 0 || y == 10 || y == TITLE_CARD_HEIGHT - 1) {
+                    title_card[x + (y * TITLE_CARD_WIDTH)].Char.UnicodeChar = L'░';
+                    title_card[x + (y * TITLE_CARD_WIDTH)].Attributes = title_card_attribute;
+                } else {
+                    title_card[x + (y * TITLE_CARD_WIDTH)].Char.UnicodeChar = L' ';
+                    title_card[x + (y * TITLE_CARD_WIDTH)].Attributes = title_card_attribute;
+                }
+            }
+        }
+
+        coordinateBufferSize.Y = TITLE_CARD_HEIGHT;
+        coordinateBufferSize.X = TITLE_CARD_WIDTH;
+        topLeftCoordinate.Y = 0;
+        topLeftCoordinate.X = 0;
+
+        (&srcWriteRect)->Top = TOP_MARGIN;
+        (&srcWriteRect)->Left = TITLE_CARD_START_POSITION;
+        (&srcWriteRect)->Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
+        (&srcWriteRect)->Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
+
+        succes = WriteConsoleOutputW(
+            defaultScreenBuffer,
+            title_card,
+            coordinateBufferSize,
+            topLeftCoordinate,
+            (&srcWriteRect)
+        );
+
+        // Get and print the title to the console
+        COORD title_coord;
+        title_coord.X = TITLE_CARD_START_POSITION + 3;
+        title_coord.Y = TOP_MARGIN + 2;
+        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+
+        for (unsigned int i = 0; i < title.size(); i++) {
+            std::cout << title[i];
+            title_coord.Y++;
+            SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+        }
+    }
+
+    bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
         if (user_input_needed) {
             system("CLS");
         }
 
-        const int TOP_MENU_MARGIN = 10;
+        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
+        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
+        COORD coordinateBufferSize;
+        COORD topLeftCoordinate;
+        SMALL_RECT srcWriteRect;
+        BOOL succes;
+
+        int bufferWidth = defaultBufferInfo.dwSize.X;
+        const int TOP_MENU_MARGIN = 20;
         const int MENU_ITEM_HEIGHT = 3;
         const int MENU_ITEM_WIDTH = 75;
         const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
-        int bufferWidth = defaultBufferInfo.dwSize.X;
         const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
-
+        const int MENU_ITEM_ATTRIBUTE = 0x6F;
+        
+        // Print menu items to console
         for (int y = 0; y < items_size; y++) {
             CHAR_INFO map[MENU_SIZE];
 
@@ -80,14 +152,14 @@ namespace MyAscii {
 
                     if (i - MENU_ITEM_WIDTH - 2 < size) {
                         map[i].Char.UnicodeChar =  menu_item_string[i - MENU_ITEM_WIDTH - 2];
-                        map[i].Attributes = 0x20;
+                        map[i].Attributes = MENU_ITEM_ATTRIBUTE;
                     } else {
                         map[i].Char.UnicodeChar =  L' ';
-                        map[i].Attributes = 0x20;
+                        map[i].Attributes = MENU_ITEM_ATTRIBUTE;
                     }
                 } else {
                     map[i].Char.UnicodeChar = L' ';
-                    map[i].Attributes = 0x20;
+                    map[i].Attributes = MENU_ITEM_ATTRIBUTE;
                 }
 
                 if (y == current_menu_item) {
@@ -123,15 +195,15 @@ namespace MyAscii {
         if (user_input_needed) {
             COORD cursorCoord;
             cursorCoord.X = START_POSITION + 1;
-            cursorCoord.Y = 14;
+            cursorCoord.Y = TOP_MENU_MARGIN + MENU_ITEM_HEIGHT + 1;
             do {
                 SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
                 std::cout << "Who's playing? ";
                 std::getline(std::cin, userName);
             } while (userName.length() == 0);
 
-            cursorCoord.X = START_POSITION + 1;
-            cursorCoord.Y = 16;
+            // cursorCoord.X = START_POSITION + 1;
+            cursorCoord.Y += 2;
             bool is_number = false;
             do {
                 SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
@@ -274,7 +346,7 @@ namespace MyAscii {
         cursorCoord.X += DIFFICULTY_COLUMN_OFFSET + MINUTE_MARK_OFFSET;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Difficulty level";
-        cursorCoord.Y++;
+        cursorCoord.Y += 2;
 
         for (unsigned int i = 0; i < scores.size() && i < 15; i++) {
             cursorCoord.X = START_POSITION + LEFT_PADDING + 1;
