@@ -10,7 +10,8 @@ namespace MyAscii {
     Score Game::start(unsigned int difficulty) {
         Score score; // Doesn't do anything right now
         setDifficulty(difficulty);
-        PlayField playfield(fieldEdgeSize, pair_size, difficulty);
+        bool hidden_char_secret = console->hiddenCharState();
+        PlayField playfield(fieldEdgeSize, pair_size, difficulty, hidden_char_secret);
         std::vector<Tile> tiles = playfield.getPlayField();
  
         bool correct_guess = true;

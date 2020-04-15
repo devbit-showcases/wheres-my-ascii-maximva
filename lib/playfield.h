@@ -10,7 +10,7 @@ namespace MyAscii {
 
     class PlayField {
         public:
-            PlayField(unsigned int fieldEdgeSize, unsigned int pairSize, unsigned int difficulty);
+            PlayField(unsigned int fieldEdgeSize, unsigned int pairSize, unsigned int difficulty, bool secret);
             
         public:
             std::vector<Tile> getPlayField(void);
@@ -32,6 +32,9 @@ namespace MyAscii {
                         0x87, 0x8F, 0x9F, 0x9B, 0xA0, 0xAC, 0xB3, 0xB5,
                         0xC7, 0xCB, 0xDF, 0xDB, 0xD1, 0xCF, 0xB9, 0xF8
                         };
+            wchar_t very_secret_hidden_char = L'$';
+            bool secret = false;
+            
 
     };
 };

@@ -26,6 +26,30 @@ namespace MyAscii {
                 current_menu_item++;
                 console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item, false);
             }
+
+            if (GetKeyState(82) & 8000) {
+                system("pause>nul");
+                if (GetKeyState(79) & 8000) {
+                    system("pause>nul");
+                    if (GetKeyState(83) & 8000) {
+                        system("pause>nul");
+                        if (GetKeyState(69) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
+                            system("pause>nul");
+                            if (GetKeyState(66) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
+                                system("pause>nul");
+                                if (GetKeyState(85) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
+                                    system("pause>nul");
+                                    if (GetKeyState(68) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
+                                        console->toggleHiddenCharSecret();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
         if (current_menu_item == 0) {

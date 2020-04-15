@@ -39,5 +39,9 @@ namespace MyAscii {
     int Tile::getCharCoveredAttribute(void) {
         return charCoveredAttribute;
     }
+
+    void Tile::setHiddenChar(wchar_t hidden_char) {
+        this->hiddenChar = hidden_char;
+    }
     
 }

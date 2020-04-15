@@ -23,6 +23,8 @@ namespace MyAscii {
             void showScoreTable(void);
             int getDifficulty(void);
             std::string getUserName(void);
+            void toggleHiddenCharSecret(void);
+            bool hiddenCharState(void);
 
         private:
             void createGameScreenBuffer(void);
@@ -42,5 +44,6 @@ namespace MyAscii {
 
             int difficulty = 0;
             std::string userName = "guest-player";
+            bool hidden_char_secret = false;
     };
 };

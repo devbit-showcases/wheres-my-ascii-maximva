@@ -40,6 +40,14 @@ namespace MyAscii {
         return userName;
     }
 
+    void Console::toggleHiddenCharSecret(void) {
+        hidden_char_secret = !hidden_char_secret;
+    }
+
+    bool Console::hiddenCharState(void) {
+        return hidden_char_secret;
+    }
+
     bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
@@ -167,7 +175,7 @@ namespace MyAscii {
 
                 // Display playfield on screen
                 for (int j = 0; j < MAP_SIZE; j++) {
-                    const char CHAR_TO_GUESS = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar()); // ascii : hidden
+                    const wchar_t CHAR_TO_GUESS = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? (*tiles)[TILE_ARRAY_INDEX].getAsciiChar() : (*tiles)[TILE_ARRAY_INDEX].getHiddenChar()); // ascii : hidden
                     const int TILE_FLIPPED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharFlippedAttribute();
                     const int TILE_COVERED_ATTRIBUTE = (*tiles)[TILE_ARRAY_INDEX].getCharCoveredAttribute();
                     const int TILE_SHOW_ATTRIBUTE = ((*tiles)[TILE_ARRAY_INDEX].isTurned() ? TILE_FLIPPED_ATTRIBUTE : TILE_COVERED_ATTRIBUTE); // Flipped : Covered

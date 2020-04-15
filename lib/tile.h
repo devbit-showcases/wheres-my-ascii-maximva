@@ -18,12 +18,13 @@ namespace MyAscii {
             void setRandomChar(void);
             int getCharFlippedAttribute(void);
             int getCharCoveredAttribute(void);
+            void setHiddenChar(wchar_t hidden_char);
 
         private:
             unsigned int id = 0;
             bool turned = false;
             char asciiChar;
-            char hiddenChar = '?';
+            wchar_t hiddenChar = L'?';
             int charFlippedAttribute = 0x31;
             int charCoveredAttribute = 0x20;
             unsigned int ASCII_TABLE_START = 'A';

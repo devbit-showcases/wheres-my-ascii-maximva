@@ -2,10 +2,11 @@
 
 namespace MyAscii {
 
-    PlayField::PlayField(unsigned int fieldEdgeSize, unsigned int pairSize, unsigned int difficulty) {
+    PlayField::PlayField(unsigned int fieldEdgeSize, unsigned int pairSize, unsigned int difficulty, bool secret) {
         this->fieldEdgeSize = fieldEdgeSize;
         this->pairSize = pairSize;
         this->difficulty = difficulty;
+        this->secret = secret;
         fieldSize = fieldEdgeSize * fieldEdgeSize;
         generatePlayField();
     }
@@ -33,6 +34,7 @@ namespace MyAscii {
             }
             
             Tile tile(c, possibleCharAttributes[attributeNumber]);
+            if (secret) tile.setHiddenChar(very_secret_hidden_char);
             int charAlphabetPosition = tile.getAsciiChar() - 'A';
             charCount[charAlphabetPosition]++;
 
