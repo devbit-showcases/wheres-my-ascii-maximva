@@ -46,4 +46,4 @@ tile.o: ./lib/tile.cpp
 	$(CC) $(CFLAGS) ./lib/tile.cpp
 
 clean:
-	rm -f *.o $(EXECUTABLE)
+	del /f *.o $(EXECUTABLE)
