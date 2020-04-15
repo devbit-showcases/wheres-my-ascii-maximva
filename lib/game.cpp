@@ -32,7 +32,7 @@ namespace MyAscii {
         do {
             // Flipping back wrong guess and resetting
             if (!correct_guess) {
-                Sleep(600);     // Or system("pause>nul");  ... don't now what feels better...
+                system("pause>nul");
                 for (int i = 0; i < guess_possitions.size(); i++) {
                     tiles[guess_possitions[i]].turnCard();
                 }
