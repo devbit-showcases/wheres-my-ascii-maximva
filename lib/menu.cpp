@@ -27,6 +27,7 @@ namespace MyAscii {
                 console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item, false);
             }
 
+            // ROSEBUD (The Sims classic cheat code)
             if (GetKeyState(82) & 8000) {
                 system("pause>nul");
                 if (GetKeyState(79) & 8000) {

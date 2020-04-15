@@ -33,7 +33,7 @@ namespace MyAscii {
         do {
             // Flipping back wrong guess and resetting
             if (!correct_guess) {
-                system("pause>nul");
+                Sleep(600); // system("pause>nul"); I think sleep feels better
                 for (unsigned int i = 0; i < guess_possitions.size(); i++) {
                     tiles[guess_possitions[i]].turnCard();
                 }
@@ -70,18 +70,60 @@ namespace MyAscii {
                 }
 
                 // Now come the cheats / powerups
-                if (GetKeyState(79) & 8000) {
+                // number key values top: 48 - 57   Keypad: 96 - 105
+                if (GetKeyState(48) & 8000 || GetKeyState(96) & 8000) {
                     system("pause>nul");
-                    if (GetKeyState(79) & 8000) {
+                    if (GetKeyState(VK_UP) & 8000) {
                         system("pause>nul");
-                        if (GetKeyState(80) & 8000) {
+                        if (GetKeyState(VK_UP) & 8000) {
                             system("pause>nul");
-                            if (GetKeyState(51) & 8000 || GetKeyState(99) & 8000) {     // number key values top: 48 - 57   Keypad: 96 - 105
-                                selectedTileY--;
-                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                            if (GetKeyState(VK_DOWN) & 8000) {
+                                system("pause>nul");
+                                if (GetKeyState(VK_DOWN) & 8000) {
+                                    system("pause>nul");
+                                    if (GetKeyState(VK_LEFT) & 8000) {
+                                        system("pause>nul");
+                                        if (GetKeyState(VK_RIGHT) & 8000) {
+                                            system("pause>nul");
+                                            if (GetKeyState(VK_LEFT) & 8000) {
+                                                system("pause>nul");
+                                                if (GetKeyState(VK_RIGHT) & 8000) {
+                                                    system("pause>nul");
+                                                    if (GetKeyState(66) & 8000) {
+                                                        system("pause>nul");
+                                                        if (GetKeyState(65) & 8000) {
+                                                            unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correct_guesses * pair_size) - cards_turned;
+                                                            for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
+                                                                int random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+                                                                while (tiles[random_index].isTurned()) {
+                                                                    random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+                                                                }
+                                                                tiles[random_index].turnCard();
+                                                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                                                                tiles[random_index].turnCard();
+                                                                Sleep(500);
+                                                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    // Make sure there's no arrow keys presses left in buffer
+                    // Otherwise if cheat is not entered fully arrow keys will behave weird afterwards
+                    GetAsyncKeyState(VK_UP);
+                    GetAsyncKeyState(VK_UP);
+                    GetAsyncKeyState(VK_DOWN);
+                    GetAsyncKeyState(VK_DOWN);
+                    GetAsyncKeyState(VK_LEFT);
+                    GetAsyncKeyState(VK_LEFT);
+                    GetAsyncKeyState(VK_RIGHT);
+                    GetAsyncKeyState(VK_RIGHT);
                 }
                 
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));

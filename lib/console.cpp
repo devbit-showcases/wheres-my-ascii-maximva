@@ -249,6 +249,7 @@ namespace MyAscii {
         const int NAME_COLUMN_OFFSET = 10;
         const int SCORE_COLUMN_OFFSET = 17;
         const int TIME_COLUMN_OFFSET = 20;
+        const int MINUTE_MARK_OFFSET = 5;
         const int DIFFICULTY_COLUMN_OFFSET = 20;
 
         COORD cursorCoord;
@@ -270,7 +271,7 @@ namespace MyAscii {
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Time it took";
 
-        cursorCoord.X += DIFFICULTY_COLUMN_OFFSET;
+        cursorCoord.X += DIFFICULTY_COLUMN_OFFSET + MINUTE_MARK_OFFSET;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Difficulty level";
         cursorCoord.Y++;
@@ -292,7 +293,13 @@ namespace MyAscii {
 
             cursorCoord.X += TIME_COLUMN_OFFSET;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout  << scores[i].get_elapsed_time() << " sec.";
+            int minutes = scores[i].get_elapsed_time() / 60;
+            int tens_seconds = (scores[i].get_elapsed_time() - (minutes * 60)) / 10; // % Doesn't work for some reason
+            int hundreds_seconds = (scores[i].get_elapsed_time() - (minutes * 60) - (tens_seconds * 10));
+            std::cout << minutes << "." << tens_seconds << hundreds_seconds;
+            cursorCoord.X += MINUTE_MARK_OFFSET;
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << " min.";
 
             cursorCoord.X += DIFFICULTY_COLUMN_OFFSET;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
