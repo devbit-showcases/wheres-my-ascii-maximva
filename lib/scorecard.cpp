@@ -13,9 +13,6 @@ namespace MyAscii {
         // Print all the scorecard entries
         if (score_file.is_open()) {
             std::string name, difficulty, correct_guesses, number_of_sets, elapsed_time;
-            // const int MAX_NAME_SIZE = 14;
-            const int MAX_TIME_SIZE = 5;
-            // std::vector<Score> score_list_array;
 
             while (getline(score_file, name, ',')){
                 getline(score_file, difficulty, ',');

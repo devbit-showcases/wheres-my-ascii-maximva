@@ -40,7 +40,7 @@ namespace MyAscii {
         return userName;
     }
 
-    void Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
+    bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
@@ -57,7 +57,6 @@ namespace MyAscii {
         const int MENU_ITEM_WIDTH = 75;
         const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
         int bufferWidth = defaultBufferInfo.dwSize.X;
-        int bufferHeight = defaultBufferInfo.dwSize.Y;
         const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
 
         for (int y = 0; y < items_size; y++) {
@@ -142,9 +141,10 @@ namespace MyAscii {
             difficulty--; // Zero indexed for internal use
             system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
         }
+        return succes;
     }
 
-    void Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
+    bool Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
@@ -175,7 +175,7 @@ namespace MyAscii {
                     if (x == selectedTileX && y == selectedTileY) {
                         if (j == (TILE_WIDTH + 2)) {
                             map[j].Char.UnicodeChar = L'┌';
-                        } else if ((j > TILE_WIDTH + 2 && j < (2 * TILE_WIDTH) - 3) || (j > MAP_SIZE - (2 * TILE_WIDTH) + 2) && j < (MAP_SIZE - TILE_WIDTH - 3)){
+                        } else if ((j > TILE_WIDTH + 2 && j < (2 * TILE_WIDTH) - 3) || ((j > MAP_SIZE - (2 * TILE_WIDTH) + 2) && j < (MAP_SIZE - TILE_WIDTH - 3))){
                             map[j].Char.UnicodeChar = L'─';
                         } else if (j == (2 * TILE_WIDTH) - 3) {
                             map[j].Char.UnicodeChar = L'┐';  // || j % (2 * TILE_WIDTH) - 3)
@@ -218,6 +218,7 @@ namespace MyAscii {
         }
 
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
+        return succes;
     }
 
     void Console::showScoreTable(void) {
@@ -266,7 +267,7 @@ namespace MyAscii {
         std::cout << "Difficulty level";
         cursorCoord.Y++;
 
-        for (int i = 0; i < scores.size() && i < 15; i++) {
+        for (unsigned int i = 0; i < scores.size() && i < 15; i++) {
             cursorCoord.X = START_POSITION + LEFT_PADDING + 1;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
             std::cout << (i + 1) << ".";
@@ -300,7 +301,7 @@ namespace MyAscii {
         drawBox(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
-    void Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
+    bool Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         int bufferWidth = defaultBufferInfo.dwSize.X;
@@ -395,12 +396,12 @@ namespace MyAscii {
             // After outputting the text, draw a box around it
             drawBox(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
         }
+        return succes;
     }
 
-    void Console::drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle) {
+    bool Console::drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle) {
         const int SCORE_CARD_WIDTH = width;
         const int SCORE_CARD_HEIGHT = height;
-        const int MAP_SIZE = SCORE_CARD_WIDTH * SCORE_CARD_HEIGHT;
         const int START_POSITION = (buffer_width - SCORE_CARD_WIDTH) / 2;
         const int HORIZONTAL_BORDER = 1;
         const int VERTICAL_BORDER = 2;
@@ -495,7 +496,8 @@ namespace MyAscii {
                 delete[] left;
                 delete[] top;
                 system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
-                break;
+                return succes;
+                // break;
             }
             
             Sleep(50); // Without this the colors in sparkle mode look dull
@@ -503,14 +505,14 @@ namespace MyAscii {
     }
 
     void Console::drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int SCORE, int MAX_SCORE) {
-        const char * max_score = std::to_string(MAX_SCORE).c_str();
+        // const char * max_score = std::to_string(MAX_SCORE).c_str();
         const char * score = std::to_string(SCORE).c_str();
         const int LEFT_MARGIN = 4; // 1 for border + actual margin
         const int RIGHT_MARGIN = 1; // 1 for border + actual margin
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
         const int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
 
-        int count = 0;
+        unsigned int count = 0;
         
         for (int i = START_POSITION; i < END_OF_LINE; i++) {
             if (!(count > sizeof(score)/sizeof(int))) {
@@ -526,12 +528,12 @@ namespace MyAscii {
         const int LEFT_MARGIN = 4;
         const int RIGHT_MARGIN = 1;
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
-        const int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
+        const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
         const char * PLAYER_NAME = userName.c_str();
 
-        int count = 0;
+        unsigned int count = 0;
 
-        for (int i = START_POSITION; i < END_OF_LINE; i++) {
+        for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
             if (!(count > sizeof(PLAYER_NAME)/sizeof(char))) {
                 addCharToMap(map, i, PLAYER_NAME[count], scoreCardAttribute);
                 count++;

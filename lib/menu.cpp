@@ -7,7 +7,7 @@ namespace MyAscii {
     }
 
     int Menu::show(void) {
-        int current_menu_item = 0;
+        unsigned int current_menu_item = 0;
 
         std::string menu_items[] = {
             "Play a game",

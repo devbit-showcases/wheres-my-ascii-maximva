@@ -17,9 +17,9 @@ namespace MyAscii {
             Console(std::string windowTitle);
 
         public:
-            void showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
-            void showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
-            void showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
+            bool showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
+            bool showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
+            bool showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             void showScoreTable(void);
             int getDifficulty(void);
             std::string getUserName(void);
@@ -32,7 +32,7 @@ namespace MyAscii {
             void drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void showMenuItem(CHAR_INFO map[], int position, std::string menu_item);
-            void drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
+            bool drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             
         private:
             HANDLE gameScreenBuffer;
