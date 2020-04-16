@@ -169,9 +169,7 @@ namespace MyAscii {
         ScoreCard scorecard;
         scorecard.save_score(&score);
 
-        // Will show the end-game score card
-        console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
-
+        console->showEndGameScreen(number_of_pairs, correct_guesses);
         return score;
     }
 

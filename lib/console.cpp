@@ -406,101 +406,94 @@ namespace MyAscii {
         drawBox(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
-    bool Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
+    void Console::showEndGameScreen(int number_of_pairs, int correct_guesses) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         int bufferWidth = defaultBufferInfo.dwSize.X;
 
+        const int SCORE_CARD_WIDTH = 70;
+        const int SCORE_CARD_HEIGHT = 16;
+        const int TOP_MARGIN = 15;
+        const int LEFT_PADDING = 10;
+        const int TOP_PADDING = 5;
+        const int START_POSITION = (bufferWidth - SCORE_CARD_WIDTH) / 2;
+        bool sparkle = (correct_guesses == number_of_pairs);
+
+        std::string gameOverText;
+        std::string found_plural = (correct_guesses == number_of_pairs ? " You found all " : " You found ");
+        std::string out_of_plural = (correct_guesses == number_of_pairs ? "" : " out of " + std::to_string(number_of_pairs));
+
+        if (correct_guesses == number_of_pairs) {
+            gameOverText = "nice job!";
+        } else if (correct_guesses == 0) {
+            gameOverText = "you didn't even try ...";
+        } else {
+            gameOverText = "try harder next time?";
+        }
+
+        // Output game summary to console screen
+        COORD cursorCoord;
+        cursorCoord.X = START_POSITION + LEFT_PADDING;
+        cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
+
+        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+        std::cout << "Hi " << userName << ",";
+        cursorCoord.Y += 1;
+        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+        std::cout << gameOverText << found_plural << std::to_string(correct_guesses) << out_of_plural << " sets!";
+        cursorCoord.Y += 2;
+        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+        std::cout << "Press [ENTER] to go back to the main menu.";
+
+        // After outputting the text, draw a box around it
+        drawBox(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
+    }
+
+    bool Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
-        if (stay_in_game) {
-            const int PLAYER_NAME_ROW_NUMBER = 2;
-            const int SCORE_ROW_NUMBER = 3;
+        const int PLAYER_NAME_ROW_NUMBER = 2;
+        const int SCORE_ROW_NUMBER = 3;
+        const int NUMBER_OF_ROWS = 10;
+        const int NUMBER_OF_COLUMNS = 50;
+        const int START_X_POSITION = 117;
+        const int START_Y_POSITION = 4;
+        const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
+        CHAR_INFO map[SCORECARD_SIZE];
 
-            const int NUMBER_OF_ROWS = 10;
-            const int NUMBER_OF_COLUMNS = 50;
-            const int START_X_POSITION = 117;
-            const int START_Y_POSITION = 4;
-            const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
-            CHAR_INFO map[SCORECARD_SIZE];
-
-            // Draw the empty scorecard box
-            drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
-            for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
-                drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
-            }
-
-            // Draw the score
-            drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
-            drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
-
-            // Get ready to write it to the console screenBuffer
-            coordinateBufferSize.Y = NUMBER_OF_ROWS;
-            coordinateBufferSize.X = NUMBER_OF_COLUMNS;
-            topLeftCoordinate.Y = 0;
-            topLeftCoordinate.X = 0;
-
-            (&srcWriteRect)->Top = START_Y_POSITION;
-            (&srcWriteRect)->Left = START_X_POSITION;
-            (&srcWriteRect)->Bottom = START_Y_POSITION + NUMBER_OF_ROWS;
-            (&srcWriteRect)->Right = START_X_POSITION + NUMBER_OF_COLUMNS;
-
-            // Write it to the console screenBuffer
-            succes = WriteConsoleOutputW(
-                gameScreenBuffer,
-                map,
-                coordinateBufferSize,
-                topLeftCoordinate,
-                (&srcWriteRect)
-            );
-        } else {
-            const int SCORE_CARD_WIDTH = 70;
-            const int SCORE_CARD_HEIGHT = 16;
-            const int TOP_MARGIN = 15;
-            const int LEFT_PADDING = 10;
-            const int TOP_PADDING = 5;
-            const int START_POSITION = (bufferWidth - SCORE_CARD_WIDTH) / 2;
-            bool sparkle = (correct_guesses == number_of_pairs);
-
-            std::string game_over_text[] = {
-                "you didn't even try ...",
-                "try harder next time?",
-                "nice job!"
-            };
-            std::string found_plural = (correct_guesses == number_of_pairs ? " You found all " : " You found ");
-            std::string out_of_plural = (correct_guesses == number_of_pairs ? "" : " out of " + std::to_string(number_of_pairs));
-
-            int game_score_level;
-            if (correct_guesses == number_of_pairs) {
-                game_score_level = 2;
-            } else if (correct_guesses == 0) {
-                game_score_level = 0;
-            } else {
-                game_score_level = 1;
-            }
-
-            // Output game summary to console screen
-            COORD cursorCoord;
-            cursorCoord.X = START_POSITION + LEFT_PADDING;
-            cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
-
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << "Hi " << userName << ",";
-
-            cursorCoord.Y += 1;
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << game_over_text[game_score_level] << found_plural << std::to_string(correct_guesses) << out_of_plural << " sets!";
-
-            cursorCoord.Y += 2;
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << "Press [ENTER] to go back to the main menu.";
-
-            // After outputting the text, draw a box around it
-            drawBox(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
+        // Draw the empty scorecard box
+        drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+        for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
+            drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
         }
+
+        // Draw the score
+        drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
+        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
+
+        // Get ready to write it to the console screenBuffer
+        coordinateBufferSize.Y = NUMBER_OF_ROWS;
+        coordinateBufferSize.X = NUMBER_OF_COLUMNS;
+        topLeftCoordinate.Y = 0;
+        topLeftCoordinate.X = 0;
+
+        (&srcWriteRect)->Top = START_Y_POSITION;
+        (&srcWriteRect)->Left = START_X_POSITION;
+        (&srcWriteRect)->Bottom = START_Y_POSITION + NUMBER_OF_ROWS;
+        (&srcWriteRect)->Right = START_X_POSITION + NUMBER_OF_COLUMNS;
+
+        // Write it to the console screenBuffer
+        succes = WriteConsoleOutputW(
+            gameScreenBuffer,
+            map,
+            coordinateBufferSize,
+            topLeftCoordinate,
+            (&srcWriteRect)
+        );
+       
         return succes;
     }
 
@@ -635,13 +628,17 @@ namespace MyAscii {
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
         const char * PLAYER_NAME = userName.c_str();
-
-        unsigned int count = 0;
+        const char * PLAYER_NAME_PREFIX = "Player: ";
+        unsigned int playerNameSize = 0;
+        unsigned int playerNamePrefixSize = 0;
+        while (PLAYER_NAME[playerNameSize] != '\0') playerNameSize++;
+        while (PLAYER_NAME_PREFIX[playerNamePrefixSize] != '\0') playerNamePrefixSize++;
 
         for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
-            if (!(count > sizeof(PLAYER_NAME)/sizeof(char))) {
-                addCharToMap(map, i, PLAYER_NAME[count], scoreCardAttribute);
-                count++;
+            if (!(i - START_POSITION > playerNamePrefixSize)) {
+                addCharToMap(map, i, PLAYER_NAME_PREFIX[i - START_POSITION], scoreCardAttribute);
+            } else if (!(i - START_POSITION > playerNameSize + playerNamePrefixSize)) {
+                addCharToMap(map, i, PLAYER_NAME[i - START_POSITION - playerNamePrefixSize - 1], scoreCardAttribute);
             } else {
                 addCharToMap(map, i, L' ', scoreCardAttribute);
             }
@@ -702,22 +699,6 @@ namespace MyAscii {
     void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
         map[position].Attributes = attribute;
-    }
-
-    void Console::showMenuItem(CHAR_INFO map[], int position, std::string menu_item) {
-        const int MENU_ITEM_WIDTH = 50;
-        const int MENU_ITEM_HEIGHT = 3;
-        const int MENU_LEFT_START = (100 - MENU_ITEM_WIDTH ) / 2;
-
-        for (int y = 4 + (position * (MENU_ITEM_HEIGHT + 1)); y < MENU_ITEM_HEIGHT; y++) {
-            for (int x = MENU_LEFT_START; x < MENU_LEFT_START + MENU_ITEM_WIDTH; x++) {
-
-                const int POSITION = x + (y * MENU_ITEM_WIDTH);
-
-                map[POSITION].Char.UnicodeChar = L'┌';
-                map[POSITION].Attributes = 0x20;
-            }
-        }
     }
 
 }
