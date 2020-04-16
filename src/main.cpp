@@ -18,9 +18,9 @@ int main(void) {
     const int PLAY_GAME = 0;
     const int SHOW_SCORES = 1;
     srand(time(NULL));
-    Console console("ASCII Adventure");  // Don't put it in the do-while, crashes when returning to menu possibly due to to using heap
 
     do {
+        Console console("ASCII Adventure");
         Menu menu(&console);
         int chosen_menu_item = menu.show();
 

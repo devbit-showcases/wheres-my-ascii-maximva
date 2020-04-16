@@ -7,29 +7,36 @@ namespace MyAscii {
     }
 
     Console::Console(std::string windowTitle) {
+        init_console_window(windowTitle);
+        defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
+        create_game_screen_buffer();
+        readTitle();
+    }
+
+    void Console::init_console_window(std::string windowTitle) {
+        // Set title, background color and go full-screen
         HWND console = GetConsoleWindow();
         this->windowTitle =  windowTitle;
         SetConsoleTitleA(windowTitle.c_str());
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xEC);
-        ShowWindow(console, SW_MAXIMIZE);
-
-        defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
-        createGameScreenBuffer();
-
-        // Hide the cursor on the game window
-        CONSOLE_CURSOR_INFO     cursorInfo;
-        GetConsoleCursorInfo(gameScreenBuffer, &cursorInfo);
-        cursorInfo.bVisible = false; // set the cursor visibility
-        SetConsoleCursorInfo(gameScreenBuffer, &cursorInfo);
+        ShowWindow(console, SW_MAXIMIZE); // Go to full-screen
     }
 
-    void Console::createGameScreenBuffer(void) { 
+    void Console::hide_cursor(HANDLE * screenBuffer) {
+        CONSOLE_CURSOR_INFO     cursorInfo;
+        GetConsoleCursorInfo((*screenBuffer), &cursorInfo);
+        cursorInfo.bVisible = false; // set the cursor visibility
+        SetConsoleCursorInfo((*screenBuffer), &cursorInfo);
+    }
+
+    void Console::create_game_screen_buffer(void) { 
         gameScreenBuffer = CreateConsoleScreenBuffer(
             GENERIC_READ | GENERIC_WRITE,
             FILE_SHARE_READ | FILE_SHARE_WRITE,
             NULL,
             CONSOLE_TEXTMODE_BUFFER,
             NULL);
+        hide_cursor(&gameScreenBuffer);
     }
 
     int Console::getDifficulty(void) {
@@ -48,7 +55,7 @@ namespace MyAscii {
         return hidden_char_secret;
     }
 
-    void Console::showTitle(void) {
+    void Console::readTitle(void) {
         // Read title art from file and store it
         std::ifstream title_file;
         title_file.open("title.txt");
@@ -58,12 +65,14 @@ namespace MyAscii {
                 title.push_back(part_title);
             }
         }
+    }
 
+    bool Console::showTitle(void) {
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
-        SMALL_RECT srcWriteRect;
+        SMALL_RECT titleRect;
         BOOL succes;
 
         int bufferWidth = defaultBufferInfo.dwSize.X;
@@ -89,17 +98,17 @@ namespace MyAscii {
         topLeftCoordinate.Y = 0;
         topLeftCoordinate.X = 0;
 
-        (&srcWriteRect)->Top = TOP_MARGIN;
-        (&srcWriteRect)->Left = TITLE_CARD_START_POSITION;
-        (&srcWriteRect)->Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
-        (&srcWriteRect)->Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
+        (&titleRect)->Top = TOP_MARGIN;
+        (&titleRect)->Left = TITLE_CARD_START_POSITION;
+        (&titleRect)->Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
+        (&titleRect)->Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
 
         succes = WriteConsoleOutputW(
             defaultScreenBuffer,
             title_card,
             coordinateBufferSize,
             topLeftCoordinate,
-            (&srcWriteRect)
+            (&titleRect)
         );
 
         // Print the title to the console
@@ -122,6 +131,8 @@ namespace MyAscii {
         title_coord.X = 0;
         title_coord.Y = 0;
         SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+
+        return succes;
     }
 
     bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
@@ -234,7 +245,7 @@ namespace MyAscii {
     bool Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
-        SMALL_RECT srcWriteRect;
+        SMALL_RECT playfieldRect;
         BOOL succes;
 
         const int TILE_WIDTH = 9;   // Has to be an uneven number  9 (min), 13, 17 (no exact center with even number)
@@ -289,21 +300,21 @@ namespace MyAscii {
                 topLeftCoordinate.Y = 0;
                 topLeftCoordinate.X = 0;
 
-                (&srcWriteRect)->Top = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
-                (&srcWriteRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
-                (&srcWriteRect)->Bottom = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
-                (&srcWriteRect)->Right = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING)) + TILE_WIDTH;
+                (&playfieldRect)->Top = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
+                (&playfieldRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
+                (&playfieldRect)->Bottom = TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
+                (&playfieldRect)->Right = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING)) + TILE_WIDTH;
 
                 succes = WriteConsoleOutputW(
                     gameScreenBuffer,
                     map,
                     coordinateBufferSize,
                     topLeftCoordinate,
-                    (&srcWriteRect)
+                    (&playfieldRect)
                 );
             }
         }
-
+        
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
         return succes;
     }

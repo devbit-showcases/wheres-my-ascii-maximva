@@ -25,10 +25,9 @@ namespace MyAscii {
             std::string getUserName(void);
             void toggleHiddenCharSecret(void);
             bool hiddenCharState(void);
-            void showTitle(void);
 
         private:
-            void createGameScreenBuffer(void);
+            void create_game_screen_buffer(void);
             void drawScorecardTopAndBottom(CHAR_INFO map[], int number_of_columns, int number_of_rows);
             void drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int score, int max_score);
@@ -36,6 +35,10 @@ namespace MyAscii {
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void showMenuItem(CHAR_INFO map[], int position, std::string menu_item);
             bool drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
+            void hide_cursor(HANDLE * screenBuffer);
+            void init_console_window(std::string windowTitle);
+            bool showTitle(void);
+            void readTitle(void);
             
         private:
             HANDLE gameScreenBuffer;
