@@ -49,9 +49,9 @@ namespace MyAscii {
     }
 
     void Console::showTitle(void) {
+        // Read title art from file and store it
         std::ifstream title_file;
         title_file.open("title.txt");
-
         if (title_file.is_open()) {
             std::string part_title;
             while (getline(title_file, part_title)){
@@ -71,19 +71,16 @@ namespace MyAscii {
         const int TITLE_CARD_WIDTH = 130;
         const int TITLE_CARD_HEIGHT = 16;
         const int TITLE_CARD_START_POSITION = (bufferWidth - TITLE_CARD_WIDTH) / 2;
-        const int TOP_MARGIN = 2;
+        const int TOP_MARGIN = 4;
+        const int LEFT_MARGIN = (TITLE_CARD_WIDTH - title[0].length()) / 2;
 
-        // Show welcome and how-to info
+        // Show frame for title and how-to info
         CHAR_INFO title_card[TITLE_CARD_WIDTH * TITLE_CARD_HEIGHT];
         for (unsigned int y = 0; y < TITLE_CARD_HEIGHT; y++) {
             for (unsigned int x = 0; x < TITLE_CARD_WIDTH; x++) {
-                if (x == 0 || x == 1 || x == TITLE_CARD_WIDTH - 2 || x == TITLE_CARD_WIDTH - 1 || y == 0 || y == 10 || y == TITLE_CARD_HEIGHT - 1) {
-                    title_card[x + (y * TITLE_CARD_WIDTH)].Char.UnicodeChar = L'░';
-                    title_card[x + (y * TITLE_CARD_WIDTH)].Attributes = title_card_attribute;
-                } else {
-                    title_card[x + (y * TITLE_CARD_WIDTH)].Char.UnicodeChar = L' ';
-                    title_card[x + (y * TITLE_CARD_WIDTH)].Attributes = title_card_attribute;
-                }
+                wchar_t fill_char = (x == 0 || x == 1 || x == TITLE_CARD_WIDTH - 2 || x == TITLE_CARD_WIDTH - 1 || y == 0 || y == 10 || y == TITLE_CARD_HEIGHT - 1 ? L'░' : L' ');
+                title_card[x + (y * TITLE_CARD_WIDTH)].Char.UnicodeChar = fill_char;
+                title_card[x + (y * TITLE_CARD_WIDTH)].Attributes = title_card_attribute;
             }
         }
 
@@ -105,23 +102,33 @@ namespace MyAscii {
             (&srcWriteRect)
         );
 
-        // Get and print the title to the console
+        // Print the title to the console
         COORD title_coord;
-        title_coord.X = TITLE_CARD_START_POSITION + 3;
+        title_coord.X = TITLE_CARD_START_POSITION + LEFT_MARGIN;
         title_coord.Y = TOP_MARGIN + 2;
         SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
 
-        for (unsigned int i = 0; i < title.size(); i++) {
+        for (unsigned int i = 0; i < 6; i++) {  // for some reason tile.size() doesn't, reprints title every time...
             std::cout << title[i];
             title_coord.Y++;
             SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
         }
+
+        title_coord.Y += 4;
+        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+        std::cout << "Use the [UP] and [DOWN] arrow keys to navigate, [ENTER] to select.";
+
+        // Reset cursor position
+        title_coord.X = 0;
+        title_coord.Y = 0;
+        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
     }
 
     bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
         if (user_input_needed) {
             system("CLS");
         }
+        showTitle();
 
         CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
         GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
@@ -131,7 +138,7 @@ namespace MyAscii {
         BOOL succes;
 
         int bufferWidth = defaultBufferInfo.dwSize.X;
-        const int TOP_MENU_MARGIN = 20;
+        const int TOP_MENU_MARGIN = 25;
         const int MENU_ITEM_HEIGHT = 3;
         const int MENU_ITEM_WIDTH = 75;
         const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
@@ -584,7 +591,7 @@ namespace MyAscii {
                 delete[] top;
                 system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
                 return succes;
-                // break;
+                break;
             }
             
             Sleep(50); // Without this the colors in sparkle mode look dull

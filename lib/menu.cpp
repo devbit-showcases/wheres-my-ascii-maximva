@@ -16,7 +16,6 @@ namespace MyAscii {
         };
 
         console->showMenu(menu_items, sizeof(menu_items)/sizeof(std::string), current_menu_item, false);
-        console->showTitle();
 
         do {
             system("pause>nul");    // pause after keystroke

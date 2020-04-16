@@ -42,12 +42,9 @@ namespace MyAscii {
             HANDLE defaultScreenBuffer;
             std::string windowTitle = "New window";
             int scoreCardAttribute = 0xEC;   // EC
-
             int difficulty = 0;
             std::string userName = "guest-player";
             bool hidden_char_secret = false;
-
             std::vector<std::string> title;
-            std::wstring try_title = L" █████╗ ███████╗ ██████╗██╗██╗     █████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗██╗   ██╗██████╗ ███████╗";
     };
 };
