@@ -9,7 +9,6 @@
 
 namespace MyAscii {
     class ScoreCard {
-
         public:
             ScoreCard();
 
@@ -19,7 +18,6 @@ namespace MyAscii {
 
         private:
             std::vector<std::string> score_array;
-            Score * game_score;
 
     };
 };

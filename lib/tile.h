@@ -4,10 +4,9 @@
 #include <time.h>
 
 namespace MyAscii {
-
     class Tile {
         public:
-            Tile(unsigned int id, int charFlippedAttribute);
+            Tile(unsigned int id, int flipped_attribute);
         
         public:
             char getHiddenChar(void);
@@ -23,10 +22,10 @@ namespace MyAscii {
         private:
             unsigned int id = 0;
             bool turned = false;
-            char asciiChar;
-            wchar_t hiddenChar = L'?';
-            int charFlippedAttribute = 0x31;
-            int charCoveredAttribute = 0x20;
+            char flipped_char;
+            wchar_t hidden_char = L'?';
+            int flipped_attribute = 0x31;
+            int covered_attribute = 0x20;
             unsigned int ASCII_TABLE_START = 'A';
             unsigned int ASCII_TABLE_END = 'Z';
             unsigned int ASCII_TABLE_RANGE = ASCII_TABLE_END - ASCII_TABLE_START;

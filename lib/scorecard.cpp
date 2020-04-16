@@ -29,7 +29,6 @@ namespace MyAscii {
     }
 
     void ScoreCard::save_score(Score * score) {
-        game_score = score;
         std::ofstream score_file;
         score_file.open("scorecard.txt", std::ios::out | std::ios::app);
 

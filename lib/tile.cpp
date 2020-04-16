@@ -2,26 +2,10 @@
 
 namespace MyAscii {
 
-    Tile::Tile(unsigned int id, int charFlippedAttribute) {
+    Tile::Tile(unsigned int id, int flipped_attribute) {
         setRandomChar();
         this->id = id;
-        this->charFlippedAttribute = charFlippedAttribute;
-    }
-
-    void Tile::setRandomChar(void) {
-        asciiChar = rand() % ASCII_TABLE_RANGE + 1 + ASCII_TABLE_START;
-    }
-
-    char Tile::getHiddenChar(void) {
-        return hiddenChar;
-    }
-
-    char Tile::getAsciiChar(void) {
-        return asciiChar;
-    }
-
-    unsigned int Tile::getId(void) {
-        return id;
+        this->flipped_attribute = flipped_attribute;
     }
 
     void Tile::turnCard(void) {
@@ -32,16 +16,34 @@ namespace MyAscii {
         return turned;
     }
 
+    // Getters
+    unsigned int Tile::getId(void) {
+        return id;
+    }
+
+    char Tile::getHiddenChar(void) {
+        return hidden_char;
+    }
+
+    char Tile::getAsciiChar(void) {
+        return flipped_char;
+    }
+
     int Tile::getCharFlippedAttribute(void) {
-        return charFlippedAttribute;
+        return flipped_attribute;
     }
 
     int Tile::getCharCoveredAttribute(void) {
-        return charCoveredAttribute;
+        return covered_attribute;
     }
 
+    // Setters
     void Tile::setHiddenChar(wchar_t hidden_char) {
-        this->hiddenChar = hidden_char;
+        this->hidden_char = hidden_char;
     }
-    
+
+    void Tile::setRandomChar(void) {
+        flipped_char = (rand() % (ASCII_TABLE_RANGE + 1)) + ASCII_TABLE_START;
+    }
+
 }
