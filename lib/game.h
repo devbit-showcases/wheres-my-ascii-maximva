@@ -20,6 +20,8 @@ namespace MyAscii {
         public:
             Score start(unsigned int difficulty);
             void setDifficulty(unsigned int difficulty);
+        private:
+            void show_card_cheat(int correct_guesses, int cards_turned, std::vector<Tile> * tiles, int selectedTileX, int selectedTileY);
 
         private:
             Player * player;
@@ -29,7 +31,11 @@ namespace MyAscii {
             unsigned int pair_size = gameParameters[difficulty][1];
             std::vector<int> correctAnswers;
 
-            // {fieldEdgeSize, pairSize}
+            std::vector<std::string> cheat = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};
+            std::vector<std::string> cheat_sequence = {};
+            bool cheat_sequence_correct = false;
+
+            // Order: {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
                 {4, 2},
                 {6, 3},

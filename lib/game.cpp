@@ -7,6 +7,28 @@ namespace MyAscii {
         this->console = console;
     }
 
+    void Game::show_card_cheat(int correct_guesses, int cards_turned, std::vector<Tile> * tiles, int selectedTileX, int selectedTileY) {
+        unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correct_guesses * pair_size) - cards_turned;
+        std::vector<int> used_indexes = {};
+
+        for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
+            int random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+
+            // Check if tile is turned or has been used in this show of cards allready
+            while ((*tiles)[random_index].isTurned() || std::count(used_indexes.begin(), used_indexes.end(), random_index)) {
+                random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+            }
+            used_indexes.push_back(random_index);
+
+            // Turn each card for a short period of time
+            (*tiles)[random_index].turnCard();
+            console->showPlayField(tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+            Sleep(500);
+            (*tiles)[random_index].turnCard();
+            console->showPlayField(tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        }
+    }
+
     Score Game::start(unsigned int difficulty) {
         Score score; // Doesn't do anything right now
         setDifficulty(difficulty);
@@ -52,78 +74,54 @@ namespace MyAscii {
             // Arrow keys to select tiles and RETURN/SPACE to select
             do {
                 system("pause>nul");    // pause after keystroke
-                if (GetAsyncKeyState(VK_UP) && selectedTileY != 0) {
-                    selectedTileY--;
-                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-                } else if (GetAsyncKeyState(VK_DOWN) && selectedTileY < (fieldEdgeSize - 1)) {
-                    selectedTileY++;
-                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-                } else if (GetAsyncKeyState(VK_LEFT) && selectedTileX != 0) {
-                    selectedTileX--;
-                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-                } else if (GetAsyncKeyState(VK_RIGHT) && selectedTileX < (fieldEdgeSize - 1)) {
-                    selectedTileX++;
-                    console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+                if (GetAsyncKeyState(VK_UP)) {
+                    // Check if going up doesn't exit playing field 
+                    if (selectedTileY != 0) {
+                        selectedTileY--;
+                    }
+                    // Add keystroke to cheat sequence
+                    cheat_sequence.push_back("up");
+                } else if (GetAsyncKeyState(VK_DOWN)) {
+                    if (selectedTileY < (fieldEdgeSize - 1)) {
+                        selectedTileY++;
+                    }
+                    cheat_sequence.push_back("down");
+                } else if (GetAsyncKeyState(VK_LEFT)) {
+                    if (selectedTileX != 0) {
+                        selectedTileX--;
+                    }
+                    cheat_sequence.push_back("left");
+                } else if (GetAsyncKeyState(VK_RIGHT)) {
+                    if (selectedTileX < (fieldEdgeSize - 1)) {
+                        selectedTileX++;
+                    }
+                    cheat_sequence.push_back("right");
+                } else if (GetKeyState(66) & 8000) {
+                    cheat_sequence.push_back("B");
+                } else if (GetKeyState(65) & 8000) {
+                    cheat_sequence.push_back("A");
                 } else if (GetAsyncKeyState(VK_ESCAPE)) {
                     stay_in_game = false; // Escape to main menu with ESC key
                     break;
                 }
+                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
 
-                // Now come the cheats / powerups
-                // number key values top: 48 - 57   Keypad: 96 - 105
-                if (GetKeyState(48) & 8000 || GetKeyState(96) & 8000) {
-                    system("pause>nul");
-                    if (GetKeyState(VK_UP) & 8000) {
-                        system("pause>nul");
-                        if (GetKeyState(VK_UP) & 8000) {
-                            system("pause>nul");
-                            if (GetKeyState(VK_DOWN) & 8000) {
-                                system("pause>nul");
-                                if (GetKeyState(VK_DOWN) & 8000) {
-                                    system("pause>nul");
-                                    if (GetKeyState(VK_LEFT) & 8000) {
-                                        system("pause>nul");
-                                        if (GetKeyState(VK_RIGHT) & 8000) {
-                                            system("pause>nul");
-                                            if (GetKeyState(VK_LEFT) & 8000) {
-                                                system("pause>nul");
-                                                if (GetKeyState(VK_RIGHT) & 8000) {
-                                                    system("pause>nul");
-                                                    if (GetKeyState(66) & 8000) {
-                                                        system("pause>nul");
-                                                        if (GetKeyState(65) & 8000) {
-                                                            unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correct_guesses * pair_size) - cards_turned;
-                                                            for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
-                                                                int random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
-                                                                while (tiles[random_index].isTurned()) {
-                                                                    random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
-                                                                }
-                                                                tiles[random_index].turnCard();
-                                                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-                                                                tiles[random_index].turnCard();
-                                                                Sleep(500);
-                                                                console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                // Check for cheat sequences
+                if (cheat_sequence.size() > cheat.size()) {
+                    cheat_sequence.erase(cheat_sequence.begin());
+                }
+                if (cheat.size() == cheat_sequence.size()) {
+                    for (int i = 0; i < cheat_sequence.size(); i++) {
+                        if (cheat[i] == cheat_sequence[i]) {
+                            cheat_sequence_correct = true;
+                        } else {
+                            cheat_sequence_correct = false;
+                            break;
                         }
                     }
-                    // Make sure there's no arrow keys presses left in buffer
-                    // Otherwise if cheat is not entered fully arrow keys will behave weird afterwards
-                    GetAsyncKeyState(VK_UP);
-                    GetAsyncKeyState(VK_UP);
-                    GetAsyncKeyState(VK_DOWN);
-                    GetAsyncKeyState(VK_DOWN);
-                    GetAsyncKeyState(VK_LEFT);
-                    GetAsyncKeyState(VK_LEFT);
-                    GetAsyncKeyState(VK_RIGHT);
-                    GetAsyncKeyState(VK_RIGHT);
+                    if (cheat_sequence_correct) {
+                        show_card_cheat(correct_guesses, cards_turned, &tiles, selectedTileX, selectedTileY);
+                    }
                 }
                 
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
