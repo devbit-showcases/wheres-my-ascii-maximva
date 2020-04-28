@@ -651,6 +651,7 @@ namespace MyAscii {
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
+                // Print first character of the row
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
                     addCharToMap(
                         map,
@@ -658,6 +659,7 @@ namespace MyAscii {
                         scorecard_structure_chars[type_index][left_char],
                         scoreCardAttribute
                     );
+                // Print all fill characters in between
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
                     addCharToMap(
                         map,
@@ -665,6 +667,7 @@ namespace MyAscii {
                         scorecard_structure_chars[type_index][fill_char],
                         scoreCardAttribute
                     );
+                // And print the last character of the row
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
                     addCharToMap(
                         map,
