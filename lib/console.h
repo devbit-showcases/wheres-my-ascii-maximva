@@ -31,8 +31,11 @@ namespace MyAscii {
             void create_game_screen_buffer(void);
             void drawScorecardTopAndBottom(CHAR_INFO map[], int number_of_columns, int number_of_rows);
             void drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
+            void drawScoreCardDubbleDividerRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
+            void drawScoreCardSingleDividerRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int score, int max_score);
             void drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
+            void drawScoreCardText(char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             bool drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             void hide_cursor(HANDLE * screenBuffer);
@@ -41,6 +44,8 @@ namespace MyAscii {
             void readTitle(void);
             
         private:
+            const int MENU_X_START_POSITION = 117;
+            const int GAME_TOP_MARGIN = 4;
             HANDLE gameScreenBuffer;
             HANDLE defaultScreenBuffer;
             std::string windowTitle = "New window";
