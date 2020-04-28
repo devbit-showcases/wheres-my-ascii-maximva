@@ -17,6 +17,7 @@ int main(void) {
     // Menu item numbers
     const int PLAY_GAME = 0;
     const int SHOW_SCORES = 1;
+    const int ABOUT_PAGE = 2;
     srand(time(NULL));
 
     do {
@@ -38,6 +39,10 @@ int main(void) {
         } else  if (chosen_menu_item == SHOW_SCORES) {
 
             console.showScoreTable();
+
+        } else if (chosen_menu_item == ABOUT_PAGE) {
+
+            console.showAboutPage();
 
         } else {
 

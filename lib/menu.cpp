@@ -12,6 +12,7 @@ namespace MyAscii {
         std::string menu_items[] = {
             "Play a game",
             "Show the high scores",
+            "About ASCII ADVENTURE",
             "Back to reality"
         };
 

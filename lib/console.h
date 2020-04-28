@@ -30,6 +30,7 @@ namespace MyAscii {
             void showEndGameScreen(int number_of_pairs, int correct_guesses);
             bool showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             void showScoreTable(void);
+            void showAboutPage(void);
             int getDifficulty(void);
             std::string getUserName(void);
             void toggleHiddenCharSecret(void);
@@ -44,7 +45,7 @@ namespace MyAscii {
             void hide_cursor(HANDLE * screenBuffer);
             void init_console_window(std::string windowTitle);
             bool showTitle(void);
-            void readTitle(void);
+            std::vector<std::string> readText(std::string filename);
             
         private:
             const int MENU_X_START_POSITION = 117;
@@ -64,6 +65,12 @@ namespace MyAscii {
                 {L'╟', L'─', L'╢'}, // Single division
                 {L'║', L' ', L'║'}, // Empty row
                 {L' ', L' ', L' '}
+            };
+            int difficulty_tile_size[4][2] = {
+                {17, 9},    // Width , Height
+                {13, 7},
+                {13, 7},
+                {9, 5}
             };
             
     };

@@ -10,7 +10,7 @@ namespace MyAscii {
         init_console_window(windowTitle);
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
         create_game_screen_buffer();
-        readTitle();
+        title = readText("title.txt");
     }
 
     void Console::init_console_window(std::string windowTitle) {
@@ -55,16 +55,18 @@ namespace MyAscii {
         return hidden_char_secret;
     }
 
-    void Console::readTitle(void) {
+    std::vector<std::string> Console::readText(std::string filename) {
         // Read title art from file and store it
-        std::ifstream title_file;
-        title_file.open("title.txt");
-        if (title_file.is_open()) {
-            std::string part_title;
-            while (getline(title_file, part_title)){
-                title.push_back(part_title);
+        std::vector<std::string> text;
+        std::ifstream text_file;
+        text_file.open(filename);
+        if (text_file.is_open()) {
+            std::string part_text;
+            while (getline(text_file, part_text)){
+                text.push_back(part_text);
             }
         }
+        return text;
     }
 
     bool Console::showTitle(void) {
@@ -248,8 +250,8 @@ namespace MyAscii {
         SMALL_RECT playfieldRect;
         BOOL succes;
 
-        const int TILE_WIDTH = 9;   // Has to be an uneven number  9 (min), 13, 17 (no exact center with even number)
-        const int TILE_HEIGHT = 5;  // Has to be an uneven number  5 (min), 7, 9
+        const int TILE_WIDTH = difficulty_tile_size[difficulty][0];   // Has to be an uneven number  9 (min), 13, 17 (no exact center with even number)
+        const int TILE_HEIGHT = difficulty_tile_size[difficulty][1];  // Has to be an uneven number  5 (min), 7, 9
         const int MAP_SIZE = TILE_WIDTH * TILE_HEIGHT;
         const int TILE_CENTER = (MAP_SIZE - 1) / 2;
         const int VERTICAL_SPACING = 1;
@@ -315,6 +317,35 @@ namespace MyAscii {
         
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
         return succes;
+    }
+
+    void Console::showAboutPage(void) {
+        system("CLS");
+        const int LEFT_PADDING = 10;
+        const int TOP_MARGIN = 10;
+        const int TOP_PADDING = 5;
+        const int FRAME_WIDTH = 130;
+        const int FRAME_HEIGHT = 40;
+
+        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
+        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
+        int bufferWidth = defaultBufferInfo.dwSize.X;
+
+        const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
+
+        std::vector<std::string> about_page = readText("about.txt");
+
+        COORD cursorCoord;
+        cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
+        cursorCoord.X = START_POSITION + LEFT_PADDING;
+
+        for(unsigned int i = 0; i < about_page.size(); i++) {
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << about_page[i];
+            cursorCoord.Y++;
+        }
+
+        drawBox(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
     void Console::showScoreTable(void) {
@@ -610,6 +641,8 @@ namespace MyAscii {
             GetAsyncKeyState(VK_RETURN);
             GetAsyncKeyState(VK_RETURN);
 
+            Sleep(50); // Without this the colors in sparkle mode look dull
+
             if (GetAsyncKeyState(VK_RETURN)) {
                 delete[] left;
                 delete[] top;
@@ -618,7 +651,6 @@ namespace MyAscii {
                 break;
             }
             
-            Sleep(50); // Without this the colors in sparkle mode look dull
         } while (true);
     }
 

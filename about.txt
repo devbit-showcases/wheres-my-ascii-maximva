@@ -1,0 +1,25 @@
+About ASCII ADVENTURE
+---------------------
+ASCII ADVENTURE is a game about finding your luck, you have to match all the tile sets to complete a game.
+Don't be fooled by the first level, as you work your way up, things get hard, fast.
+
+
+Cheats / Power-ups / Easter-Eggs
+--------------------------------
+Classic cheat from 'The Sims': 'ROSEBUD' would grant you in-game money to build or furnish your house:
+    - Type 'ROSEBUD' in the main menu and the character displayed on all tiles in the next game will be '$'.
+
+The KONAMI code: This cheat-code is present in most all games from KONAMI, it's a real classic:
+    - typing 'UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A' in-game will briefly reveal 5 random tiles.
+
+
+Music credits
+-------------
+Simply Me by Deoxys Beats | https://soundcloud.com/deoxysbeats1
+Music promoted by https://www.free-stock-music.com
+Creative Commons Attribution-ShareAlike 3.0 Unported
+https://creativecommons.org/licenses/by-sa/3.0/deed.en_US
+
+
+
+Press [ENTER] to go back to the main menu.
