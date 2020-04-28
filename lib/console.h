@@ -15,7 +15,8 @@ namespace MyAscii {
         BOTTOM,
         DOUBLE_DIVISION,
         SINGLE_DIVISION,
-        EMPTY_LINE
+        EMPTY_LINE,     // Empty line inside box
+        BLANK_LINE      // Blank line outside box
     };
 
     class Console {
@@ -56,12 +57,13 @@ namespace MyAscii {
             std::string userName = "guest-player";
             bool hidden_char_secret = false;
             std::vector<std::string> title;
-            wchar_t scorecard_structure_chars[5][3] = {
+            wchar_t scorecard_structure_chars[6][3] = {
                 {L'╔', L'═', L'╗'}, // Top
                 {L'╚', L'═', L'╝'}, // Bottom
                 {L'╠', L'═', L'╣'}, // Double division
                 {L'╟', L'─', L'╢'}, // Single division
-                {L'║', L' ', L'║'}  // Empty row
+                {L'║', L' ', L'║'}, // Empty row
+                {L' ', L' ', L' '}
             };
             
     };

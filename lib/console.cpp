@@ -447,6 +447,13 @@ namespace MyAscii {
         drawBox(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
     }
 
+    /**
+     * Why this very elaborate way to print the scorecard to the console during the game?
+     * Using the default properties of the standard console screen buffer allows you to easily use std::cout.
+     * However these default properties make the game feel very sluggish.
+     * The only way i found to easily print text to the console screen during the game
+     * and to make the game run smoothly is to build these custom methods to do it.
+    */
     bool Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
@@ -455,7 +462,7 @@ namespace MyAscii {
 
         const int PLAYER_NAME_ROW_NUMBER = 4;
         const int SCORE_ROW_NUMBER = 5;
-        const int NUMBER_OF_ROWS = 22;
+        const int NUMBER_OF_ROWS = 23;
         const int NUMBER_OF_COLUMNS = 50;
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
@@ -471,11 +478,11 @@ namespace MyAscii {
         print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
         print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
         const char * PLAYER_NAME_TEXT = ("Player: " + userName).c_str();
-        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, scoreCardAttribute);
-        const char * SCORE = std::to_string(correct_guesses).c_str();
-        print_scorecard_text(SCORE, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, scoreCardAttribute);
+        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, scoreCardAttribute); // Print player name
+        const char * SCORE_TEXT = ("Score: " + std::to_string(correct_guesses) + "/" + std::to_string(number_of_pairs)).c_str();
+        print_scorecard_text(SCORE_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, scoreCardAttribute); // Print score
         print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
-        print_scorecard_structure(map, ScoreCardStructure::EMPTY_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8);
+        print_scorecard_structure(map, ScoreCardStructure::BLANK_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8);
 
         // Print the controls info
         print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
@@ -485,8 +492,8 @@ namespace MyAscii {
         print_scorecard_text((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
         print_scorecard_text((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 16, scoreCardAttribute);
         print_scorecard_text((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
-        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
-        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 19, scoreCardAttribute);
+        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 19, scoreCardAttribute);
+        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 20, scoreCardAttribute);
 
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
