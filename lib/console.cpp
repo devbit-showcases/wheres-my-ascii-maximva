@@ -460,23 +460,23 @@ namespace MyAscii {
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
 
-        // Draw the empty scorecard box
-        drawScorecardTopAndBottom(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+        // Print the empty scorecard box
+        print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 0);
         for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
-            drawScoreCardEmptyRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
+            print_scorecard_structure(map, ScoreCardStructure::EMPTY_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
         }
+        print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, NUMBER_OF_ROWS - 1);
 
-        // Draw the score
+        // Print the game info
         drawScoreCardText((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
-        drawScoreCardSingleDividerRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
-
+        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
         drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
         drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
-        drawScoreCardDubbleDividerRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
+        print_scorecard_structure(map, ScoreCardStructure::DOUBLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
 
+        // Print the controls info
         drawScoreCardText((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8, 0xE9);
-        drawScoreCardSingleDividerRow(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
-
+        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
         drawScoreCardText((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, scoreCardAttribute);
         drawScoreCardText((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
         drawScoreCardText((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
@@ -484,13 +484,11 @@ namespace MyAscii {
         drawScoreCardText((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
         drawScoreCardText((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
 
-
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
         coordinateBufferSize.X = NUMBER_OF_COLUMNS;
         topLeftCoordinate.Y = 0;
         topLeftCoordinate.X = 0;
-
         (&srcWriteRect)->Top = GAME_TOP_MARGIN;
         (&srcWriteRect)->Left = MENU_X_START_POSITION;
         (&srcWriteRect)->Bottom = GAME_TOP_MARGIN + NUMBER_OF_ROWS;
@@ -504,7 +502,7 @@ namespace MyAscii {
             topLeftCoordinate,
             (&srcWriteRect)
         );
-       
+        
         return succes;
     }
 
@@ -656,7 +654,7 @@ namespace MyAscii {
         }
     }
 
-        void Console::drawScoreCardText(char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
+    void Console::drawScoreCardText(char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
         const int LEFT_MARGIN = 4;
         const int RIGHT_MARGIN = 1;
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
@@ -674,86 +672,81 @@ namespace MyAscii {
         }
     }
 
-    void Console::drawScoreCardEmptyRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
+    void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
+        wchar_t left_char, fil_char, right_char;
+        
+        if (type == ScoreCardStructure::TOP) {
+            left_char = L'╔';
+            fil_char = L'═';
+            right_char = L'╗';
+        } else if (type == ScoreCardStructure::BOTTOM) {
+            left_char = L'╚';
+            fil_char = L'═';
+            right_char = L'╝';
+        } else if (type == ScoreCardStructure::DOUBLE_DIVISION) {
+            left_char = L'╠';
+            fil_char = L'═';
+            right_char = L'╣';
+        } else if (type == ScoreCardStructure::SINGLE_DIVISION) {
+            left_char = L'╟';
+            fil_char = L'─';
+            right_char = L'╢';
+        } else if (type == ScoreCardStructure::EMPTY_LINE) {
+            left_char = L'║';
+            fil_char = L' ';
+            right_char = L'║';
+        }
+
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    addCharToMap(map, MAP_POSITION, L'║', scoreCardAttribute);
+                    addCharToMap(map, MAP_POSITION, left_char, scoreCardAttribute);
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L' ', scoreCardAttribute);
+                    addCharToMap(map, MAP_POSITION, fil_char, scoreCardAttribute);
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L'║', scoreCardAttribute);
+                    addCharToMap(map, MAP_POSITION, right_char, scoreCardAttribute);
                 }
             }
         }
     }
 
-    void Console::drawScoreCardDubbleDividerRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
-        for (int y = 0; y < NUMBER_OF_ROWS; y++) {
-            for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-                const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-                if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    addCharToMap(map, MAP_POSITION, L'╠', scoreCardAttribute);
-                } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
-                } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L'╣', scoreCardAttribute);
-                }
-            }
-        }
-    }
 
-    void Console::drawScoreCardSingleDividerRow(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
-        for (int y = 0; y < NUMBER_OF_ROWS; y++) {
-            for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-                const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-                if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    addCharToMap(map, MAP_POSITION, L'╟', scoreCardAttribute);
-                } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L'─', scoreCardAttribute);
-                } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, L'╢', scoreCardAttribute);
-                }
-            }
-        }
-    }
+    // void Console::drawScorecardTopAndBottom(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS) {
+    //     const int FIRST_ROW_START = 0;
+    //     const int FIRST_ROW_END = (NUMBER_OF_COLUMNS - 1);
+    //     const int FINAL_ROW_START = (NUMBER_OF_COLUMNS * (NUMBER_OF_ROWS - 1));
+    //     const int FINAL_ROW_END = (NUMBER_OF_COLUMNS * NUMBER_OF_ROWS) - 1;
 
-    void Console::drawScorecardTopAndBottom(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS) {
-        const int FIRST_ROW_START = 0;
-        const int FIRST_ROW_END = (NUMBER_OF_COLUMNS - 1);
-        const int FINAL_ROW_START = (NUMBER_OF_COLUMNS * (NUMBER_OF_ROWS - 1));
-        const int FINAL_ROW_END = (NUMBER_OF_COLUMNS * NUMBER_OF_ROWS) - 1;
+    //     // Used Unicode chars for reference
+    //     // ╔═══════════════╗
+    //     // ║               ║
+    //     // ╟───────────────╢
+    //     // ╠═══════════════╣
+    //     // ╚═══════════════╝
 
-        // Used Unicode chars for reference
-        // ╔═══════════════╗
-        // ║               ║
-        // ╟───────────────╢
-        // ╠═══════════════╣
-        // ╚═══════════════╝
-
-        for (int y = 0; y < NUMBER_OF_ROWS; y++) {
-            for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-                const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-                // Draw first row of scorecard
-                if (MAP_POSITION == FIRST_ROW_START) {
-                    addCharToMap(map, MAP_POSITION, L'╔', scoreCardAttribute);
-                } else if (MAP_POSITION > FIRST_ROW_START && MAP_POSITION < FIRST_ROW_END) {
-                    addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
-                } else if(MAP_POSITION == FIRST_ROW_END) {
-                    addCharToMap(map, MAP_POSITION, L'╗', scoreCardAttribute);
-                }
-                // Draw final row of scorecard
-                if (MAP_POSITION == FINAL_ROW_START) {
-                    addCharToMap(map, MAP_POSITION, L'╚', scoreCardAttribute);
-                } else if (MAP_POSITION > FINAL_ROW_START && MAP_POSITION < FINAL_ROW_END) {
-                    addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
-                } else if(MAP_POSITION == FINAL_ROW_END) {
-                    addCharToMap(map, MAP_POSITION, L'╝', scoreCardAttribute);
-                }
-            }
-        }
-    }
+    //     for (int y = 0; y < NUMBER_OF_ROWS; y++) {
+    //         for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
+    //             const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
+    //             // Draw first row of scorecard
+    //             if (MAP_POSITION == FIRST_ROW_START) {
+    //                 addCharToMap(map, MAP_POSITION, L'╔', scoreCardAttribute);
+    //             } else if (MAP_POSITION > FIRST_ROW_START && MAP_POSITION < FIRST_ROW_END) {
+    //                 addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
+    //             } else if(MAP_POSITION == FIRST_ROW_END) {
+    //                 addCharToMap(map, MAP_POSITION, L'╗', scoreCardAttribute);
+    //             }
+    //             // Draw final row of scorecard
+    //             if (MAP_POSITION == FINAL_ROW_START) {
+    //                 addCharToMap(map, MAP_POSITION, L'╚', scoreCardAttribute);
+    //             } else if (MAP_POSITION > FINAL_ROW_START && MAP_POSITION < FINAL_ROW_END) {
+    //                 addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
+    //             } else if(MAP_POSITION == FINAL_ROW_END) {
+    //                 addCharToMap(map, MAP_POSITION, L'╝', scoreCardAttribute);
+    //             }
+    //         }
+    //     }
+    // }
 
     void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
