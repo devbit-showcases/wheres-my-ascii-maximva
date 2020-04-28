@@ -36,10 +36,7 @@ namespace MyAscii {
 
         private:
             void create_game_screen_buffer(void);
-            // void drawScorecardTopAndBottom(CHAR_INFO map[], int number_of_columns, int number_of_rows);
             void drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int score, int max_score);
-            void drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
-            void drawScoreCardText(char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
             void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
             bool drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             void hide_cursor(HANDLE * screenBuffer);
@@ -47,6 +44,7 @@ namespace MyAscii {
             bool showTitle(void);
             void readTitle(void);
             void print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
+            void print_scorecard_text(const char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
             
         private:
             const int MENU_X_START_POSITION = 117;
@@ -59,11 +57,16 @@ namespace MyAscii {
             std::string userName = "guest-player";
             bool hidden_char_secret = false;
             std::vector<std::string> title;
+            wchar_t scorecard_structure_chars[5][3] = {
+                {L'╔', L'═', L'╗'}, // Top
+                {L'╚', L'═', L'╝'}, // Bottom
+                {L'╠', L'═', L'╣'}, // Double division
+                {L'╟', L'─', L'╢'}, // Single division
+                {L'║', L' ', L'║'}  // Empty row
+            };
             
     };
-
 };
-
 
 // Used Unicode chars for reference
         // ╔═══════════════╗

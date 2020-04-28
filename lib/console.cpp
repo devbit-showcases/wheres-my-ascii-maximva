@@ -468,21 +468,26 @@ namespace MyAscii {
         print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, NUMBER_OF_ROWS - 1);
 
         // Print the game info
-        drawScoreCardText((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
+        print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
         print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
-        drawScoreCardPlayerName(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER);
+
+        const char * PLAYER_NAME_TEXT = ("Player: " + userName).c_str();
+        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, 0xE9);
+
+
+
         drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
         print_scorecard_structure(map, ScoreCardStructure::DOUBLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
 
         // Print the controls info
-        drawScoreCardText((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8, 0xE9);
+        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8, 0xE9);
         print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
-        drawScoreCardText((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, scoreCardAttribute);
-        drawScoreCardText((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
-        drawScoreCardText((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
-        drawScoreCardText((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 15, scoreCardAttribute);
-        drawScoreCardText((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
-        drawScoreCardText((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
+        print_scorecard_text((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, scoreCardAttribute);
+        print_scorecard_text((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
+        print_scorecard_text((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
+        print_scorecard_text((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 15, scoreCardAttribute);
+        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
+        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
 
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
@@ -502,7 +507,7 @@ namespace MyAscii {
             topLeftCoordinate,
             (&srcWriteRect)
         );
-        
+
         return succes;
     }
 
@@ -630,41 +635,20 @@ namespace MyAscii {
             }
         }
     }
-    
-    void Console::drawScoreCardPlayerName(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
+
+    void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
         const int LEFT_MARGIN = 4;
         const int RIGHT_MARGIN = 1;
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
-        const char * PLAYER_NAME = userName.c_str();
-        const char * PLAYER_NAME_PREFIX = "Player: ";
-        unsigned int playerNameSize = 0;
-        unsigned int playerNamePrefixSize = 0;
-        while (PLAYER_NAME[playerNameSize] != '\0') playerNameSize++;
-        while (PLAYER_NAME_PREFIX[playerNamePrefixSize] != '\0') playerNamePrefixSize++;
 
+        // Determine the size of the text
+        unsigned int text_size = 0;
+        while (TEXT[text_size] != '\0') text_size++;
+
+        // Print the text
         for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
-            if (!(i - START_POSITION > playerNamePrefixSize)) {
-                addCharToMap(map, i, PLAYER_NAME_PREFIX[i - START_POSITION], scoreCardAttribute);
-            } else if (!(i - START_POSITION > playerNameSize + playerNamePrefixSize)) {
-                addCharToMap(map, i, PLAYER_NAME[i - START_POSITION - playerNamePrefixSize - 1], scoreCardAttribute);
-            } else {
-                addCharToMap(map, i, L' ', scoreCardAttribute);
-            }
-        }
-    }
-
-    void Console::drawScoreCardText(char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
-        const int LEFT_MARGIN = 4;
-        const int RIGHT_MARGIN = 1;
-        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
-        const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
-        const char * TEXT = text;
-        unsigned int playerNamePrefixSize = 0;
-        while (TEXT[playerNamePrefixSize] != '\0') playerNamePrefixSize++;
-
-        for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
-            if (!(i - START_POSITION > playerNamePrefixSize)) {
+            if (!(i - START_POSITION > text_size)) {
                 addCharToMap(map, i, TEXT[i - START_POSITION], text_attribute);
             } else {
                 addCharToMap(map, i, L' ', scoreCardAttribute);
@@ -673,80 +657,39 @@ namespace MyAscii {
     }
 
     void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
-        wchar_t left_char, fil_char, right_char;
-        
-        if (type == ScoreCardStructure::TOP) {
-            left_char = L'╔';
-            fil_char = L'═';
-            right_char = L'╗';
-        } else if (type == ScoreCardStructure::BOTTOM) {
-            left_char = L'╚';
-            fil_char = L'═';
-            right_char = L'╝';
-        } else if (type == ScoreCardStructure::DOUBLE_DIVISION) {
-            left_char = L'╠';
-            fil_char = L'═';
-            right_char = L'╣';
-        } else if (type == ScoreCardStructure::SINGLE_DIVISION) {
-            left_char = L'╟';
-            fil_char = L'─';
-            right_char = L'╢';
-        } else if (type == ScoreCardStructure::EMPTY_LINE) {
-            left_char = L'║';
-            fil_char = L' ';
-            right_char = L'║';
-        }
+        int type_index = (int) type;
+        int left_char = 0;
+        int fill_char = 1;
+        int right_char = 2;
 
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    addCharToMap(map, MAP_POSITION, left_char, scoreCardAttribute);
+                    addCharToMap(
+                        map,
+                        MAP_POSITION,
+                        scorecard_structure_chars[type_index][left_char],
+                        scoreCardAttribute
+                    );
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, fil_char, scoreCardAttribute);
+                    addCharToMap(
+                        map,
+                        MAP_POSITION,
+                        scorecard_structure_chars[type_index][fill_char],
+                        scoreCardAttribute
+                    );
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(map, MAP_POSITION, right_char, scoreCardAttribute);
+                    addCharToMap(
+                        map,
+                        MAP_POSITION,
+                        scorecard_structure_chars[type_index][right_char],
+                        scoreCardAttribute
+                    );
                 }
             }
         }
     }
-
-
-    // void Console::drawScorecardTopAndBottom(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS) {
-    //     const int FIRST_ROW_START = 0;
-    //     const int FIRST_ROW_END = (NUMBER_OF_COLUMNS - 1);
-    //     const int FINAL_ROW_START = (NUMBER_OF_COLUMNS * (NUMBER_OF_ROWS - 1));
-    //     const int FINAL_ROW_END = (NUMBER_OF_COLUMNS * NUMBER_OF_ROWS) - 1;
-
-    //     // Used Unicode chars for reference
-    //     // ╔═══════════════╗
-    //     // ║               ║
-    //     // ╟───────────────╢
-    //     // ╠═══════════════╣
-    //     // ╚═══════════════╝
-
-    //     for (int y = 0; y < NUMBER_OF_ROWS; y++) {
-    //         for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
-    //             const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-    //             // Draw first row of scorecard
-    //             if (MAP_POSITION == FIRST_ROW_START) {
-    //                 addCharToMap(map, MAP_POSITION, L'╔', scoreCardAttribute);
-    //             } else if (MAP_POSITION > FIRST_ROW_START && MAP_POSITION < FIRST_ROW_END) {
-    //                 addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
-    //             } else if(MAP_POSITION == FIRST_ROW_END) {
-    //                 addCharToMap(map, MAP_POSITION, L'╗', scoreCardAttribute);
-    //             }
-    //             // Draw final row of scorecard
-    //             if (MAP_POSITION == FINAL_ROW_START) {
-    //                 addCharToMap(map, MAP_POSITION, L'╚', scoreCardAttribute);
-    //             } else if (MAP_POSITION > FINAL_ROW_START && MAP_POSITION < FINAL_ROW_END) {
-    //                 addCharToMap(map, MAP_POSITION, L'═', scoreCardAttribute);
-    //             } else if(MAP_POSITION == FINAL_ROW_END) {
-    //                 addCharToMap(map, MAP_POSITION, L'╝', scoreCardAttribute);
-    //             }
-    //         }
-    //     }
-    // }
 
     void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
