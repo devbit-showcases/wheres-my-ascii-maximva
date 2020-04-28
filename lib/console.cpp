@@ -470,24 +470,23 @@ namespace MyAscii {
         // Print the game info
         print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
         print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
-
         const char * PLAYER_NAME_TEXT = ("Player: " + userName).c_str();
-        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, 0xE9);
-
-
-
-        drawScoreCardScore(map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, correct_guesses, number_of_pairs);
-        print_scorecard_structure(map, ScoreCardStructure::DOUBLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
+        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, scoreCardAttribute);
+        const char * SCORE = std::to_string(correct_guesses).c_str();
+        print_scorecard_text(SCORE, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, scoreCardAttribute);
+        print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
+        print_scorecard_structure(map, ScoreCardStructure::EMPTY_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8);
 
         // Print the controls info
-        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8, 0xE9);
-        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
-        print_scorecard_text((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, scoreCardAttribute);
-        print_scorecard_text((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
-        print_scorecard_text((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
-        print_scorecard_text((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 15, scoreCardAttribute);
-        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
-        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
+        print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
+        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 10, 0xE9);
+        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11);
+        print_scorecard_text((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 13, scoreCardAttribute);
+        print_scorecard_text((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
+        print_scorecard_text((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 16, scoreCardAttribute);
+        print_scorecard_text((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
+        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 18, scoreCardAttribute);
+        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 19, scoreCardAttribute);
 
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
@@ -614,26 +613,6 @@ namespace MyAscii {
             
             Sleep(50); // Without this the colors in sparkle mode look dull
         } while (true);
-    }
-
-    void Console::drawScoreCardScore(CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int SCORE, int MAX_SCORE) {
-        // const char * max_score = std::to_string(MAX_SCORE).c_str();
-        const char * score = std::to_string(SCORE).c_str();
-        const int LEFT_MARGIN = 4; // 1 for border + actual margin
-        const int RIGHT_MARGIN = 1; // 1 for border + actual margin
-        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
-        const int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
-
-        unsigned int count = 0;
-        
-        for (int i = START_POSITION; i < END_OF_LINE; i++) {
-            if (!(count > sizeof(score)/sizeof(int))) {
-                addCharToMap(map, i, score[count], scoreCardAttribute);
-                count++;
-            } else {
-                addCharToMap(map, i, L' ', scoreCardAttribute);
-            }
-        }
     }
 
     void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
