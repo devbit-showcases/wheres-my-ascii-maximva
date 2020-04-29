@@ -8,23 +8,23 @@ namespace MyAscii {
         this->difficulty = difficulty;
         set_game_parameters(difficulty);
         bool hidden_char_secret = console->hiddenCharState();
-        this->playfield = PlayField(fieldEdgeSize, pair_size, difficulty, hidden_char_secret);
+        this->playfield = PlayField(fieldEdgeSize, setSize, difficulty, hidden_char_secret);
         this->tiles = playfield.get_playfield();
     }
 
-    void Game::show_card_cheat(int cards_turned, int selectedTileX, int selectedTileY) {
-        unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correct_guesses * pair_size) - cards_turned;
-        std::vector<int> used_indexes = {};
+    void Game::show_card_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
+        unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correctGuesses * setSize) - cardsTurned;
+        std::vector<int> usedIndexes = {};
 
         for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
-            int random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+            int randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
 
             // Check if tile is turned or has been used in this show of cards allready
-            while (tiles[random_index].is_flipped() || std::count(used_indexes.begin(), used_indexes.end(), random_index)) {
-                random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
+            while (tiles[randomIndex].is_flipped() || std::count(usedIndexes.begin(), usedIndexes.end(), randomIndex)) {
+                randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
             }
-            used_indexes.push_back(random_index);
-            shortly_turn_tile(random_index, 500);
+            usedIndexes.push_back(randomIndex);
+            shortly_turn_tile(randomIndex, 500);
         }
     }
 
@@ -34,30 +34,30 @@ namespace MyAscii {
      */
     void Game::start() {
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-        console->showScoreCard(number_of_pairs, correct_guesses, unCompleteGame);
+        console->showScoreCard(numberOfPairs, correctGuesses, unCompleteGame);
         double end_time;
         double start_time = GetTickCount();
 
         do {
             clear_returns_spaces();
-            if (!correct_guess) flip_back_wrong_guess();
-            select_tile();
+            if (!correctGuess) flip_back_wrong_guess();
+            allow_player_input();
             int currentSelectedTile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
             handle_current_tile(currentSelectedTile);
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-            unCompleteGame = (correct_guesses == number_of_pairs ? false : true);
+            unCompleteGame = (correctGuesses == numberOfPairs ? false : true);
         } while (unCompleteGame && noEscape);
 
         end_time = GetTickCount();
         save_gamescore(end_time, start_time);
-        console->print_endgame_screen(number_of_pairs, correct_guesses);
+        console->print_endgame_screen(numberOfPairs, correctGuesses);
     }
 
 
     /**
      * Allow player to select a tile
      */
-    void Game::select_tile(void) {
+    void Game::allow_player_input(void) {
         do {
             system("pause>nul");    // pause after keystroke
             if (GetAsyncKeyState(VK_UP)) {
@@ -66,26 +66,26 @@ namespace MyAscii {
                     selectedTileY--;
                 }
                 // Add keystroke to cheat sequence
-                cheat_sequence.push_back("up");
+                cheatSequence.push_back("up");
             } else if (GetAsyncKeyState(VK_DOWN)) {
                 if (selectedTileY < (fieldEdgeSize - 1)) {
                     selectedTileY++;
                 }
-                cheat_sequence.push_back("down");
+                cheatSequence.push_back("down");
             } else if (GetAsyncKeyState(VK_LEFT)) {
                 if (selectedTileX != 0) {
                     selectedTileX--;
                 }
-                cheat_sequence.push_back("left");
+                cheatSequence.push_back("left");
             } else if (GetAsyncKeyState(VK_RIGHT)) {
                 if (selectedTileX < (fieldEdgeSize - 1)) {
                     selectedTileX++;
                 }
-                cheat_sequence.push_back("right");
+                cheatSequence.push_back("right");
             } else if (GetKeyState(66) & 8000) {
-                cheat_sequence.push_back("B");
+                cheatSequence.push_back("B");
             } else if (GetKeyState(65) & 8000) {
-                cheat_sequence.push_back("A");
+                cheatSequence.push_back("A");
             } else if (GetAsyncKeyState(VK_ESCAPE)) {
                 noEscape = false; // Escape to main menu with ESC key
                 break;
@@ -112,12 +112,12 @@ namespace MyAscii {
      */
     void Game::flip_back_wrong_guess(void) {
         Sleep(600);
-        for (unsigned int i = 0; i < guess_possitions.size(); i++) {
-            tiles[guess_possitions[i]].flip_tile();
+        for (unsigned int i = 0; i < guessPossitions.size(); i++) {
+            tiles[guessPossitions[i]].flip_tile();
         }
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         reset_guess_parameters();
-        correct_guess = true;
+        correctGuess = true;
     }
 
 
@@ -125,19 +125,19 @@ namespace MyAscii {
      * Check if a cheat sequence has been entered
      */
     void Game::check_for_cheats(void) {
-        if (cheat_sequence.size() > cheat.size()) {
-            cheat_sequence.erase(cheat_sequence.begin());
+        if (cheatSequence.size() > cheat.size()) {
+            cheatSequence.erase(cheatSequence.begin());
         }
-        if (cheat.size() == cheat_sequence.size()) {
-            for (unsigned int i = 0; i < cheat_sequence.size(); i++) {
-                if (cheat[i] == cheat_sequence[i]) {
-                    cheat_sequence_correct = true;
+        if (cheat.size() == cheatSequence.size()) {
+            for (unsigned int i = 0; i < cheatSequence.size(); i++) {
+                if (cheat[i] == cheatSequence[i]) {
+                    correctCheatSequence = true;
                 } else {
-                    cheat_sequence_correct = false;
+                    correctCheatSequence = false;
                     break;
                 }
             }
-            if (cheat_sequence_correct) {
+            if (correctCheatSequence) {
                 show_card_cheat(cardsTurned, selectedTileX, selectedTileY);
             }
         }
@@ -167,16 +167,16 @@ namespace MyAscii {
             cardsTurned++;
             if (cardsTurned == 1) {
                 guessId = tiles[currentSelectedTile].get_id();
-                guess_possitions.push_back(currentSelectedTile);
-            } else if (cardsTurned < pair_size && guessId == tiles[currentSelectedTile].get_id()) {
-                guess_possitions.push_back(currentSelectedTile);
-            } else if (cardsTurned == pair_size && guessId == tiles[currentSelectedTile].get_id()) {
-                correct_guesses++;
-                console->showScoreCard(number_of_pairs, correct_guesses, unCompleteGame);
+                guessPossitions.push_back(currentSelectedTile);
+            } else if (cardsTurned < setSize && guessId == tiles[currentSelectedTile].get_id()) {
+                guessPossitions.push_back(currentSelectedTile);
+            } else if (cardsTurned == setSize && guessId == tiles[currentSelectedTile].get_id()) {
+                correctGuesses++;
+                console->showScoreCard(numberOfPairs, correctGuesses, unCompleteGame);
                 reset_guess_parameters();
             } else {
-                guess_possitions.push_back(currentSelectedTile);
-                correct_guess = false;
+                guessPossitions.push_back(currentSelectedTile);
+                correctGuess = false;
             }
         }
     }
@@ -188,7 +188,7 @@ namespace MyAscii {
     void Game::reset_guess_parameters(void) {
         cardsTurned = 0;
         guessId = 0;
-        guess_possitions.clear();
+        guessPossitions.clear();
     }
 
 
@@ -197,7 +197,7 @@ namespace MyAscii {
      */
     void Game::save_gamescore(double endTime, double startTime) {
         double elapsed_time = (endTime - startTime) / 1000;
-        Score score((*player).get_name(), difficulty, correct_guesses, number_of_pairs, elapsed_time);
+        Score score((*player).get_name(), difficulty, correctGuesses, numberOfPairs, elapsed_time);
         ScoreCard scorecard;
         scorecard.save_score(&score);
     }
@@ -208,7 +208,7 @@ namespace MyAscii {
      */
     void Game::set_game_parameters(unsigned int difficulty) {
         fieldEdgeSize = gameParameters[difficulty][0];
-        pair_size = gameParameters[difficulty][1];
-        number_of_pairs = (fieldEdgeSize * fieldEdgeSize) / pair_size;
+        setSize = gameParameters[difficulty][1];
+        numberOfPairs = (fieldEdgeSize * fieldEdgeSize) / setSize;
     }
 }

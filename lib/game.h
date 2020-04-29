@@ -30,33 +30,30 @@ namespace MyAscii {
             void check_for_cheats(void);
             void flip_back_wrong_guess(void);
             void clear_returns_spaces(void);
-            void select_tile(void);
+            void allow_player_input(void);
 
         private:
             Player * player;
             Console * console;
             PlayField playfield;
             bool unCompleteGame = true;
-            bool correct_guess = true;
+            bool correctGuess = true;
             bool noEscape = true;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = 0;
-            unsigned int pair_size = 0;
+            unsigned int setSize = 0;
             unsigned int guessId = 0;
             unsigned int selectedTileX = 0;
             unsigned int selectedTileY = 0;
             unsigned int cardsTurned = 0;
-            int correct_guesses = 0;
-            int number_of_pairs = 0;
+            int correctGuesses = 0;
+            int numberOfPairs = 0;
             std::vector<int> correctAnswers;
             std::vector<Tile> tiles;
-            std::vector<int> guess_possitions;
-
-
+            std::vector<int> guessPossitions;
             std::vector<std::string> cheat = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};
-            std::vector<std::string> cheat_sequence = {};
-            bool cheat_sequence_correct = false;
-
+            std::vector<std::string> cheatSequence = {};
+            bool correctCheatSequence = false;
             // Order: {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
                 {4, 2},
