@@ -10,6 +10,7 @@ namespace MyAscii {
 
     class PlayField {
         public:
+            PlayField(void);
             PlayField(unsigned int fieldEdgeSize, unsigned int pairSize, unsigned int difficulty, bool secret);
             
         public:

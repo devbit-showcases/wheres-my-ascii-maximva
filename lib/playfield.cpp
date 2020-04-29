@@ -3,6 +3,15 @@
 namespace MyAscii {
 
     /**
+     * Creates an instance of PlayField with default values
+     */
+    PlayField::PlayField(void)
+    :PlayField(4, 2, 0, false) {
+
+    }
+
+
+    /**
      * Creates an instance of PlayField
      */
     PlayField::PlayField(unsigned int playfieldEdgesize, unsigned int setSize, unsigned int difficulty, bool secret) {

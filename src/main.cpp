@@ -14,7 +14,6 @@
 using namespace MyAscii;
 
 int main(void) {
-    // Menu item numbers
     const int PLAY_GAME = 0;
     const int SHOW_SCORES = 1;
     const int ABOUT_PAGE = 2;
@@ -38,9 +37,9 @@ int main(void) {
             int difficulty = console.getDifficulty();
             Player player;
             player.set_name(userName);
-            Game game(&player, &console);
             PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-            Score score = game.start(difficulty);
+            Game game(&player, &console, difficulty);
+            game.start();
             PlaySound(NULL, 0, 0); // Stops the music
 
         } else  if (chosen_menu_item == SHOW_SCORES) {
