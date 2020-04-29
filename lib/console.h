@@ -27,7 +27,7 @@ namespace MyAscii {
         public:
             bool showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
             bool showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
-            void showEndGameScreen(int number_of_pairs, int correct_guesses);
+            void print_endgame_screen(int number_of_pairs, int correct_guesses);
             bool showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             void showScoreTable(void);
             void showAboutPage(void);
@@ -35,19 +35,29 @@ namespace MyAscii {
             std::string getUserName(void);
             void toggleHiddenCharSecret(void);
             bool hiddenCharState(void);
+            void hide_cursor(HANDLE * screenBuffer);
 
         private:
-            void create_game_screen_buffer(void);
+            void create_generic_screenbuffer(HANDLE * screenBuffer);
             void print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void print_scorecard_text(const char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
-            void addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute);
-            bool drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
-            void hide_cursor(HANDLE * screenBuffer);
+            void add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute);
+            bool draw_frame(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             void init_console_window(std::string windowTitle);
             bool showTitle(void);
-            std::vector<std::string> readText(std::string filename);
-            
+            std::vector<std::string> read_textfile(std::string filename);
+            void reset_coord(COORD * coord);
+            void set_coord(COORD * coord, int xPosition, int yPosition);
+            int get_screenbuffer_width(HANDLE * screenbuffer);
+            int sizeof_text(const char * TEXT);
+
         private:
+
+            // Margin and padding values
+            const int SCORECARD_LEFT_MARGIN = 4;
+            const int SCORECARD_RIGHT_MARGIN = 1;
+
+
             const int MENU_X_START_POSITION = 117;
             const int GAME_TOP_MARGIN = 4;
             HANDLE gameScreenBuffer;

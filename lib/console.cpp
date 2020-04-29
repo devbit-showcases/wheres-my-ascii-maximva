@@ -9,8 +9,9 @@ namespace MyAscii {
     Console::Console(std::string windowTitle) {
         init_console_window(windowTitle);
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
-        create_game_screen_buffer();
-        title = readText("title.txt");
+        create_generic_screenbuffer(&gameScreenBuffer);
+        hide_cursor(&gameScreenBuffer);
+        title = read_textfile("title.txt");
     }
 
     void Console::init_console_window(std::string windowTitle) {
@@ -22,6 +23,10 @@ namespace MyAscii {
         ShowWindow(console, SW_MAXIMIZE); // Go to full-screen
     }
 
+
+    /**
+     * Hides the cursor on the provided screenbuffer 
+     */
     void Console::hide_cursor(HANDLE * screenBuffer) {
         CONSOLE_CURSOR_INFO     cursorInfo;
         GetConsoleCursorInfo((*screenBuffer), &cursorInfo);
@@ -29,14 +34,34 @@ namespace MyAscii {
         SetConsoleCursorInfo((*screenBuffer), &cursorInfo);
     }
 
-    void Console::create_game_screen_buffer(void) { 
-        gameScreenBuffer = CreateConsoleScreenBuffer(
+
+    /**
+     * Creates generic read/write screenbuffer
+     */ 
+    void Console::create_generic_screenbuffer(HANDLE * screenBuffer) { 
+        (*screenBuffer) = CreateConsoleScreenBuffer(
             GENERIC_READ | GENERIC_WRITE,
             FILE_SHARE_READ | FILE_SHARE_WRITE,
             NULL,
             CONSOLE_TEXTMODE_BUFFER,
             NULL);
-        hide_cursor(&gameScreenBuffer);
+    }
+
+
+    /**
+     * Returns vector with lines from provided textfile as elements
+     */
+    std::vector<std::string> Console::read_textfile(std::string filename) {
+        std::vector<std::string> text;
+        std::ifstream text_file;
+        text_file.open(filename);
+        if (text_file.is_open()) {
+            std::string part_text;
+            while (getline(text_file, part_text)){
+                text.push_back(part_text);
+            }
+        }
+        return text;
     }
 
     int Console::getDifficulty(void) {
@@ -55,29 +80,14 @@ namespace MyAscii {
         return hidden_char_secret;
     }
 
-    std::vector<std::string> Console::readText(std::string filename) {
-        // Read title art from file and store it
-        std::vector<std::string> text;
-        std::ifstream text_file;
-        text_file.open(filename);
-        if (text_file.is_open()) {
-            std::string part_text;
-            while (getline(text_file, part_text)){
-                text.push_back(part_text);
-            }
-        }
-        return text;
-    }
 
     bool Console::showTitle(void) {
-        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT titleRect;
         BOOL succes;
 
-        int bufferWidth = defaultBufferInfo.dwSize.X;
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         int title_card_attribute = 0xEC;
         const int TITLE_CARD_WIDTH = 130;
         const int TITLE_CARD_HEIGHT = 16;
@@ -114,25 +124,24 @@ namespace MyAscii {
         );
 
         // Print the title to the console
-        COORD title_coord;
-        title_coord.X = TITLE_CARD_START_POSITION + LEFT_MARGIN;
-        title_coord.Y = TOP_MARGIN + 2;
-        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+        COORD tileCoord;
+        tileCoord.X = TITLE_CARD_START_POSITION + LEFT_MARGIN;
+        tileCoord.Y = TOP_MARGIN + 2;
+        SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
 
         for (unsigned int i = 0; i < 6; i++) {  // for some reason tile.size() doesn't, reprints title every time...
             std::cout << title[i];
-            title_coord.Y++;
-            SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+            tileCoord.Y++;
+            SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
         }
 
-        title_coord.Y += 4;
-        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+        tileCoord.Y += 4;
+        SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
         std::cout << "Use the [UP] and [DOWN] arrow keys to navigate, [ENTER] to select.";
 
         // Reset cursor position
-        title_coord.X = 0;
-        title_coord.Y = 0;
-        SetConsoleCursorPosition(defaultScreenBuffer, title_coord);
+        reset_coord(&tileCoord);
+        SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
 
         return succes;
     }
@@ -143,14 +152,12 @@ namespace MyAscii {
         }
         showTitle();
 
-        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
 
-        int bufferWidth = defaultBufferInfo.dwSize.X;
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int TOP_MENU_MARGIN = 25;
         const int MENU_ITEM_HEIGHT = 3;
         const int MENU_ITEM_WIDTH = 75;
@@ -192,10 +199,8 @@ namespace MyAscii {
 
             const int USER_INPUT_SPACER = ((user_input_needed) && (y == 1 || y == 2) ? 5 : 0);
 
-            coordinateBufferSize.Y = MENU_ITEM_HEIGHT;
-            coordinateBufferSize.X = MENU_ITEM_WIDTH;
-            topLeftCoordinate.Y = 0;
-            topLeftCoordinate.X = 0;
+            set_coord(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+            reset_coord(&topLeftCoordinate);
 
             (&srcWriteRect)->Top = USER_INPUT_SPACER + TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
             (&srcWriteRect)->Left = START_POSITION;
@@ -295,10 +300,8 @@ namespace MyAscii {
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
-                coordinateBufferSize.Y = TILE_HEIGHT;
-                coordinateBufferSize.X = TILE_WIDTH;
-                topLeftCoordinate.Y = 0;
-                topLeftCoordinate.X = 0;
+                set_coord(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
+                reset_coord(&topLeftCoordinate);
 
                 (&playfieldRect)->Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
                 (&playfieldRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
@@ -326,14 +329,10 @@ namespace MyAscii {
         const int TOP_PADDING = 5;
         const int FRAME_WIDTH = 130;
         const int FRAME_HEIGHT = 40;
-
-        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
-        int bufferWidth = defaultBufferInfo.dwSize.X;
-
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
 
-        std::vector<std::string> about_page = readText("about.txt");
+        std::vector<std::string> about_page = read_textfile("about.txt");
 
         COORD cursorCoord;
         cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
@@ -345,7 +344,7 @@ namespace MyAscii {
             cursorCoord.Y++;
         }
 
-        drawBox(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
+        draw_frame(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
     void Console::showScoreTable(void) {
@@ -359,11 +358,7 @@ namespace MyAscii {
         const int FRAME_WIDTH = 130;
         const int FRAME_HEIGHT = 40;
         const int MAX_NAME_SIZE = 15;
-
-        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
-        int bufferWidth = defaultBufferInfo.dwSize.X;
-
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
         const int NAME_COLUMN_OFFSET = 10;
         const int SCORE_COLUMN_OFFSET = 17;
@@ -372,8 +367,7 @@ namespace MyAscii {
         const int DIFFICULTY_COLUMN_OFFSET = 20;
 
         COORD cursorCoord;
-        cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
-        cursorCoord.X = START_POSITION + LEFT_PADDING;
+        set_coord(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Ranking";
@@ -432,13 +426,11 @@ namespace MyAscii {
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Press [ENTER] to go back to the main menu.";
 
-        drawBox(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
+        draw_frame(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
-    void Console::showEndGameScreen(int number_of_pairs, int correct_guesses) {
-        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
-        GetConsoleScreenBufferInfo(defaultScreenBuffer, &defaultBufferInfo);
-        int bufferWidth = defaultBufferInfo.dwSize.X;
+    void Console::print_endgame_screen(int number_of_pairs, int correct_guesses) {
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
 
         const int SCORE_CARD_WIDTH = 70;
         const int SCORE_CARD_HEIGHT = 16;
@@ -475,7 +467,7 @@ namespace MyAscii {
         std::cout << "Press [ENTER] to go back to the main menu.";
 
         // After outputting the text, draw a box around it
-        drawBox(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
+        draw_frame(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
     }
 
     /**
@@ -529,8 +521,7 @@ namespace MyAscii {
         // Get ready to write it to the console screenBuffer
         coordinateBufferSize.Y = NUMBER_OF_ROWS;
         coordinateBufferSize.X = NUMBER_OF_COLUMNS;
-        topLeftCoordinate.Y = 0;
-        topLeftCoordinate.X = 0;
+        reset_coord(&topLeftCoordinate);
         (&srcWriteRect)->Top = GAME_TOP_MARGIN;
         (&srcWriteRect)->Left = MENU_X_START_POSITION;
         (&srcWriteRect)->Bottom = GAME_TOP_MARGIN + NUMBER_OF_ROWS;
@@ -548,61 +539,53 @@ namespace MyAscii {
         return succes;
     }
 
-    bool Console::drawBox(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle) {
-        const int SCORE_CARD_WIDTH = width;
-        const int SCORE_CARD_HEIGHT = height;
-        const int START_POSITION = (buffer_width - SCORE_CARD_WIDTH) / 2;
+    bool Console::draw_frame(HANDLE * screenBuffer, int bufferWidth, int frameHeight, int frameWidth, int topMargin, bool sparkle) {
+        const int START_POSITION = (bufferWidth - frameWidth) / 2;
         const int HORIZONTAL_BORDER = 1;
         const int VERTICAL_BORDER = 2;
-        const int TOP_MARGIN = top_margin;
         BOOL succes;
         
         COORD topLeftCoordinate;
-        topLeftCoordinate.Y = 0;
-        topLeftCoordinate.X = 0;
-
-        COORD horizontal_buffer_size;
-        horizontal_buffer_size.X = SCORE_CARD_WIDTH;
-        horizontal_buffer_size.Y = HORIZONTAL_BORDER;
-
-        COORD vertical_buffer_size;
-        vertical_buffer_size.X = VERTICAL_BORDER;
-        vertical_buffer_size.Y = SCORE_CARD_HEIGHT;
+        reset_coord(&topLeftCoordinate);
+        COORD horizontalBufferSize;
+        set_coord(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
+        COORD verticalBufferSize;
+        set_coord(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
         
         // Set position of all frame edges on screen
         SMALL_RECT topRect;
-        (&topRect)->Top = TOP_MARGIN;
+        (&topRect)->Top = topMargin;
         (&topRect)->Left = START_POSITION;
-        (&topRect)->Bottom = TOP_MARGIN;
-        (&topRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+        (&topRect)->Bottom = topMargin;
+        (&topRect)->Right = START_POSITION + frameWidth;
         SMALL_RECT bottomRect;
-        (&bottomRect)->Top = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
+        (&bottomRect)->Top = topMargin + frameHeight - 1;
         (&bottomRect)->Left = START_POSITION;
-        (&bottomRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT - 1;
-        (&bottomRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+        (&bottomRect)->Bottom = topMargin + frameHeight - 1;
+        (&bottomRect)->Right = START_POSITION + frameWidth;
         SMALL_RECT leftRect;
-        (&leftRect)->Top = TOP_MARGIN;
+        (&leftRect)->Top = topMargin;
         (&leftRect)->Left = START_POSITION;
-        (&leftRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
+        (&leftRect)->Bottom = topMargin + frameHeight;
         (&leftRect)->Right = START_POSITION + 1;
         SMALL_RECT rightRect;
-        (&rightRect)->Top = TOP_MARGIN;
-        (&rightRect)->Left = START_POSITION + SCORE_CARD_WIDTH - 1;
-        (&rightRect)->Bottom = TOP_MARGIN + SCORE_CARD_HEIGHT;
-        (&rightRect)->Right = START_POSITION + SCORE_CARD_WIDTH;
+        (&rightRect)->Top = topMargin;
+        (&rightRect)->Left = START_POSITION + frameWidth - 1;
+        (&rightRect)->Bottom = topMargin + frameHeight;
+        (&rightRect)->Right = START_POSITION + frameWidth;
 
-        CHAR_INFO * top = new CHAR_INFO[SCORE_CARD_WIDTH * HORIZONTAL_BORDER];
-        CHAR_INFO * left = new CHAR_INFO[SCORE_CARD_HEIGHT * VERTICAL_BORDER];
+        CHAR_INFO * top = new CHAR_INFO[frameWidth * HORIZONTAL_BORDER];
+        CHAR_INFO * left = new CHAR_INFO[frameHeight * VERTICAL_BORDER];
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
 
         do {
             // Set color of frame to sparkle or black depending if game was successfull
-            for (int x = 0; x < SCORE_CARD_WIDTH; x++) {
+            for (int x = 0; x < frameWidth; x++) {
                     top[x].Attributes = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
                     top[x].Char.UnicodeChar = L' ';
             }
 
-            for (int x = 0; x < (SCORE_CARD_HEIGHT * 2); x++) {
+            for (int x = 0; x < (frameHeight * 2); x++) {
                     left[x].Attributes = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
                     left[x].Char.UnicodeChar = L' ';
             }
@@ -611,28 +594,28 @@ namespace MyAscii {
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
                 top,
-                horizontal_buffer_size,
+                horizontalBufferSize,
                 topLeftCoordinate,
                 (&topRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
                 top,
-                horizontal_buffer_size,
+                horizontalBufferSize,
                 topLeftCoordinate,
                 (&bottomRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
                 left,
-                vertical_buffer_size,
+                verticalBufferSize,
                 topLeftCoordinate,
                 (&leftRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
                 left,
-                vertical_buffer_size,
+                verticalBufferSize,
                 topLeftCoordinate,
                 (&rightRect)
             );
@@ -655,23 +638,27 @@ namespace MyAscii {
     }
 
     void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
-        const int LEFT_MARGIN = 4;
-        const int RIGHT_MARGIN = 1;
-        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + LEFT_MARGIN;
-        const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - RIGHT_MARGIN;
-
-        // Determine the size of the text
-        unsigned int text_size = 0;
-        while (TEXT[text_size] != '\0') text_size++;
-
+        const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + SCORECARD_LEFT_MARGIN;
+        const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - SCORECARD_RIGHT_MARGIN;
+        unsigned int textSize = sizeof_text(TEXT);
+        
         // Print the text
         for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
-            if (!(i - START_POSITION > text_size)) {
-                addCharToMap(map, i, TEXT[i - START_POSITION], text_attribute);
+            if (!(i - START_POSITION > textSize)) {
+                add_char_to_map(map, i, TEXT[i - START_POSITION], text_attribute);
             } else {
-                addCharToMap(map, i, L' ', scoreCardAttribute);
+                add_char_to_map(map, i, L' ', scoreCardAttribute);
             }
         }
+    }
+
+    /**
+     * Returns the size of a const char *
+     */
+    int Console::sizeof_text(const char * TEXT) {
+        int textSize = 0;
+        while (TEXT[textSize] != '\0') textSize++;
+        return textSize;
     }
 
     void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
@@ -685,7 +672,7 @@ namespace MyAscii {
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
                 // Print first character of the row
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    addCharToMap(
+                    add_char_to_map(
                         map,
                         MAP_POSITION,
                         scorecard_structure_chars[type_index][left_char],
@@ -693,7 +680,7 @@ namespace MyAscii {
                     );
                 // Print all fill characters in between
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(
+                    add_char_to_map(
                         map,
                         MAP_POSITION,
                         scorecard_structure_chars[type_index][fill_char],
@@ -701,7 +688,7 @@ namespace MyAscii {
                     );
                 // And print the last character of the row
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    addCharToMap(
+                    add_char_to_map(
                         map,
                         MAP_POSITION,
                         scorecard_structure_chars[type_index][right_char],
@@ -712,9 +699,36 @@ namespace MyAscii {
         }
     }
 
-    void Console::addCharToMap(CHAR_INFO map[], int position, wchar_t character, int attribute) {
+    /**
+     * Adds a char to a specified position on a CHAR_INFO map
+     */
+    void Console::add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
         map[position].Attributes = attribute;
+    }
+
+    /**
+     * Resets x and y coordinate values of the provided COORD object
+     */
+    void Console::reset_coord(COORD * coord) {
+        set_coord(coord, 0, 0);
+    }
+
+    /**
+     * Sets x and y coordinate values of the provided COORD object with provided values
+     */
+    void Console::set_coord(COORD * coord, int xPosition, int yPosition) {
+        (*coord).X = xPosition;
+        (*coord).Y = yPosition;
+    }
+
+    /**
+     * Returns the width of the provided screenbuffer
+     */
+    int Console::get_screenbuffer_width(HANDLE * screenbuffer) {
+        CONSOLE_SCREEN_BUFFER_INFO defaultBufferInfo;
+        GetConsoleScreenBufferInfo((*screenbuffer), &defaultBufferInfo);
+        return defaultBufferInfo.dwSize.X;
     }
 
 }
