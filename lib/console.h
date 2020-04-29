@@ -57,6 +57,8 @@ namespace MyAscii {
             const int SCORECARD_LEFT_MARGIN = 4;
             const int SCORECARD_RIGHT_MARGIN = 1;
 
+            const int MENU_TOP_MARGIN = 25;
+
 
             const int MENU_X_START_POSITION = 117;
             const int GAME_TOP_MARGIN = 4;

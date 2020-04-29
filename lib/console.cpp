@@ -158,7 +158,6 @@ namespace MyAscii {
         BOOL succes;
 
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
-        const int TOP_MENU_MARGIN = 25;
         const int MENU_ITEM_HEIGHT = 3;
         const int MENU_ITEM_WIDTH = 75;
         const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
@@ -173,9 +172,7 @@ namespace MyAscii {
 
                 if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
                     const char * menu_item_string = items[y].c_str();
-
-                    int size = 0;
-                    while (menu_item_string[size] != '\0') size++;
+                    int size = sizeof_text(menu_item_string);
 
                     if (i - MENU_ITEM_WIDTH - 2 < size) {
                         map[i].Char.UnicodeChar =  menu_item_string[i - MENU_ITEM_WIDTH - 2];
@@ -197,14 +194,13 @@ namespace MyAscii {
                 }
             }
 
-            const int USER_INPUT_SPACER = ((user_input_needed) && (y == 1 || y == 2) ? 5 : 0);
-
+            const int USER_INPUT_SPACER = ((user_input_needed) && (y != 0) ? 5 : 0);
             set_coord(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             reset_coord(&topLeftCoordinate);
 
-            (&srcWriteRect)->Top = USER_INPUT_SPACER + TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
+            (&srcWriteRect)->Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
             (&srcWriteRect)->Left = START_POSITION;
-            (&srcWriteRect)->Bottom = USER_INPUT_SPACER + TOP_MENU_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
+            (&srcWriteRect)->Bottom = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
             (&srcWriteRect)->Right = (START_POSITION + MENU_ITEM_WIDTH);
 
             succes = WriteConsoleOutputW(
@@ -220,7 +216,7 @@ namespace MyAscii {
         if (user_input_needed) {
             COORD cursorCoord;
             cursorCoord.X = START_POSITION + 1;
-            cursorCoord.Y = TOP_MENU_MARGIN + MENU_ITEM_HEIGHT + 1;
+            cursorCoord.Y = MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1;
             do {
                 SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
                 std::cout << "Who's playing? ";

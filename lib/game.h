@@ -36,8 +36,9 @@ namespace MyAscii {
             Player * player;
             Console * console;
             PlayField playfield;
-            bool stay_in_game = true;
+            bool unCompleteGame = true;
             bool correct_guess = true;
+            bool noEscape = true;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = 0;
             unsigned int pair_size = 0;

@@ -34,7 +34,7 @@ namespace MyAscii {
      */
     void Game::start() {
         console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-        console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
+        console->showScoreCard(number_of_pairs, correct_guesses, unCompleteGame);
         double end_time;
         double start_time = GetTickCount();
 
@@ -45,8 +45,8 @@ namespace MyAscii {
             int currentSelectedTile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
             handle_current_tile(currentSelectedTile);
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-            stay_in_game = (correct_guesses == number_of_pairs ? false : true);
-        } while (stay_in_game);
+            unCompleteGame = (correct_guesses == number_of_pairs ? false : true);
+        } while (unCompleteGame && noEscape);
 
         end_time = GetTickCount();
         save_gamescore(end_time, start_time);
@@ -87,9 +87,10 @@ namespace MyAscii {
             } else if (GetKeyState(65) & 8000) {
                 cheat_sequence.push_back("A");
             } else if (GetAsyncKeyState(VK_ESCAPE)) {
-                stay_in_game = false; // Escape to main menu with ESC key
+                noEscape = false; // Escape to main menu with ESC key
                 break;
             }
+
             console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
             check_for_cheats();
             
@@ -171,7 +172,7 @@ namespace MyAscii {
                 guess_possitions.push_back(currentSelectedTile);
             } else if (cardsTurned == pair_size && guessId == tiles[currentSelectedTile].get_id()) {
                 correct_guesses++;
-                console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
+                console->showScoreCard(number_of_pairs, correct_guesses, unCompleteGame);
                 reset_guess_parameters();
             } else {
                 guess_possitions.push_back(currentSelectedTile);
