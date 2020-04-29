@@ -36,20 +36,20 @@ namespace MyAscii {
             Player * player;
             Console * console;
             PlayField playfield;
+            bool stay_in_game = true;
+            bool correct_guess = true;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = 0;
             unsigned int pair_size = 0;
-            std::vector<int> correctAnswers;
-            std::vector<Tile> tiles;
-            int correct_guesses = 0;
-            int number_of_pairs = 0;
-            bool stay_in_game = true;
-            bool correct_guess = true;
-            std::vector<int> guess_possitions;
             unsigned int guessId = 0;
             unsigned int selectedTileX = 0;
             unsigned int selectedTileY = 0;
             unsigned int cardsTurned = 0;
+            int correct_guesses = 0;
+            int number_of_pairs = 0;
+            std::vector<int> correctAnswers;
+            std::vector<Tile> tiles;
+            std::vector<int> guess_possitions;
 
 
             std::vector<std::string> cheat = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};

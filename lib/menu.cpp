@@ -16,7 +16,7 @@ namespace MyAscii {
      * Show the menu
      */
     int Menu::show(void) {
-        unsigned int currentMenuItem = 0;
+        int currentMenuItem = 0;
         console->showMenu(menuItems, menuItemsSize, currentMenuItem, false);
 
         do {

@@ -128,7 +128,7 @@ namespace MyAscii {
             cheat_sequence.erase(cheat_sequence.begin());
         }
         if (cheat.size() == cheat_sequence.size()) {
-            for (int i = 0; i < cheat_sequence.size(); i++) {
+            for (unsigned int i = 0; i < cheat_sequence.size(); i++) {
                 if (cheat[i] == cheat_sequence[i]) {
                     cheat_sequence_correct = true;
                 } else {
