@@ -30,7 +30,6 @@ namespace MyAscii {
     }
 
     Score Game::start(unsigned int difficulty) {
-        Score score; // Doesn't do anything right now
         setDifficulty(difficulty);
         bool hidden_char_secret = console->hiddenCharState();
         PlayField playfield(fieldEdgeSize, pair_size, difficulty, hidden_char_secret);
@@ -163,7 +162,7 @@ namespace MyAscii {
         // Save the end-game score and player info
         end_time = GetTickCount();
         double elapsed_time = (end_time - start_time) / 1000;
-        score.set_score((*player).get_name(), difficulty, correct_guesses, number_of_pairs, elapsed_time);
+        Score score((*player).get_name(), difficulty, correct_guesses, number_of_pairs, elapsed_time);
         ScoreCard scorecard;
         scorecard.save_score(&score);
 

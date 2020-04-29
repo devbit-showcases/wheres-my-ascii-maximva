@@ -2,35 +2,54 @@
 
 namespace MyAscii {
 
-    Score::Score() {
-
-    }
-
-    void Score::set_score(std::string name, int difficulty, int correct_guesses, int number_of_sets, double elapsed_time) {
+    /**
+     * Creates an instance of Score
+     */
+    Score::Score(std::string name, int difficulty, int correctGuesses, int numberOfSets, double elapsedTime) {
         this->name = name;
         this->difficulty = difficulty;
-        this->correct_guesses = correct_guesses;
-        this->number_of_sets = number_of_sets;
-        this->elapsed_time = elapsed_time;
+        this->correctGuesses = correctGuesses;
+        this->numberOfSets = numberOfSets;
+        this->elapsedTime = elapsedTime;
     }
 
+
+    /**
+     * Get the games player name stored in the score
+     */
     std::string Score::get_name(void) {
         return name;
     }
 
+
+    /**
+     * Get the game difficulty level stored in the score
+     */
     int Score::get_difficulty(void) {
         return difficulty;
     }
 
+
+    /**
+     * Get the games amount of correct guesses stored in the score
+     */
     int Score::get_correct_guesses(void) {
-        return correct_guesses;
+        return correctGuesses;
     }
 
+
+    /**
+     * Get the amount of sets available in game, stored in the score
+     */
     int Score::get_number_of_sets(void) {
-        return number_of_sets;
+        return numberOfSets;
     }
 
+
+    /**
+     * Get the games elapsed time stored in the score
+     */
     double Score::get_elapsed_time(void){
-        return elapsed_time;
+        return elapsedTime;
     }
 }

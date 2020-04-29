@@ -8,10 +8,9 @@ namespace MyAscii {
 
     class Score {
         public:
-            Score();
+            Score(std::string name, int difficulty, int correctGuesses, int numberOfSets, double elapsedTime);
         
         public:
-            void set_score(std::string name, int difficulty, int correct_guesses, int number_of_sets, double elapsed_time);
             std::string get_name(void);
             int get_difficulty(void);
             int get_correct_guesses(void);
@@ -20,17 +19,17 @@ namespace MyAscii {
 
             bool operator < (const Score& str) const
             {
-                if( correct_guesses != str.correct_guesses)
-                    return (correct_guesses > str.correct_guesses);
-                return (elapsed_time < str.elapsed_time);
+                if( correctGuesses != str.correctGuesses)
+                    return (correctGuesses > str.correctGuesses);
+                return (elapsedTime < str.elapsedTime);
             }
 
         private:
             std::string name;
             int difficulty;
-            int correct_guesses;
-            int number_of_sets;
-            double elapsed_time;
+            int correctGuesses;
+            int numberOfSets;
+            double elapsedTime;
 
     };
 
