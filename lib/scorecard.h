@@ -17,7 +17,8 @@ namespace MyAscii {
             void get_scoretable(std::vector<Score> * scores);
 
         private:
-            std::vector<std::string> score_array;
+            std::vector<std::string> scores;
+            std::string scoresFilename = "scorecard.txt";
 
     };
 };

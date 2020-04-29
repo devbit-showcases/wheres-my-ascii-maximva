@@ -7,7 +7,7 @@ namespace MyAscii {
     }
 
     Player::Player(std::string name) {
-        Player::set_name(name);
+        set_name(name);
     }
 
     void Player::set_name(std::string name) {

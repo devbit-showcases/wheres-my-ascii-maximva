@@ -2,38 +2,48 @@
 
 namespace MyAscii {
 
+    /**
+     * Creates an instance of ScoreCard
+     */
     ScoreCard::ScoreCard() {
 
     }
 
+
+    /**
+     * Adds all scores to the provided score vector pointer
+     */
     void ScoreCard::get_scoretable(std::vector<Score> * scores) {
-        std::ifstream score_file;
-        score_file.open("scorecard.txt");
+        std::ifstream scoreFile;
+        scoreFile.open(scoresFilename);
 
-        // Print all the scorecard entries
-        if (score_file.is_open()) {
-            std::string name, difficulty, correct_guesses, number_of_sets, elapsed_time;
+        if (scoreFile.is_open()) {
+            std::string name, difficulty, correctGuesses, numberOfSets, elapsedTime;
 
-            while (getline(score_file, name, ',')){
-                getline(score_file, difficulty, ',');
-                getline(score_file, correct_guesses, ',');
-                getline(score_file, number_of_sets, ',');
-                getline(score_file, elapsed_time);
+            while (getline(scoreFile, name, ',')){
+                getline(scoreFile, difficulty, ',');
+                getline(scoreFile, correctGuesses, ',');
+                getline(scoreFile, numberOfSets, ',');
+                getline(scoreFile, elapsedTime);
 
                 Score temp_score;
-                temp_score.set_score(name, stoi(difficulty), stoi(correct_guesses), stod(number_of_sets), stod(elapsed_time));
+                temp_score.set_score(name, stoi(difficulty), stoi(correctGuesses), stod(numberOfSets), stod(elapsedTime));
                 scores->push_back(temp_score);
             }
             std::sort(scores->begin(), scores->end());
         }
     }
 
-    void ScoreCard::save_score(Score * score) {
-        std::ofstream score_file;
-        score_file.open("scorecard.txt", std::ios::out | std::ios::app);
 
-        if (score_file.is_open()) {
-            score_file  << score->get_name() << ","
+    /**
+     * Adds a score to the scores file
+     */
+    void ScoreCard::save_score(Score * score) {
+        std::ofstream scoreFile;
+        scoreFile.open(scoresFilename, std::ios::out | std::ios::app);
+
+        if (scoreFile.is_open()) {
+            scoreFile  << score->get_name() << ","
                         << score->get_difficulty() << ","
                         << score->get_correct_guesses() << ","
                         << score->get_number_of_sets() << ","

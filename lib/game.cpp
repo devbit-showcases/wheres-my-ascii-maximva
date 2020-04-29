@@ -15,16 +15,16 @@ namespace MyAscii {
             int random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
 
             // Check if tile is turned or has been used in this show of cards allready
-            while ((*tiles)[random_index].isTurned() || std::count(used_indexes.begin(), used_indexes.end(), random_index)) {
+            while ((*tiles)[random_index].is_flipped() || std::count(used_indexes.begin(), used_indexes.end(), random_index)) {
                 random_index = rand() % (fieldEdgeSize * fieldEdgeSize);
             }
             used_indexes.push_back(random_index);
 
             // Turn each card for a short period of time
-            (*tiles)[random_index].turnCard();
+            (*tiles)[random_index].flip_tile();
             console->showPlayField(tiles, fieldEdgeSize, selectedTileX, selectedTileY);
             Sleep(500);
-            (*tiles)[random_index].turnCard();
+            (*tiles)[random_index].flip_tile();
             console->showPlayField(tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         }
     }
@@ -34,7 +34,7 @@ namespace MyAscii {
         setDifficulty(difficulty);
         bool hidden_char_secret = console->hiddenCharState();
         PlayField playfield(fieldEdgeSize, pair_size, difficulty, hidden_char_secret);
-        std::vector<Tile> tiles = playfield.getPlayField();
+        std::vector<Tile> tiles = playfield.get_playfield();
  
         bool correct_guess = true;
         bool stay_in_game = true;
@@ -57,7 +57,7 @@ namespace MyAscii {
             if (!correct_guess) {
                 Sleep(600); // system("pause>nul"); I think sleep feels better
                 for (unsigned int i = 0; i < guess_possitions.size(); i++) {
-                    tiles[guess_possitions[i]].turnCard();
+                    tiles[guess_possitions[i]].flip_tile();
                 }
                 console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
                 // Reset for next try
@@ -126,20 +126,20 @@ namespace MyAscii {
                 
             } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
-            int current_selected_tile = (selectedTileX) + (selectedTileY * playfield.getFieldEdgeSize());
+            int current_selected_tile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
 
             // Game mechanics
-            if (tiles[current_selected_tile].isTurned()) {
+            if (tiles[current_selected_tile].is_flipped()) {
                 // Do nothing
             } else {
-                tiles[current_selected_tile].turnCard();
+                tiles[current_selected_tile].flip_tile();
                 cards_turned++;
                 if (cards_turned == 1) {
-                    guessId = tiles[current_selected_tile].getId();
+                    guessId = tiles[current_selected_tile].get_id();
                     guess_possitions.push_back(current_selected_tile);
-                } else if (cards_turned < pair_size && guessId == tiles[current_selected_tile].getId()) {
+                } else if (cards_turned < pair_size && guessId == tiles[current_selected_tile].get_id()) {
                     guess_possitions.push_back(current_selected_tile);
-                } else if (cards_turned == pair_size && guessId == tiles[current_selected_tile].getId()) {
+                } else if (cards_turned == pair_size && guessId == tiles[current_selected_tile].get_id()) {
                     correct_guesses++;
                     console->showScoreCard(number_of_pairs, correct_guesses, stay_in_game);
                     // Reset for next try

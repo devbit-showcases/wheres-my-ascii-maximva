@@ -1,49 +1,78 @@
 #include "tile.h"
 
 namespace MyAscii {
-
-    Tile::Tile(unsigned int id, int flipped_attribute) {
-        setRandomChar();
+    /**
+     * Create an instance of Tile
+     */
+    Tile::Tile(unsigned int id, int flippedAttribute, bool secret) {
         this->id = id;
-        this->flipped_attribute = flipped_attribute;
+        this->flippedAttribute = flippedAttribute;
+        this->secret = secret;
+        set_random_char();
     }
 
-    void Tile::turnCard(void) {
+
+    /**
+     * FLips the tile
+     */
+    void Tile::flip_tile(void) {
         turned = !turned;
     }
 
-    bool Tile::isTurned(void) {
+
+    /**
+     * Returns if tile is flipped or not
+     */
+    bool Tile::is_flipped(void) {
         return turned;
     }
 
-    // Getters
-    unsigned int Tile::getId(void) {
+
+    /**
+     * Returns the ID of a tile
+     */
+    unsigned int Tile::get_id(void) {
         return id;
     }
 
-    char Tile::getHiddenChar(void) {
-        return hidden_char;
+
+    /**
+     * Returns the character to show when tile is covered
+     */
+    char Tile::get_covered_char(void) {
+        return (secret ? secretHiddenChar : coveredChar);
     }
 
-    char Tile::getAsciiChar(void) {
-        return flipped_char;
+
+    /**
+     * Returns the character to show when tile is flipped
+     */
+    char Tile::get_flipped_char(void) {
+        return flippedChar;
     }
 
-    int Tile::getCharFlippedAttribute(void) {
-        return flipped_attribute;
+
+    /**
+     * Get the attribute (back- and foreground color) to use when tile is flipped
+     */
+    int Tile::get_flipped_attribute(void) {
+        return flippedAttribute;
     }
 
-    int Tile::getCharCoveredAttribute(void) {
-        return covered_attribute;
+
+    /**
+     * Get the attribute (back- and foreground color) to use when tile is covered
+     */
+    int Tile::get_covered_attribute(void) {
+        return coveredAttribute;
     }
 
-    // Setters
-    void Tile::setHiddenChar(wchar_t hidden_char) {
-        this->hidden_char = hidden_char;
-    }
 
-    void Tile::setRandomChar(void) {
-        flipped_char = (rand() % (ASCII_TABLE_RANGE + 1)) + ASCII_TABLE_START;
+    /**
+     * Set a random character for the tile
+     */
+    void Tile::set_random_char(void) {
+        flippedChar = (rand() % (ASCII_TABLE_RANGE + 1)) + ASCII_TABLE_START;
     }
 
 }
