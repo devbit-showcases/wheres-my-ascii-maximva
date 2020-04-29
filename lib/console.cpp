@@ -81,7 +81,7 @@ namespace MyAscii {
     }
 
 
-    bool Console::showTitle(void) {
+    bool Console::show_title(void) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT titleRect;
@@ -150,7 +150,7 @@ namespace MyAscii {
         if (user_input_needed) {
             system("CLS");
         }
-        showTitle();
+        show_title();
 
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
@@ -195,7 +195,7 @@ namespace MyAscii {
             }
 
             const int USER_INPUT_SPACER = ((user_input_needed) && (y != 0) ? 5 : 0);
-            set_coord(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+            set_coords(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             reset_coord(&topLeftCoordinate);
 
             (&srcWriteRect)->Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
@@ -296,7 +296,7 @@ namespace MyAscii {
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
-                set_coord(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
+                set_coords(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
                 reset_coord(&topLeftCoordinate);
 
                 (&playfieldRect)->Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
@@ -327,12 +327,9 @@ namespace MyAscii {
         const int FRAME_HEIGHT = 40;
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
-
         std::vector<std::string> about_page = read_textfile("about.txt");
-
         COORD cursorCoord;
-        cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
-        cursorCoord.X = START_POSITION + LEFT_PADDING;
+        set_coords(&cursorCoord, (TOP_MARGIN + TOP_PADDING), (START_POSITION + LEFT_PADDING));
 
         for(unsigned int i = 0; i < about_page.size(); i++) {
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
@@ -363,7 +360,7 @@ namespace MyAscii {
         const int DIFFICULTY_COLUMN_OFFSET = 20;
 
         COORD cursorCoord;
-        set_coord(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
+        set_coords(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Ranking";
@@ -544,9 +541,9 @@ namespace MyAscii {
         COORD topLeftCoordinate;
         reset_coord(&topLeftCoordinate);
         COORD horizontalBufferSize;
-        set_coord(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
+        set_coords(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
         COORD verticalBufferSize;
-        set_coord(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
+        set_coords(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
         
         // Set position of all frame edges on screen
         SMALL_RECT topRect;
@@ -633,6 +630,7 @@ namespace MyAscii {
         } while (true);
     }
 
+
     void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + SCORECARD_LEFT_MARGIN;
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - SCORECARD_RIGHT_MARGIN;
@@ -648,14 +646,6 @@ namespace MyAscii {
         }
     }
 
-    /**
-     * Returns the size of a const char *
-     */
-    int Console::sizeof_text(const char * TEXT) {
-        int textSize = 0;
-        while (TEXT[textSize] != '\0') textSize++;
-        return textSize;
-    }
 
     void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
         int type_index = (int) type;
@@ -695,6 +685,17 @@ namespace MyAscii {
         }
     }
 
+
+    /**
+     * Returns the size of a const char *
+     */
+    int Console::sizeof_text(const char * TEXT) {
+        int textSize = 0;
+        while (TEXT[textSize] != '\0') textSize++;
+        return textSize;
+    }
+
+
     /**
      * Adds a char to a specified position on a CHAR_INFO map
      */
@@ -703,20 +704,39 @@ namespace MyAscii {
         map[position].Attributes = attribute;
     }
 
+
     /**
      * Resets x and y coordinate values of the provided COORD object
      */
     void Console::reset_coord(COORD * coord) {
-        set_coord(coord, 0, 0);
+        set_coords(coord, 0, 0);
     }
+
 
     /**
      * Sets x and y coordinate values of the provided COORD object with provided values
      */
-    void Console::set_coord(COORD * coord, int xPosition, int yPosition) {
-        (*coord).X = xPosition;
-        (*coord).Y = yPosition;
+    void Console::set_coords(COORD * coord, int xPosition, int yPosition) {
+        set_x_coord(coord, xPosition);
+        set_y_coord(coord, yPosition);
     }
+
+
+    /**
+     * Set x coordinate value of provided COORD object
+     */
+    void Console::set_x_coord(COORD * coord, int position) {
+        (*coord).X = position;
+    }
+
+
+    /**
+     * Set y coordinate value of provided COORD object
+     */
+     void Console::set_y_coord(COORD * coord, int position) {
+        (*coord).Y = position;
+    }
+
 
     /**
      * Returns the width of the provided screenbuffer

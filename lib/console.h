@@ -44,22 +44,20 @@ namespace MyAscii {
             void add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute);
             bool draw_frame(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
             void init_console_window(std::string windowTitle);
-            bool showTitle(void);
+            bool show_title(void);
             std::vector<std::string> read_textfile(std::string filename);
             void reset_coord(COORD * coord);
-            void set_coord(COORD * coord, int xPosition, int yPosition);
+            void set_coords(COORD * coord, int xPosition, int yPosition);
+            void set_x_coord(COORD * coord, int position);
+            void set_y_coord(COORD * coord, int position);
             int get_screenbuffer_width(HANDLE * screenbuffer);
             int sizeof_text(const char * TEXT);
 
         private:
-
             // Margin and padding values
             const int SCORECARD_LEFT_MARGIN = 4;
             const int SCORECARD_RIGHT_MARGIN = 1;
-
             const int MENU_TOP_MARGIN = 25;
-
-
             const int MENU_X_START_POSITION = 117;
             const int GAME_TOP_MARGIN = 4;
             HANDLE gameScreenBuffer;
