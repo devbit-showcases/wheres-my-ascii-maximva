@@ -26,9 +26,8 @@ namespace MyAscii {
                 getline(scoreFile, numberOfSets, ',');
                 getline(scoreFile, elapsedTime);
 
-                Score temp_score;
-                temp_score.set_score(name, stoi(difficulty), stoi(correctGuesses), stod(numberOfSets), stod(elapsedTime));
-                scores->push_back(temp_score);
+                Score tempScore(name, stoi(difficulty), stoi(correctGuesses), stod(numberOfSets), stod(elapsedTime));
+                scores->push_back(tempScore);
             }
             std::sort(scores->begin(), scores->end());
         }

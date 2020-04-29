@@ -22,7 +22,14 @@ int main(void) {
 
     do {
         Console console("ASCII Adventure");
-        Menu menu(&console);
+        std::string menuItems[] = {
+            "Play a game",
+            "Show the high scores",
+            "About ASCII ADVENTURE",
+            "Back to reality"
+        };
+        int menuItemsSize = (sizeof(menuItems)/sizeof(std::string));
+        Menu menu(&console, menuItems, menuItemsSize);
         int chosen_menu_item = menu.show();
 
         if (chosen_menu_item == PLAY_GAME) {
