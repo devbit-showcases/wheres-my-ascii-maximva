@@ -329,7 +329,7 @@ namespace MyAscii {
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
         std::vector<std::string> about_page = read_textfile("about.txt");
         COORD cursorCoord;
-        set_coords(&cursorCoord, (TOP_MARGIN + TOP_PADDING), (START_POSITION + LEFT_PADDING));
+        set_coords(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
         for(unsigned int i = 0; i < about_page.size(); i++) {
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
