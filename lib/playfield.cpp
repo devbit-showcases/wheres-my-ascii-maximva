@@ -1,7 +1,6 @@
 #include "playfield.h"
 
 namespace MyAscii {
-
     /**
      * Creates an instance of PlayField with base values
      */
@@ -46,9 +45,11 @@ namespace MyAscii {
      * Generates the tiles that occupy the playfield
      */
     void PlayField::generate_playfield(void) {      
-        const int GREEN_BACK_WHITE_FRONT = 3;  
+        const int GREEN_BACK_WHITE_TEXT = 0x2F;
+
         for (unsigned int id = 0; id < playfieldSize / setSize; id++) {
-            Tile tile(id, charAttributes[GREEN_BACK_WHITE_FRONT], secret);
+            int tileAttribute = (monochromeTiles ? GREEN_BACK_WHITE_TEXT : add_tile_color());
+            Tile tile(id, tileAttribute, secret);
             int charAlphabetPosition = tile.get_flipped_char() - 'A';
             charCount[charAlphabetPosition]++;
 
@@ -56,7 +57,6 @@ namespace MyAscii {
                 add_unique_character(&tile, charAlphabetPosition);
             }
             
-            if (!monochromeTiles) add_tile_colors(&tile);
             create_tile_set(&tile);
         }
         randomize_playfield();
@@ -77,9 +77,11 @@ namespace MyAscii {
     /**
      * Add a unique color to the tile
      */
-    void PlayField::add_tile_colors(Tile * tile) {
+    int PlayField::add_tile_color(void) {
         int attributeNumber = rand() % charAttributes.size();
+        int attribute = charAttributes[attributeNumber];
         charAttributes.erase(std::begin(charAttributes) + attributeNumber);
+        return attribute;
     }
 
 

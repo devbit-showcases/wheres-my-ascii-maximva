@@ -58,8 +58,8 @@ namespace MyAscii {
             unsigned int gameParameters[5][2] = {
                 {4, 2},
                 {6, 3},
-                {6, 3}, // Same as before but with possible double characters  AND TIMER
-                {9, 3}  // Insane, large, tripple tile and possible double characters  AND TIMER
+                {6, 3},
+                {9, 3}
             };
     };
 };

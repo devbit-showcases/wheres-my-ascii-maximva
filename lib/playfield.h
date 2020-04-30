@@ -18,10 +18,10 @@ namespace MyAscii {
             unsigned int get_playfield_edgesize(void);
 
         private:
+            int add_tile_color(void);
             void generate_playfield(void);
             void randomize_playfield(void);
             void create_tile_set(Tile * tile);
-            void add_tile_colors(Tile * tile);
             void add_unique_character(Tile *tile, int charAlphabetPosition);
         
         private:
