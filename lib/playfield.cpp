@@ -45,7 +45,8 @@ namespace MyAscii {
     /**
      * Generates the tiles that occupy the playfield
      */
-    void PlayField::generate_playfield(void) {        
+    void PlayField::generate_playfield(void) {      
+        const int GREEN_BACK_WHITE_FRONT = 3;  
         for (unsigned int id = 0; id < playfieldSize / setSize; id++) {
             Tile tile(id, charAttributes[GREEN_BACK_WHITE_FRONT], secret);
             int charAlphabetPosition = tile.get_flipped_char() - 'A';

@@ -25,7 +25,6 @@ namespace MyAscii {
             void add_unique_character(Tile *tile, int charAlphabetPosition);
         
         private:
-            const int GREEN_BACK_WHITE_FRONT = 3;
             unsigned int playfieldEdgesize = 2;
             unsigned int playfieldSize = 4;
             unsigned int setSize = 2;
