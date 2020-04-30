@@ -29,7 +29,6 @@ namespace MyAscii {
             unsigned int playfieldSize = 4;
             unsigned int setSize = 2;
             unsigned int difficulty = 0;
-
             std::vector<Tile> playField;
             std::vector<Tile> nonRandomTiles;
             unsigned int charCount[26] = {0};
@@ -42,7 +41,5 @@ namespace MyAscii {
             bool secret = false;
             bool monochromeTiles = false;
             bool preventDuplicateChars = true;
-            
-
     };
 };

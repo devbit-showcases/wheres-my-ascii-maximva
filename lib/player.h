@@ -9,8 +9,8 @@ namespace MyAscii {
             Player (std::string name);
         
         public:
-            void set_name(std::string name);
             std::string get_name(void);
+            void set_name(std::string name);
 
         private:
             std::string name = "guest-player";

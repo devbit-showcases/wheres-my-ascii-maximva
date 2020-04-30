@@ -11,12 +11,12 @@ namespace MyAscii {
         public:
             char get_covered_char(void);
             char get_flipped_char(void);
-            unsigned int get_id(void);
-            void flip_tile(void);
-            bool is_flipped(void);
-            void set_random_char(void);
             int get_flipped_attribute(void);
             int get_covered_attribute(void);
+            unsigned int get_id(void);
+            bool is_flipped(void);
+            void set_random_char(void);
+            void flip_tile(void);
 
         private:
             unsigned int id = 0;
