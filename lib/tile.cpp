@@ -72,7 +72,7 @@ namespace MyAscii {
      * Set a random character for the tile
      */
     void Tile::set_random_char(void) {
-        flippedChar = (rand() % (ASCII_TABLE_RANGE + 1)) + ASCII_TABLE_START;
+        flippedChar = (rand() % (asciiTableRange + 1)) + asciiTableStart;
     }
 
 }

@@ -39,6 +39,7 @@ namespace MyAscii {
             bool unCompleteGame = true;
             bool correctGuess = true;
             bool noEscape = true;
+            bool correctCheatSequence = false;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = 0;
             unsigned int setSize = 0;
@@ -49,17 +50,16 @@ namespace MyAscii {
             int correctGuesses = 0;
             int numberOfPairs = 0;
             std::vector<int> correctAnswers;
-            std::vector<Tile> tiles;
             std::vector<int> guessPossitions;
+            std::vector<Tile> tiles;
             std::vector<std::string> cheat = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};
             std::vector<std::string> cheatSequence = {};
-            bool correctCheatSequence = false;
             // Order: {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
                 {4, 2},
                 {6, 3},
-                {6, 3}, // Same as before but with possible double characters  AND TIMER
-                {9, 3}  // Insane, large, tripple tile and possible double characters  AND TIMER
+                {6, 3},
+                {9, 3}
             };
     };
 };
