@@ -3,7 +3,7 @@
 namespace MyAscii {
 
     /**
-     * Creates an instance of PlayField with default values
+     * Creates an instance of PlayField with base values
      */
     PlayField::PlayField(void)
     :PlayField(4, 2, 0, false) {
@@ -19,6 +19,8 @@ namespace MyAscii {
         this->setSize = setSize;
         this->difficulty = difficulty;
         this->secret = secret;
+        this->monochromeTiles = (difficulty == 2 || difficulty == 3);
+        this->preventDuplicateChars = (difficulty < 3);
         playfieldSize = playfieldEdgesize * playfieldEdgesize;
         generate_playfield();
     }
@@ -43,38 +45,47 @@ namespace MyAscii {
     /**
      * Generates the tiles that occupy the playfield
      */
-    void PlayField::generate_playfield(void) {
-        const bool MONOCHROME_TILES = (difficulty == 2 || difficulty == 3);
-        const int GREEN_BACK_WHITE_FRONT = 3;
-        int attributeNumber = GREEN_BACK_WHITE_FRONT;
-
+    void PlayField::generate_playfield(void) {        
         for (unsigned int id = 0; id < playfieldSize / setSize; id++) {
-            const bool PREVENT_DUPLICATE_CHARS = (difficulty < 3);
-            Tile tile(id, possibleCharAttributes[attributeNumber], secret);
+            Tile tile(id, charAttributes[GREEN_BACK_WHITE_FRONT], secret);
             int charAlphabetPosition = tile.get_flipped_char() - 'A';
             charCount[charAlphabetPosition]++;
 
-            if (!MONOCHROME_TILES) {
-                attributeNumber = rand() % possibleCharAttributes.size();
-                possibleCharAttributes.erase(std::begin(possibleCharAttributes) + attributeNumber); // Erase attribute from vector
+            while (preventDuplicateChars && charCount[charAlphabetPosition] > 1) {
+                add_unique_character(&tile, charAlphabetPosition);
             }
             
-            while (PREVENT_DUPLICATE_CHARS && charCount[charAlphabetPosition] > 1) {
-                charCount[charAlphabetPosition]--;
-                tile.set_random_char();
-                charAlphabetPosition = tile.get_flipped_char() - 'A';
-                charCount[charAlphabetPosition]++;
-            }
-            add_tiles_set(&tile);
+            if (!monochromeTiles) add_tile_colors(&tile);
+            create_tile_set(&tile);
         }
         randomize_playfield();
     }
 
 
     /**
+     * Add a character to the tile thats unique for this playfield
+     */
+    void PlayField::add_unique_character(Tile * tile, int charAlphabetPosition) {
+        charCount[charAlphabetPosition]--;
+        (*tile).set_random_char();
+        charAlphabetPosition = (*tile).get_flipped_char() - 'A';
+        charCount[charAlphabetPosition]++;
+    }
+
+
+    /**
+     * Add a unique color to the tile
+     */
+    void PlayField::add_tile_colors(Tile * tile) {
+        int attributeNumber = rand() % charAttributes.size();
+        charAttributes.erase(std::begin(charAttributes) + attributeNumber);
+    }
+
+
+    /**
      * Adds a set (size of a pair) to the (non-random) tile vector
      */
-    void PlayField::add_tiles_set(Tile * tile) {
+    void PlayField::create_tile_set(Tile * tile) {
         for (unsigned int d = 0; d < setSize; d++) {
                 nonRandomTiles.push_back((*tile));
         }

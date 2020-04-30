@@ -15,7 +15,7 @@ namespace MyAscii {
 
 
     /**
-     * Get the games player name stored in the score
+     * Get player name stored in the score
      */
     std::string Score::get_name(void) {
         return name;
@@ -23,7 +23,7 @@ namespace MyAscii {
 
 
     /**
-     * Get the game difficulty level stored in the score
+     * Get difficulty level stored in the score
      */
     int Score::get_difficulty(void) {
         return difficulty;
@@ -31,7 +31,7 @@ namespace MyAscii {
 
 
     /**
-     * Get the games amount of correct guesses stored in the score
+     * Get amount of correct guesses stored in the score
      */
     int Score::get_correct_guesses(void) {
         return correctGuesses;
@@ -39,7 +39,7 @@ namespace MyAscii {
 
 
     /**
-     * Get the amount of sets available in game, stored in the score
+     * Get the max amount of sets stored in the score
      */
     int Score::get_number_of_sets(void) {
         return numberOfSets;
@@ -47,7 +47,7 @@ namespace MyAscii {
 
 
     /**
-     * Get the games elapsed time stored in the score
+     * Get the elapsed time stored in the score
      */
     double Score::get_elapsed_time(void){
         return elapsedTime;
