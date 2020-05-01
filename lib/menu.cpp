@@ -17,22 +17,22 @@ namespace MyAscii {
      */
     int Menu::show(void) {
         int currentMenuItem = 0;
-        console->showMenu(menuItems, menuItemsSize, currentMenuItem, false);
+        console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
 
         do {
             system("pause>nul");    // pause after keystroke
             if (GetAsyncKeyState(VK_UP) && currentMenuItem != 0) {
                 currentMenuItem--;
-                console->showMenu(menuItems, menuItemsSize, currentMenuItem, false);
+                console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
             } else if (GetAsyncKeyState(VK_DOWN) && currentMenuItem < (menuItemsSize - 1)) {
                 currentMenuItem++;
-                console->showMenu(menuItems, menuItemsSize, currentMenuItem, false);
+                console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
             }
             rosebud_easteregg();
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
         if (currentMenuItem == 0) {
-            console->showMenu(menuItems, menuItemsSize, currentMenuItem, true);
+            console->print_menu(menuItems, menuItemsSize, currentMenuItem, true);
         }
 
         return currentMenuItem;

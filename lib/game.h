@@ -29,7 +29,7 @@ namespace MyAscii {
             void shortly_turn_tile(int index, int time);
             void check_for_cheats(void);
             void flip_back_wrong_guess(void);
-            void clear_returns_spaces(void);
+            void clear_returns_and_spaces(void);
             void allow_player_input(void);
 
         private:

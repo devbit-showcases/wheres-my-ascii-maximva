@@ -14,19 +14,19 @@
 using namespace MyAscii;
 
 int main(void) {
+    srand(time(NULL));
     const int PLAY_GAME = 0;
     const int SHOW_SCORES = 1;
     const int ABOUT_PAGE = 2;
-    srand(time(NULL));
+    std::string menuItems[] = {
+        "Play a game",
+        "Show the high scores",
+        "About ASCII ADVENTURE",
+        "Back to reality"
+    };
 
     do {
         Console console("ASCII Adventure");
-        std::string menuItems[] = {
-            "Play a game",
-            "Show the high scores",
-            "About ASCII ADVENTURE",
-            "Back to reality"
-        };
         int menuItemsSize = (sizeof(menuItems)/sizeof(std::string));
         Menu menu(&console, menuItems, menuItemsSize);
         int chosen_menu_item = menu.show();

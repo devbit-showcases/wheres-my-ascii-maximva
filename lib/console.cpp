@@ -2,20 +2,30 @@
 
 namespace MyAscii {
 
+    /**
+     * Creates instance of Console with default title
+     */
     Console::Console(void)
     : Console("New window") {
     }
 
+
+    /**
+     * Creates instance of Console with provided title
+     */
     Console::Console(std::string windowTitle) {
         init_console_window(windowTitle);
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
-        create_generic_screenbuffer(&gameScreenBuffer);
+        create_textmode_screenbuffer(&gameScreenBuffer);
         hide_cursor(&gameScreenBuffer);
         title = read_textfile("title.txt");
     }
 
+
+    /**
+     * Sets the title, background color and sets console to full-screen
+     */
     void Console::init_console_window(std::string windowTitle) {
-        // Set title, background color and go full-screen
         HWND console = GetConsoleWindow();
         this->windowTitle =  windowTitle;
         SetConsoleTitleA(windowTitle.c_str());
@@ -28,17 +38,28 @@ namespace MyAscii {
      * Hides the cursor on the provided screenbuffer 
      */
     void Console::hide_cursor(HANDLE * screenBuffer) {
-        CONSOLE_CURSOR_INFO     cursorInfo;
+        CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo((*screenBuffer), &cursorInfo);
-        cursorInfo.bVisible = false; // set the cursor visibility
+        cursorInfo.bVisible = false;
         SetConsoleCursorInfo((*screenBuffer), &cursorInfo);
     }
 
 
     /**
-     * Creates generic read/write screenbuffer
+     * Shows the cursor on the provided screenbuffer 
+     */
+    void Console::show_cursor(HANDLE * screenBuffer) {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo((*screenBuffer), &cursorInfo);
+        cursorInfo.bVisible = true;
+        SetConsoleCursorInfo((*screenBuffer), &cursorInfo);
+    }
+
+
+    /**
+     * Creates textmode read/write screenbuffer
      */ 
-    void Console::create_generic_screenbuffer(HANDLE * screenBuffer) { 
+    void Console::create_textmode_screenbuffer(HANDLE * screenBuffer) { 
         (*screenBuffer) = CreateConsoleScreenBuffer(
             GENERIC_READ | GENERIC_WRITE,
             FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -76,12 +97,12 @@ namespace MyAscii {
         hidden_char_secret = !hidden_char_secret;
     }
 
-    bool Console::hiddenCharState(void) {
+    bool Console::hidden_char_state(void) {
         return hidden_char_secret;
     }
 
 
-    bool Console::show_title(void) {
+    bool Console::print_title(void) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT titleRect;
@@ -107,8 +128,7 @@ namespace MyAscii {
 
         coordinateBufferSize.Y = TITLE_CARD_HEIGHT;
         coordinateBufferSize.X = TITLE_CARD_WIDTH;
-        topLeftCoordinate.Y = 0;
-        topLeftCoordinate.X = 0;
+        reset_coord(&topLeftCoordinate);
 
         (&titleRect)->Top = TOP_MARGIN;
         (&titleRect)->Left = TITLE_CARD_START_POSITION;
@@ -125,8 +145,7 @@ namespace MyAscii {
 
         // Print the title to the console
         COORD tileCoord;
-        tileCoord.X = TITLE_CARD_START_POSITION + LEFT_MARGIN;
-        tileCoord.Y = TOP_MARGIN + 2;
+        set_coords(&tileCoord, (TITLE_CARD_START_POSITION + LEFT_MARGIN), TOP_MARGIN + 2);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
 
         for (unsigned int i = 0; i < 6; i++) {  // for some reason tile.size() doesn't, reprints title every time...
@@ -138,63 +157,90 @@ namespace MyAscii {
         tileCoord.Y += 4;
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
         std::cout << "Use the [UP] and [DOWN] arrow keys to navigate, [ENTER] to select.";
-
-        // Reset cursor position
         reset_coord(&tileCoord);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
-
         return succes;
     }
 
-    bool Console::showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed) {
-        if (user_input_needed) {
-            system("CLS");
-        }
-        show_title();
 
-        COORD coordinateBufferSize;
-        COORD topLeftCoordinate;
-        SMALL_RECT srcWriteRect;
-        BOOL succes;
+    /**
+     * Adds a menu item to the provided CHAR_INFO map
+     */
+    void Console::add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem) {
+        for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
+            if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
+                int size = sizeof_text(menuItem);
 
-        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
-        const int MENU_ITEM_HEIGHT = 3;
-        const int MENU_ITEM_WIDTH = 75;
-        const int MENU_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
-        const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
-        const int MENU_ITEM_ATTRIBUTE = 0x6F;
-        
-        // Print menu items to console
-        for (int y = 0; y < items_size; y++) {
-            CHAR_INFO map[MENU_SIZE];
-
-            for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
-
-                if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
-                    const char * menu_item_string = items[y].c_str();
-                    int size = sizeof_text(menu_item_string);
-
-                    if (i - MENU_ITEM_WIDTH - 2 < size) {
-                        map[i].Char.UnicodeChar =  menu_item_string[i - MENU_ITEM_WIDTH - 2];
-                        map[i].Attributes = MENU_ITEM_ATTRIBUTE;
-                    } else {
-                        map[i].Char.UnicodeChar =  L' ';
-                        map[i].Attributes = MENU_ITEM_ATTRIBUTE;
-                    }
+                if (i - MENU_ITEM_WIDTH - 2 < size) {
+                    add_char_to_map(map, i, menuItem[i - MENU_ITEM_WIDTH - 2], MENU_ITEM_ATTRIBUTE);
                 } else {
-                    map[i].Char.UnicodeChar = L' ';
-                    map[i].Attributes = MENU_ITEM_ATTRIBUTE;
+                    add_char_to_map(map, i, L' ', MENU_ITEM_ATTRIBUTE);
                 }
-
-                if (y == current_menu_item) {
-                    if (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH ) {
-                        map[i].Char.UnicodeChar = L' ';
-                        map[i].Attributes = 0x40;
-                    }
-                }
+            } else {
+                add_char_to_map(map, i, L' ', MENU_ITEM_ATTRIBUTE);
             }
 
-            const int USER_INPUT_SPACER = ((user_input_needed) && (y != 0) ? 5 : 0);
+            if (currentMenuItem) {
+                if (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH ) {
+                    add_char_to_map(map, i, L' ', 0x40);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Asks user to provide a name and a difficulty setting
+     */
+    void Console::get_player_info(int startPosition) {
+        COORD cursorCoord;
+        set_coords(&cursorCoord, (startPosition + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
+
+        do {
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << "Who's playing? ";
+            std::getline(std::cin, userName);
+        } while (userName.length() == 0);
+
+        cursorCoord.Y += 2;
+        bool is_number = false;
+        do {
+            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+            std::cout << "What can you handle (1 - 4)? ";
+            std::cin >> difficulty;
+
+            if (std::cin.good()){
+                is_number = true;
+            } else {
+                std::cin.clear();
+                std::cin.ignore(100000,'\n');
+            }
+
+        } while (!is_number || difficulty == 0 || difficulty > 4);
+        difficulty--; // Zero indexed for internal use
+        system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
+    }
+
+
+    bool Console::print_menu(std::string menuItems[], int itemsSize, int currentMenuItem, bool userInputNeeded) {
+        COORD coordinateBufferSize, topLeftCoordinate;
+        SMALL_RECT srcWriteRect;
+        BOOL succes;
+        int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
+        const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
+        
+        hide_cursor(&defaultScreenBuffer);
+        if (userInputNeeded) {
+            system("CLS");
+            show_cursor(&defaultScreenBuffer);
+        }
+        print_title();
+        
+        for (int y = 0; y < itemsSize; y++) {
+            CHAR_INFO map[MENU_ITEM_SIZE];
+            add_menu_item_to_map(map, menuItems[y].c_str(), (y == currentMenuItem));
+            
+            const int USER_INPUT_SPACER = ((userInputNeeded) && (y != 0) ? 5 : 0);
             set_coords(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             reset_coord(&topLeftCoordinate);
 
@@ -211,41 +257,12 @@ namespace MyAscii {
                 (&srcWriteRect)
             );
         }
-
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
-        if (user_input_needed) {
-            COORD cursorCoord;
-            cursorCoord.X = START_POSITION + 1;
-            cursorCoord.Y = MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1;
-            do {
-                SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-                std::cout << "Who's playing? ";
-                std::getline(std::cin, userName);
-            } while (userName.length() == 0);
-
-            // cursorCoord.X = START_POSITION + 1;
-            cursorCoord.Y += 2;
-            bool is_number = false;
-            do {
-                SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-                std::cout << "What can you handle (1 - 4)? ";
-                std::cin >> difficulty;
-
-                if (std::cin.good()){
-                    is_number = true;
-                } else {
-                    std::cin.clear();
-                    std::cin.ignore(100000,'\n');
-                }
-    
-            } while (!is_number || difficulty == 0 || difficulty > 4);
-            difficulty--; // Zero indexed for internal use
-            system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
-        }
+        if (userInputNeeded) get_player_info(START_POSITION);
         return succes;
     }
 
-    bool Console::showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
+    bool Console::print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT playfieldRect;
@@ -277,7 +294,7 @@ namespace MyAscii {
                         } else if ((j > TILE_WIDTH + 2 && j < (2 * TILE_WIDTH) - 3) || ((j > MAP_SIZE - (2 * TILE_WIDTH) + 2) && j < (MAP_SIZE - TILE_WIDTH - 3))){
                             map[j].Char.UnicodeChar = L'─';
                         } else if (j == (2 * TILE_WIDTH) - 3) {
-                            map[j].Char.UnicodeChar = L'┐';  // || j % (2 * TILE_WIDTH) - 3)
+                            map[j].Char.UnicodeChar = L'┐';
                         } else if (j > ((2 * TILE_WIDTH) - 3 ) && j < (MAP_SIZE - (2 * TILE_WIDTH) + 2) && ((j - 2) % (TILE_WIDTH) == 0 || (j + 3) % TILE_WIDTH == 0)) {   
                             map[j].Char.UnicodeChar = L'│';
                         } else if (j == MAP_SIZE - (2 * TILE_WIDTH) + 2) {
@@ -290,7 +307,7 @@ namespace MyAscii {
                             map[j].Char.UnicodeChar = L' ';
                         }
                     } else {
-                        map[j].Char.UnicodeChar = (j == TILE_CENTER ? CHAR_TO_GUESS : L' ');     // Use   L'▓' for unicode chars
+                        map[j].Char.UnicodeChar = (j == TILE_CENTER ? CHAR_TO_GUESS : L' ');
                     }
 
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
@@ -475,10 +492,7 @@ namespace MyAscii {
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
-
-        const int PLAYER_NAME_ROW_NUMBER = 4;
-        const int SCORE_ROW_NUMBER = 5;
-        const int NUMBER_OF_ROWS = 23;
+        const int NUMBER_OF_ROWS = 24;
         const int NUMBER_OF_COLUMNS = 50;
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
@@ -491,36 +505,40 @@ namespace MyAscii {
         print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, NUMBER_OF_ROWS - 1);
 
         // Print the game info
+        const char * GAME_INFO[] = {
+            (char *)"single-division",
+            (char *)"",
+            (char *)("Player: " + userName).c_str(),
+            (char *)("Difficulty level: " + std::to_string(difficulty + 1)).c_str(),
+            (char *)("Score: " + std::to_string(correct_guesses) + "/" + std::to_string(number_of_pairs)).c_str(),
+            (char *)"",
+            (char *)"bottom-division",
+            (char *)"blank-division",
+            (char *)"top-division"
+        };
         print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
-        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2);
-        const char * PLAYER_NAME_TEXT = ("Player: " + userName).c_str();
-        print_scorecard_text(PLAYER_NAME_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, PLAYER_NAME_ROW_NUMBER, scoreCardAttribute); // Print player name
-        const char * SCORE_TEXT = ("Score: " + std::to_string(correct_guesses) + "/" + std::to_string(number_of_pairs)).c_str();
-        print_scorecard_text(SCORE_TEXT, map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, SCORE_ROW_NUMBER, scoreCardAttribute); // Print score
-        print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 7);
-        print_scorecard_structure(map, ScoreCardStructure::BLANK_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 8);
+        print_scorecard_text_array(GAME_INFO, sizeof(GAME_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2, scoreCardAttribute);
 
         // Print the controls info
-        print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 9);
-        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 10, 0xE9);
-        print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11);
-        print_scorecard_text((char *)"Use the arrow keys to move around:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 13, scoreCardAttribute);
-        print_scorecard_text((char *)"[UP] [DOWN] [LEFT] [RIGHT]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 14, scoreCardAttribute);
-        print_scorecard_text((char *)"To flip a tile:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 16, scoreCardAttribute);
-        print_scorecard_text((char *)"[RETURN] or [SPACE]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 17, scoreCardAttribute);
-        print_scorecard_text((char *)"To exit the game:", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 19, scoreCardAttribute);
-        print_scorecard_text((char *)"[ESC]", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 20, scoreCardAttribute);
+        const char * CONTROL_INFO[] = {
+            (char *)"single-division",
+            (char *)"",
+            (char *)"Use the arrow keys to move around:",
+            (char *)"[UP] [DOWN] [LEFT] [RIGHT]",
+            (char *)"",
+            (char *)"To flip a tile:",
+            (char *)"[RETURN] or [SPACE]",
+            (char *)"",
+            (char *)"To exit the game:",
+            (char *)"[ESC]"
+        };
+        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, 0xE9);
+        print_scorecard_text_array(CONTROL_INFO, sizeof(CONTROL_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
 
-        // Get ready to write it to the console screenBuffer
-        coordinateBufferSize.Y = NUMBER_OF_ROWS;
-        coordinateBufferSize.X = NUMBER_OF_COLUMNS;
+        set_coords(&coordinateBufferSize, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
         reset_coord(&topLeftCoordinate);
-        (&srcWriteRect)->Top = GAME_TOP_MARGIN;
-        (&srcWriteRect)->Left = MENU_X_START_POSITION;
-        (&srcWriteRect)->Bottom = GAME_TOP_MARGIN + NUMBER_OF_ROWS;
-        (&srcWriteRect)->Right = MENU_X_START_POSITION + NUMBER_OF_COLUMNS;
+        set_smallrect_position(&srcWriteRect, GAME_TOP_MARGIN, (GAME_TOP_MARGIN + NUMBER_OF_ROWS), MENU_X_START_POSITION, (MENU_X_START_POSITION + NUMBER_OF_COLUMNS));
 
-        // Write it to the console screenBuffer
         succes = WriteConsoleOutputW(
             gameScreenBuffer,
             map,
@@ -532,12 +550,27 @@ namespace MyAscii {
         return succes;
     }
 
+    
+    /**
+     * Sets the top, bottom, left and right coordinate of the box to print to
+     */
+    void Console::set_smallrect_position(SMALL_RECT * canvas, int top, int bottom, int left, int right) {
+        (*canvas).Top = top;
+        (*canvas).Bottom = bottom;
+        (*canvas).Left = left;
+        (*canvas).Right = right;
+    }
+
+
+    /**
+     * Draw frame in black or sparkle mode around anything on the provided screenBuffer
+     */
     bool Console::draw_frame(HANDLE * screenBuffer, int bufferWidth, int frameHeight, int frameWidth, int topMargin, bool sparkle) {
         const int START_POSITION = (bufferWidth - frameWidth) / 2;
         const int HORIZONTAL_BORDER = 1;
         const int VERTICAL_BORDER = 2;
-        BOOL succes;
-        
+        BOOL succes = false;
+
         COORD topLeftCoordinate;
         reset_coord(&topLeftCoordinate);
         COORD horizontalBufferSize;
@@ -547,67 +580,54 @@ namespace MyAscii {
         
         // Set position of all frame edges on screen
         SMALL_RECT topRect;
-        (&topRect)->Top = topMargin;
-        (&topRect)->Left = START_POSITION;
-        (&topRect)->Bottom = topMargin;
-        (&topRect)->Right = START_POSITION + frameWidth;
+        set_smallrect_position(&topRect, topMargin, topMargin, START_POSITION, (START_POSITION + frameWidth));
         SMALL_RECT bottomRect;
-        (&bottomRect)->Top = topMargin + frameHeight - 1;
-        (&bottomRect)->Left = START_POSITION;
-        (&bottomRect)->Bottom = topMargin + frameHeight - 1;
-        (&bottomRect)->Right = START_POSITION + frameWidth;
+        set_smallrect_position(&bottomRect, (topMargin + frameHeight - 1), (topMargin + frameHeight - 1), START_POSITION, (START_POSITION + frameWidth));
         SMALL_RECT leftRect;
-        (&leftRect)->Top = topMargin;
-        (&leftRect)->Left = START_POSITION;
-        (&leftRect)->Bottom = topMargin + frameHeight;
-        (&leftRect)->Right = START_POSITION + 1;
+        set_smallrect_position(&leftRect, topMargin, (topMargin + frameHeight), START_POSITION, (START_POSITION + 1));
         SMALL_RECT rightRect;
-        (&rightRect)->Top = topMargin;
-        (&rightRect)->Left = START_POSITION + frameWidth - 1;
-        (&rightRect)->Bottom = topMargin + frameHeight;
-        (&rightRect)->Right = START_POSITION + frameWidth;
+        set_smallrect_position(&rightRect, topMargin, (topMargin + frameHeight), (START_POSITION + frameWidth - 1), (START_POSITION + frameWidth));
 
-        CHAR_INFO * top = new CHAR_INFO[frameWidth * HORIZONTAL_BORDER];
-        CHAR_INFO * left = new CHAR_INFO[frameHeight * VERTICAL_BORDER];
+        CHAR_INFO * horizontalMap = new CHAR_INFO[frameWidth * HORIZONTAL_BORDER];
+        CHAR_INFO * verticalMap = new CHAR_INFO[frameHeight * VERTICAL_BORDER];
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
 
         do {
             // Set color of frame to sparkle or black depending if game was successfull
             for (int x = 0; x < frameWidth; x++) {
-                    top[x].Attributes = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
-                    top[x].Char.UnicodeChar = L' ';
+                int attribute = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
+                add_char_to_map(horizontalMap, x, L' ', attribute);
             }
-
             for (int x = 0; x < (frameHeight * 2); x++) {
-                    left[x].Attributes = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
-                    left[x].Char.UnicodeChar = L' ';
+                int attribute = (sparkle ? (rand() % 0xEE) + 10 : 0x01);
+                add_char_to_map(verticalMap, x, L' ', attribute);
             }
 
             // Write all score-card frame sides to the console
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
-                top,
+                horizontalMap,
                 horizontalBufferSize,
                 topLeftCoordinate,
                 (&topRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
-                top,
+                horizontalMap,
                 horizontalBufferSize,
                 topLeftCoordinate,
                 (&bottomRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
-                left,
+                verticalMap,
                 verticalBufferSize,
                 topLeftCoordinate,
                 (&leftRect)
             );
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
-                left,
+                verticalMap,
                 verticalBufferSize,
                 topLeftCoordinate,
                 (&rightRect)
@@ -617,11 +637,11 @@ namespace MyAscii {
             GetAsyncKeyState(VK_RETURN);
             GetAsyncKeyState(VK_RETURN);
 
-            Sleep(50); // Without this the colors in sparkle mode look dull
+            Sleep(50); // Slow down the sparkling a little
 
             if (GetAsyncKeyState(VK_RETURN)) {
-                delete[] left;
-                delete[] top;
+                delete[] verticalMap;
+                delete[] horizontalMap;
                 system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
                 return succes;
                 break;
@@ -631,6 +651,9 @@ namespace MyAscii {
     }
 
 
+    /**
+     * Prints the provided text on the provided line in the in-game scorecard
+     */
     void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + SCORECARD_LEFT_MARGIN;
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - SCORECARD_RIGHT_MARGIN;
@@ -647,6 +670,28 @@ namespace MyAscii {
     }
 
 
+    void Console::print_scorecard_text_array(const char * TEXT[], int size, CHAR_INFO map[], int numberOfColumns, int numberOfRows, int startingRow, int textAttribute) {
+        int row = startingRow;
+        for (int i = 0; i < size; i++) {
+            if (TEXT[i] == (char *)"single-division") {
+                print_scorecard_structure(map, ScoreCardStructure::SINGLE_DIVISION, numberOfColumns, numberOfRows, row);
+            } else if (TEXT[i] == (char *)"top-division") {
+                print_scorecard_structure(map, ScoreCardStructure::TOP, numberOfColumns, numberOfRows, row);
+            } else if (TEXT[i] == (char *)"bottom-division") {
+                print_scorecard_structure(map, ScoreCardStructure::BOTTOM, numberOfColumns, numberOfRows, row);
+            } else if (TEXT[i] == (char *)"blank-division") {
+                print_scorecard_structure(map, ScoreCardStructure::BLANK_LINE, numberOfColumns, numberOfRows, row);
+            } else {
+                print_scorecard_text(TEXT[i], map, numberOfColumns, numberOfRows, row, textAttribute);
+            }
+            row++;
+        }
+    }
+
+
+    /**
+     * Prints the structure of the in-game scorecard
+     */
     void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
         int type_index = (int) type;
         int left_char = 0;

@@ -7,7 +7,7 @@ namespace MyAscii {
         this->console = console;
         this->difficulty = difficulty;
         set_game_parameters(difficulty);
-        bool hidden_char_secret = console->hiddenCharState();
+        bool hidden_char_secret = console->hidden_char_state();
         this->playfield = PlayField(fieldEdgeSize, setSize, difficulty, hidden_char_secret);
         this->tiles = playfield.get_playfield();
     }
@@ -33,18 +33,18 @@ namespace MyAscii {
      * Starts the game
      */
     void Game::start() {
-        console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         console->showScoreCard(numberOfPairs, correctGuesses, unCompleteGame);
         double end_time;
         double start_time = GetTickCount();
 
         do {
-            clear_returns_spaces();
+            clear_returns_and_spaces();
             if (!correctGuess) flip_back_wrong_guess();
             allow_player_input();
             int currentSelectedTile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
             handle_current_tile(currentSelectedTile);
-            console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+            console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
             unCompleteGame = (correctGuesses == numberOfPairs ? false : true);
         } while (unCompleteGame && noEscape);
 
@@ -91,7 +91,7 @@ namespace MyAscii {
                 break;
             }
 
-            console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+            console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
             check_for_cheats();
             
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
@@ -101,7 +101,7 @@ namespace MyAscii {
     /**
      * Clears any remaning returns or spaces
      */
-    void Game::clear_returns_spaces(void) {
+    void Game::clear_returns_and_spaces(void) {
         GetAsyncKeyState(VK_RETURN);
         GetAsyncKeyState(VK_SPACE);
     }
@@ -115,7 +115,7 @@ namespace MyAscii {
         for (unsigned int i = 0; i < guessPossitions.size(); i++) {
             tiles[guessPossitions[i]].flip_tile();
         }
-        console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         reset_guess_parameters();
         correctGuess = true;
     }
@@ -149,10 +149,10 @@ namespace MyAscii {
      */
     void Game::shortly_turn_tile(int index, int time) {
         tiles[index].flip_tile();
-        console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         Sleep(time);
         tiles[index].flip_tile();
-        console->showPlayField(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
+        console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
     }
 
 

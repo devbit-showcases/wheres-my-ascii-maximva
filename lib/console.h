@@ -28,10 +28,11 @@ namespace MyAscii {
             std::string getUserName(void);
             int getDifficulty(void);
             void hide_cursor(HANDLE * screenBuffer);
-            bool showPlayField(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
+            void show_cursor(HANDLE * screenBuffer);
+            bool print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
             bool showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
-            bool showMenu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
-            bool hiddenCharState(void);
+            bool print_menu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
+            bool hidden_char_state(void);
             void print_endgame_screen(int number_of_pairs, int correct_guesses);
             void showScoreTable(void);
             void showAboutPage(void);
@@ -42,22 +43,30 @@ namespace MyAscii {
             int get_screenbuffer_width(HANDLE * screenbuffer);
             int sizeof_text(const char * TEXT);
             bool draw_frame(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
-            bool show_title(void);
-            void create_generic_screenbuffer(HANDLE * screenBuffer);
+            bool print_title(void);
+            void create_textmode_screenbuffer(HANDLE * screenBuffer);
             void print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
             void print_scorecard_text(const char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
+            void print_scorecard_text_array(const char * TEXT[], int size, CHAR_INFO map[], int numberOfColumns, int numberOfRows, int startingRow, int text_attribute);
             void add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void init_console_window(std::string windowTitle);
             void reset_coord(COORD * coord);
             void set_coords(COORD * coord, int xPosition, int yPosition);
             void set_x_coord(COORD * coord, int position);
             void set_y_coord(COORD * coord, int position);
+            void add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem);
+            void get_player_info(int startPosition);
+            void set_smallrect_position(SMALL_RECT * canvas, int top, int bottom, int left, int right);
 
         private:
             const int SCORECARD_LEFT_MARGIN = 4;
             const int SCORECARD_RIGHT_MARGIN = 1;
             const int MENU_TOP_MARGIN = 25;
             const int MENU_X_START_POSITION = 117;
+            const int MENU_ITEM_HEIGHT = 3;
+            const int MENU_ITEM_WIDTH = 75;
+            const int MENU_ITEM_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
+            const int MENU_ITEM_ATTRIBUTE = 0x6F;
             const int GAME_TOP_MARGIN = 4;
             HANDLE gameScreenBuffer;
             HANDLE defaultScreenBuffer;
