@@ -30,7 +30,7 @@ namespace MyAscii {
             void hide_cursor(HANDLE * screenBuffer);
             void show_cursor(HANDLE * screenBuffer);
             bool print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
-            bool showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game);
+            bool show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game);
             bool print_menu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             bool hidden_char_state(void);
             void print_endgame_screen(int number_of_pairs, int correct_guesses);
@@ -46,7 +46,7 @@ namespace MyAscii {
             bool print_title(void);
             void create_textmode_screenbuffer(HANDLE * screenBuffer);
             void print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER);
-            void print_scorecard_text(const char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute);
+            void print_scorecard_text(const char * text, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int ROW_NUMBER, int text_attribute);
             void print_scorecard_text_array(const char * TEXT[], int size, CHAR_INFO map[], int numberOfColumns, int numberOfRows, int startingRow, int text_attribute);
             void add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute);
             void init_console_window(std::string windowTitle);

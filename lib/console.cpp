@@ -130,10 +130,10 @@ namespace MyAscii {
         coordinateBufferSize.X = TITLE_CARD_WIDTH;
         reset_coord(&topLeftCoordinate);
 
-        (&titleRect)->Top = TOP_MARGIN;
-        (&titleRect)->Left = TITLE_CARD_START_POSITION;
-        (&titleRect)->Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
-        (&titleRect)->Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
+        titleRect.Top = TOP_MARGIN;
+        titleRect.Left = TITLE_CARD_START_POSITION;
+        titleRect.Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
+        titleRect.Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
 
         succes = WriteConsoleOutputW(
             defaultScreenBuffer,
@@ -244,10 +244,10 @@ namespace MyAscii {
             set_coords(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             reset_coord(&topLeftCoordinate);
 
-            (&srcWriteRect)->Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
-            (&srcWriteRect)->Left = START_POSITION;
-            (&srcWriteRect)->Bottom = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
-            (&srcWriteRect)->Right = (START_POSITION + MENU_ITEM_WIDTH);
+            srcWriteRect.Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
+            srcWriteRect.Left = START_POSITION;
+            srcWriteRect.Bottom = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
+            srcWriteRect.Right = (START_POSITION + MENU_ITEM_WIDTH);
 
             succes = WriteConsoleOutputW(
                 defaultScreenBuffer,
@@ -316,10 +316,10 @@ namespace MyAscii {
                 set_coords(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
                 reset_coord(&topLeftCoordinate);
 
-                (&playfieldRect)->Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
-                (&playfieldRect)->Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
-                (&playfieldRect)->Bottom = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
-                (&playfieldRect)->Right = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING)) + TILE_WIDTH;
+                playfieldRect.Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
+                playfieldRect.Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
+                playfieldRect.Bottom = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
+                playfieldRect.Right = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING)) + TILE_WIDTH;
 
                 succes = WriteConsoleOutputW(
                     gameScreenBuffer,
@@ -487,15 +487,18 @@ namespace MyAscii {
      * The only way i found to easily print text to the console screen during the game
      * and to make the game run smoothly is to build these custom methods to do it.
     */
-    bool Console::showScoreCard(int number_of_pairs, int correct_guesses, bool stay_in_game) {
+    bool Console::show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
-        const int NUMBER_OF_ROWS = 24;
+        const int NUMBER_OF_ROWS = 27;
         const int NUMBER_OF_COLUMNS = 50;
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
+
+        bool uniqueChars = !(difficulty == 2 || difficulty == 3);
+        int difficultyLevel = difficulty + 1;
 
         // Print the empty scorecard box
         print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 0);
@@ -503,20 +506,22 @@ namespace MyAscii {
             print_scorecard_structure(map, ScoreCardStructure::EMPTY_LINE, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, i);
         }
         print_scorecard_structure(map, ScoreCardStructure::BOTTOM, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, NUMBER_OF_ROWS - 1);
-
         // Print the game info
         const char * GAME_INFO[] = {
             (char *)"single-division",
             (char *)"",
             (char *)("Player: " + userName).c_str(),
-            (char *)("Difficulty level: " + std::to_string(difficulty + 1)).c_str(),
             (char *)("Score: " + std::to_string(correct_guesses) + "/" + std::to_string(number_of_pairs)).c_str(),
+            (char *)"",
+            (char *)("Difficulty level: " + std::to_string(difficultyLevel)).c_str(),
+            (char *)("Size of a set: " + std::to_string(setSize)).c_str(),
+            (uniqueChars ? (char *)"Every set has a unique letter" : (char *)"Multiple sets can have the same letter"),
             (char *)"",
             (char *)"bottom-division",
             (char *)"blank-division",
             (char *)"top-division"
         };
-        print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 1, 0xE9);
+        print_scorecard_text((char *)"GAME INFO", map, NUMBER_OF_COLUMNS, 1, 0xE9);
         print_scorecard_text_array(GAME_INFO, sizeof(GAME_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 2, scoreCardAttribute);
 
         // Print the controls info
@@ -530,10 +535,11 @@ namespace MyAscii {
             (char *)"[RETURN] or [SPACE]",
             (char *)"",
             (char *)"To exit the game:",
-            (char *)"[ESC]"
+            (char *)"[ESC]",
+            (char *)""
         };
-        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 11, 0xE9);
-        print_scorecard_text_array(CONTROL_INFO, sizeof(CONTROL_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 12, scoreCardAttribute);
+        print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, 14, 0xE9);
+        print_scorecard_text_array(CONTROL_INFO, sizeof(CONTROL_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 15, scoreCardAttribute);
 
         set_coords(&coordinateBufferSize, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
         reset_coord(&topLeftCoordinate);
@@ -654,7 +660,7 @@ namespace MyAscii {
     /**
      * Prints the provided text on the provided line in the in-game scorecard
      */
-    void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER, int text_attribute) {
+    void Console::print_scorecard_text(const char * TEXT, CHAR_INFO map[], int NUMBER_OF_COLUMNS, int ROW_NUMBER, int text_attribute) {
         const int START_POSITION = (NUMBER_OF_COLUMNS * ROW_NUMBER) + SCORECARD_LEFT_MARGIN;
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - SCORECARD_RIGHT_MARGIN;
         unsigned int textSize = sizeof_text(TEXT);
@@ -670,6 +676,9 @@ namespace MyAscii {
     }
 
 
+    /**
+     * Prints the provided char* array starting at the provided line to the in-game scorecard
+     */
     void Console::print_scorecard_text_array(const char * TEXT[], int size, CHAR_INFO map[], int numberOfColumns, int numberOfRows, int startingRow, int textAttribute) {
         int row = startingRow;
         for (int i = 0; i < size; i++) {
@@ -682,7 +691,7 @@ namespace MyAscii {
             } else if (TEXT[i] == (char *)"blank-division") {
                 print_scorecard_structure(map, ScoreCardStructure::BLANK_LINE, numberOfColumns, numberOfRows, row);
             } else {
-                print_scorecard_text(TEXT[i], map, numberOfColumns, numberOfRows, row, textAttribute);
+                print_scorecard_text(TEXT[i], map, numberOfColumns, row, textAttribute);
             }
             row++;
         }

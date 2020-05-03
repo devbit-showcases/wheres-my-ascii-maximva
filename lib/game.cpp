@@ -34,7 +34,8 @@ namespace MyAscii {
      */
     void Game::start() {
         console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-        console->showScoreCard(numberOfPairs, correctGuesses, unCompleteGame);
+        console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame);
+        
         double end_time;
         double start_time = GetTickCount();
 
@@ -45,12 +46,12 @@ namespace MyAscii {
             int currentSelectedTile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
             handle_current_tile(currentSelectedTile);
             console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
-            unCompleteGame = (correctGuesses == numberOfPairs ? false : true);
+            unCompleteGame = (correctGuesses == numberOfSets ? false : true);
         } while (unCompleteGame && noEscape);
 
         end_time = GetTickCount();
         save_gamescore(end_time, start_time);
-        console->print_endgame_screen(numberOfPairs, correctGuesses);
+        console->print_endgame_screen(numberOfSets, correctGuesses);
     }
 
 
@@ -172,7 +173,7 @@ namespace MyAscii {
                 guessPossitions.push_back(currentSelectedTile);
             } else if (cardsTurned == setSize && guessId == tiles[currentSelectedTile].get_id()) {
                 correctGuesses++;
-                console->showScoreCard(numberOfPairs, correctGuesses, unCompleteGame);
+                console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame);
                 reset_guess_parameters();
             } else {
                 guessPossitions.push_back(currentSelectedTile);
@@ -197,7 +198,7 @@ namespace MyAscii {
      */
     void Game::save_gamescore(double endTime, double startTime) {
         double elapsed_time = (endTime - startTime) / 1000;
-        Score score((*player).get_name(), difficulty, correctGuesses, numberOfPairs, elapsed_time);
+        Score score((*player).get_name(), difficulty, correctGuesses, numberOfSets, elapsed_time);
         ScoreCard scorecard;
         scorecard.save_score(&score);
     }
@@ -209,6 +210,6 @@ namespace MyAscii {
     void Game::set_game_parameters(unsigned int difficulty) {
         fieldEdgeSize = gameParameters[difficulty][0];
         setSize = gameParameters[difficulty][1];
-        numberOfPairs = (fieldEdgeSize * fieldEdgeSize) / setSize;
+        numberOfSets = (fieldEdgeSize * fieldEdgeSize) / setSize;
     }
 }

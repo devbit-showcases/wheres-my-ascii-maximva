@@ -48,7 +48,7 @@ namespace MyAscii {
             unsigned int selectedTileY = 0;
             unsigned int cardsTurned = 0;
             int correctGuesses = 0;
-            int numberOfPairs = 0;
+            int numberOfSets = 0;
             std::vector<int> correctAnswers;
             std::vector<Tile> tiles;
             std::vector<int> guessPossitions;
