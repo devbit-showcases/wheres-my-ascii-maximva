@@ -33,7 +33,7 @@ namespace MyAscii {
             bool show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game);
             bool print_menu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
             bool hidden_char_state(void);
-            void print_endgame_screen(int number_of_pairs, int correct_guesses);
+            void print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime);
             void showScoreTable(void);
             void showAboutPage(void);
             void toggleHiddenCharSecret(void);
@@ -57,6 +57,7 @@ namespace MyAscii {
             void add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem);
             void get_player_info(int startPosition);
             void set_smallrect_position(SMALL_RECT * canvas, int top, int bottom, int left, int right);
+            std::string get_timestring(double time);
 
         private:
             const int SCORECARD_LEFT_MARGIN = 4;

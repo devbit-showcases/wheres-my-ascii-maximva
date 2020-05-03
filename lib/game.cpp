@@ -36,8 +36,8 @@ namespace MyAscii {
         console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY);
         console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame);
         
-        double end_time;
-        double start_time = GetTickCount();
+        double endTime;
+        double startTime = GetTickCount();
 
         do {
             clear_returns_and_spaces();
@@ -49,9 +49,10 @@ namespace MyAscii {
             unCompleteGame = (correctGuesses == numberOfSets ? false : true);
         } while (unCompleteGame && noEscape);
 
-        end_time = GetTickCount();
-        save_gamescore(end_time, start_time);
-        console->print_endgame_screen(numberOfSets, correctGuesses);
+        endTime = GetTickCount();
+        double elapsedTime = (endTime - startTime) / 1000;
+        save_gamescore(elapsedTime);
+        console->print_endgame_screen(numberOfSets, correctGuesses, elapsedTime);
     }
 
 
@@ -196,9 +197,8 @@ namespace MyAscii {
     /**
      * Save the games score
      */
-    void Game::save_gamescore(double endTime, double startTime) {
-        double elapsed_time = (endTime - startTime) / 1000;
-        Score score((*player).get_name(), difficulty, correctGuesses, numberOfSets, elapsed_time);
+    void Game::save_gamescore(double elapsedTime) {
+        Score score((*player).get_name(), difficulty, correctGuesses, numberOfSets, elapsedTime);
         ScoreCard scorecard;
         scorecard.save_score(&score);
     }

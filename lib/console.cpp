@@ -416,13 +416,7 @@ namespace MyAscii {
 
             cursorCoord.X += TIME_COLUMN_OFFSET;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            int minutes = scores[i].get_elapsed_time() / 60;
-            int tens_seconds = (scores[i].get_elapsed_time() - (minutes * 60)) / 10; // % Doesn't work for some reason
-            int hundreds_seconds = (scores[i].get_elapsed_time() - (minutes * 60) - (tens_seconds * 10));
-            std::cout << minutes << "." << tens_seconds << hundreds_seconds;
-            cursorCoord.X += MINUTE_MARK_OFFSET;
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << " min.";
+            std::cout << get_timestring(scores[i].get_elapsed_time());
 
             cursorCoord.X += DIFFICULTY_COLUMN_OFFSET;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
@@ -439,7 +433,18 @@ namespace MyAscii {
         draw_frame(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
-    void Console::print_endgame_screen(int number_of_pairs, int correct_guesses) {
+
+    /**
+     * Returns a string format: "mm:ss min." from a type double time argument
+     */
+    std::string Console::get_timestring(double time) {
+        int minutes = time / 60;
+        int tens_seconds = (time - (minutes * 60)) / 10; // % Doesn't work for some reason
+        int hundreds_seconds = (time - (minutes * 60) - (tens_seconds * 10));
+        return std::to_string(minutes) + "." + std::to_string(tens_seconds) + std::to_string(hundreds_seconds) + " min."; 
+    }
+
+    void Console::print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime) {
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
 
         const int SCORE_CARD_WIDTH = 70;
@@ -472,6 +477,9 @@ namespace MyAscii {
         cursorCoord.Y += 1;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << gameOverText << found_plural << std::to_string(correct_guesses) << out_of_plural << " sets!";
+        cursorCoord.Y += 1;
+        SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
+        std::cout << "It took you " << get_timestring(elapsedTime);
         cursorCoord.Y += 2;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Press [ENTER] to go back to the main menu.";

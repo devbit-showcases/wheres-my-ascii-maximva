@@ -23,7 +23,7 @@ namespace MyAscii {
 
         private:
             void show_card_cheat(int cards_turned, int selectedTileX, int selectedTileY);
-            void save_gamescore(double endTime, double startTime);
+            void save_gamescore(double elapsedTime);
             void handle_current_tile(int currentSelectedTile);
             void reset_guess_parameters(void);
             void shortly_turn_tile(int index, int time);
