@@ -16,7 +16,6 @@ namespace MyAscii {
             next = menu.show();
 
             if (next == Screen::PLAY_GAME) {
-
                 std::string userName = console.getUserName();
                 int difficulty = console.getDifficulty();
                 Player player;
@@ -25,17 +24,11 @@ namespace MyAscii {
                 Game game(&player, &console, difficulty);
                 game.start();
                 PlaySound(NULL, 0, 0); // Stops the music
-
             } else  if (next == Screen::SHOW_SCORES) {
-
                 console.showScoreTable();
-
             } else if (next == Screen::ABOUT_PAGE) {
-
                 console.showAboutPage();
-
             } else {
-
                 break;
             }
 

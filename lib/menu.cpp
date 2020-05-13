@@ -36,7 +36,6 @@ namespace MyAscii {
         }
 
         return (Screen)currentMenuItem;
-        // return currentMenuItem;
     }
 
 
