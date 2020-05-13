@@ -15,7 +15,7 @@ namespace MyAscii {
     /**
      * Show the menu
      */
-    int Menu::show(void) {
+    Screen Menu::show(void) {
         int currentMenuItem = 0;
         console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
 
@@ -35,7 +35,8 @@ namespace MyAscii {
             console->print_menu(menuItems, menuItemsSize, currentMenuItem, true);
         }
 
-        return currentMenuItem;
+        return (Screen)currentMenuItem;
+        // return currentMenuItem;
     }
 
 
