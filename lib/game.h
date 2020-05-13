@@ -22,7 +22,8 @@ namespace MyAscii {
             void set_game_parameters(unsigned int difficulty);
 
         private:
-            void show_card_cheat(int cards_turned, int selectedTileX, int selectedTileY);
+            void show_5tileflip_cheat(int cards_turned, int selectedTileX, int selectedTileY);
+            void show_alltileflip_cheat(void);
             void save_gamescore(double elapsedTime);
             void handle_current_tile(int currentSelectedTile);
             void reset_guess_parameters(void);
@@ -39,7 +40,8 @@ namespace MyAscii {
             bool unCompleteGame = true;
             bool correctGuess = true;
             bool noEscape = true;
-            bool correctCheatSequence = false;
+            bool konamiCheat = false;
+            bool doomCheat = false;
             unsigned int difficulty = 0;
             unsigned int fieldEdgeSize = 0;
             unsigned int setSize = 0;
@@ -52,7 +54,8 @@ namespace MyAscii {
             std::vector<int> correctAnswers;
             std::vector<Tile> tiles;
             std::vector<int> guessPossitions;
-            std::vector<std::string> cheat = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};
+            std::vector<std::string> konamiCheatSequence = {"up", "up", "down", "down", "left", "right", "left", "right", "B", "A"};
+            std::vector<std::string> doomCheatSequence = {"I", "D", "Q", "D"};
             std::vector<std::string> cheatSequence = {};
             // Order: {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {

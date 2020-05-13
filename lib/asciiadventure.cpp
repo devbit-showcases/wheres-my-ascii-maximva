@@ -1,0 +1,63 @@
+#include "asciiadventure.h"
+#include <iostream>
+#include "time.h"
+#include <windows.h>
+#include <stdio.h>
+#include <thread>
+#include "tile.h"
+#include "playfield.h"
+#include "game.h"
+#include "player.h"
+#include "Console.h"
+#include "menu.h"
+#include "score.h"
+
+namespace MyAscii {
+
+    void AsciiAdventure::start(void) {
+        srand(time(NULL));
+        const int PLAY_GAME = 0;
+        const int SHOW_SCORES = 1;
+        const int ABOUT_PAGE = 2;
+        std::string menuItems[] = {
+            "Play a game",
+            "Show the high scores",
+            "About ASCII ADVENTURE",
+            "Back to reality"
+        };
+
+        do {
+            Console console("ASCII Adventure");
+            int menuItemsSize = (sizeof(menuItems)/sizeof(std::string));
+            Menu menu(&console, menuItems, menuItemsSize);
+            int chosen_menu_item = menu.show();
+
+            if (chosen_menu_item == PLAY_GAME) {
+
+                std::string userName = console.getUserName();
+                int difficulty = console.getDifficulty();
+                Player player;
+                player.set_name(userName);
+                PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+                Game game(&player, &console, difficulty);
+                game.start();
+                PlaySound(NULL, 0, 0); // Stops the music
+
+            } else  if (chosen_menu_item == SHOW_SCORES) {
+
+                console.showScoreTable();
+
+            } else if (chosen_menu_item == ABOUT_PAGE) {
+
+                console.showAboutPage();
+
+            } else {
+
+                break;
+            }
+
+        } while (true);
+    }
+
+
+}

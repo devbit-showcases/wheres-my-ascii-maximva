@@ -12,7 +12,7 @@ namespace MyAscii {
         this->tiles = playfield.get_playfield();
     }
 
-    void Game::show_card_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
+    void Game::show_5tileflip_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
         unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correctGuesses * setSize) - cardsTurned;
         std::vector<int> usedIndexes = {};
 
@@ -25,6 +25,15 @@ namespace MyAscii {
             }
             usedIndexes.push_back(randomIndex);
             shortly_turn_tile(randomIndex, 500);
+        }
+    }
+
+    void Game::show_alltileflip_cheat(void) {
+        unsigned int cardsToTurn = (fieldEdgeSize * fieldEdgeSize);
+        for (unsigned int i = 0; i < cardsToTurn; i++) {
+            if (!tiles[i].is_flipped()) {
+                shortly_turn_tile(i, 300);
+            }
         }
     }
 
@@ -84,10 +93,16 @@ namespace MyAscii {
                     selectedTileX++;
                 }
                 cheatSequence.push_back("right");
-            } else if (GetKeyState(66) & 8000) {
-                cheatSequence.push_back("B");
             } else if (GetKeyState(65) & 8000) {
                 cheatSequence.push_back("A");
+            } else if (GetKeyState(66) & 8000) {
+                cheatSequence.push_back("B");
+            } else if (GetKeyState(68) & 8000) {
+                cheatSequence.push_back("D");
+            } else if (GetKeyState(73) & 8000) {
+                cheatSequence.push_back("I");
+            } else if (GetKeyState(81) & 8000) {
+                cheatSequence.push_back("Q");
             } else if (GetAsyncKeyState(VK_ESCAPE)) {
                 noEscape = false; // Escape to main menu with ESC key
                 break;
@@ -127,22 +142,47 @@ namespace MyAscii {
      * Check if a cheat sequence has been entered
      */
     void Game::check_for_cheats(void) {
-        if (cheatSequence.size() > cheat.size()) {
+        const unsigned int MAX_CHEAT_LENGTH = 10;
+        if (cheatSequence.size() > MAX_CHEAT_LENGTH) {
             cheatSequence.erase(cheatSequence.begin());
         }
-        if (cheat.size() == cheatSequence.size()) {
-            for (unsigned int i = 0; i < cheatSequence.size(); i++) {
-                if (cheat[i] == cheatSequence[i]) {
-                    correctCheatSequence = true;
+
+        if (cheatSequence.size() >= konamiCheatSequence.size()) {
+            for (unsigned int i = 0; i < konamiCheatSequence.size(); i++) {
+                if (konamiCheatSequence[i] == cheatSequence[i]) {
+                    konamiCheat = true;
                 } else {
-                    correctCheatSequence = false;
+                    konamiCheat = false;
                     break;
                 }
             }
-            if (correctCheatSequence) {
-                show_card_cheat(cardsTurned, selectedTileX, selectedTileY);
+
+            if (konamiCheat) {
+                cheatSequence.clear();
+                show_5tileflip_cheat(cardsTurned, selectedTileX, selectedTileY);
             }
         }
+
+        if (cheatSequence.size() >= doomCheatSequence.size()) {
+            for (unsigned int j = 0; j < cheatSequence.size() - doomCheatSequence.size() + 2; j++) {
+                for (unsigned int i = j; i < j + doomCheatSequence.size(); i++) {
+
+                    if (doomCheatSequence[i - j] == cheatSequence[i]) {
+                        doomCheat = true;
+                    } else {
+                        doomCheat = false;
+                        break;
+                    }
+                }
+                if (doomCheat) {
+                    cheatSequence.clear();
+                    show_alltileflip_cheat();
+                    break;
+                }
+            }
+
+        }
+
     }
 
 

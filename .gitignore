@@ -1,12 +1,4 @@
 .vscode/
 main.exe
 scorecard.txt
-console.o
-game.o
-menu.o
-player.o
-playfield.o
-score.o
-scorecard.o
-tile.o
-main.o
+*.o

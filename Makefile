@@ -15,8 +15,8 @@ EXECUTABLE=main
 
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o
-	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o -o $(EXECUTABLE) $(LDFLAGS)
+$(EXECUTABLE): main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o
+	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o -o $(EXECUTABLE) $(LDFLAGS)
 
 main.o: ./src/main.cpp
 	$(CC) $(CFLAGS) ./src/main.cpp
@@ -44,6 +44,9 @@ playfield.o: ./lib/playfield.cpp
 
 tile.o: ./lib/tile.cpp
 	$(CC) $(CFLAGS) ./lib/tile.cpp
+
+asciiadventure.o: ./lib/asciiadventure.cpp
+	$(CC) $(CFLAGS) ./lib/asciiadventure.cpp
 
 clean:
 	del /f *.o $(EXECUTABLE)

@@ -6,12 +6,14 @@ Don't be fooled by the first level, as you work your way up, things get hard, fa
 
 Cheats / Power-ups / Easter-Eggs
 --------------------------------
-Classic cheat from 'The Sims': 'ROSEBUD' would grant you in-game money to build or furnish your house:
+The Sims money cheat: 'ROSEBUD' would grant you in-game money to build or furnish your house:
     - Type 'ROSEBUD' in the main menu and the character displayed on all tiles in the next game will be '$'.
 
 The KONAMI code: This cheat-code is present in most all games from KONAMI, it's a real classic:
-    - typing 'UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A' in-game will briefly reveal 5 random tiles.
+    - Typing 'UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A' in-game will briefly reveal 5 random tiles.
 
+The DOOM God Mode cheat: It would give the player god-like power (no damage from enemies):
+    - Type 'IDQD' in-game and all tiles will briefly turn around.
 
 Music credits
 -------------
