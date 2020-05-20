@@ -8,6 +8,8 @@
 #include "score.h"
 #include "player.h"
 #include "scorecard.h"
+#include "userinput.h"
+#include "filereader.h"
 
 namespace MyAscii {
     enum class ScoreCardStructure {
@@ -25,21 +27,18 @@ namespace MyAscii {
             Console(std::string windowTitle);
 
         public:
-            std::string getUserName(void);
-            int getDifficulty(void);
             void hide_cursor(HANDLE * screenBuffer);
             void show_cursor(HANDLE * screenBuffer);
-            bool print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY);
-            bool show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game);
-            bool print_menu(std::string items[], int items_size, int current_menu_item, bool user_input_needed);
+            bool print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY, int difficulty);
+            bool show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game, int difficulty, std::string userName);
+            bool print_menu(std::string items[], int items_size, int current_menu_item, UserInput * userInfo, bool user_input_needed);
             bool hidden_char_state(void);
-            void print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime);
+            void print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime, Player * player);
             void showScoreTable(void);
             void showAboutPage(void);
             void toggleHiddenCharSecret(void);
 
         private:
-            std::vector<std::string> read_textfile(std::string filename);
             int get_screenbuffer_width(HANDLE * screenbuffer);
             int sizeof_text(const char * TEXT);
             bool draw_frame(HANDLE * screenBuffer, int buffer_width, int height, int width, int top_margin, bool sparkle);
@@ -55,7 +54,6 @@ namespace MyAscii {
             void set_x_coord(COORD * coord, int position);
             void set_y_coord(COORD * coord, int position);
             void add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem);
-            void get_player_info(int startPosition);
             void set_smallrect_position(SMALL_RECT * canvas, int top, int bottom, int left, int right);
             std::string get_timestring(double time);
 
@@ -73,8 +71,6 @@ namespace MyAscii {
             HANDLE defaultScreenBuffer;
             std::string windowTitle = "New window";
             int scoreCardAttribute = 0xEC;   // EC
-            int difficulty = 0;
-            std::string userName = "guest-player";
             bool hidden_char_secret = false;
             std::vector<std::string> title;
             wchar_t scorecard_structure_chars[6][3] = {

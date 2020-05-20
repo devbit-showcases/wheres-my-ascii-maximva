@@ -2,6 +2,7 @@
 
 #include "console.h"
 #include "screen.h"
+#include "userinput.h"
 
 namespace MyAscii {
 
@@ -10,7 +11,7 @@ namespace MyAscii {
             Menu(Console * console, std::string * menuItems, int menuItemsSize);
 
         public:
-            Screen show(void);
+            Screen show(UserInput * userInfo);
         
         private:
             void rosebud_easteregg();

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "scorecard.h"
 #include <time.h>
+#include "userinput.h"
 
 namespace MyAscii {
 
@@ -19,9 +20,9 @@ namespace MyAscii {
         
         public:
             void start();
-            void set_game_parameters(unsigned int difficulty);
 
         private:
+            void set_game_parameters(unsigned int difficulty);
             void show_5tileflip_cheat(int cards_turned, int selectedTileX, int selectedTileY);
             void show_alltileflip_cheat(void);
             void save_gamescore(double elapsedTime);

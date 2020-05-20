@@ -18,7 +18,7 @@ namespace MyAscii {
         defaultScreenBuffer = GetStdHandle(STD_OUTPUT_HANDLE);
         create_textmode_screenbuffer(&gameScreenBuffer);
         hide_cursor(&gameScreenBuffer);
-        title = read_textfile("title.txt");
+        title = FileReader::read_plaintext("title.txt");
     }
 
 
@@ -68,30 +68,6 @@ namespace MyAscii {
             NULL);
     }
 
-
-    /**
-     * Returns vector with lines from provided textfile as elements
-     */
-    std::vector<std::string> Console::read_textfile(std::string filename) {
-        std::vector<std::string> text;
-        std::ifstream text_file;
-        text_file.open(filename);
-        if (text_file.is_open()) {
-            std::string part_text;
-            while (getline(text_file, part_text)){
-                text.push_back(part_text);
-            }
-        }
-        return text;
-    }
-
-    int Console::getDifficulty(void) {
-        return difficulty;
-    }
-
-    std::string Console::getUserName(void) {
-        return userName;
-    }
 
     void Console::toggleHiddenCharSecret(void) {
         hidden_char_secret = !hidden_char_secret;
@@ -189,40 +165,7 @@ namespace MyAscii {
     }
 
 
-    /**
-     * Asks user to provide a name and a difficulty setting
-     */
-    void Console::get_player_info(int startPosition) {
-        COORD cursorCoord;
-        set_coords(&cursorCoord, (startPosition + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
-
-        do {
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << "Who's playing? ";
-            std::getline(std::cin, userName);
-        } while (userName.length() == 0);
-
-        cursorCoord.Y += 2;
-        bool is_number = false;
-        do {
-            SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-            std::cout << "What can you handle (1 - 4)? ";
-            std::cin >> difficulty;
-
-            if (std::cin.good()){
-                is_number = true;
-            } else {
-                std::cin.clear();
-                std::cin.ignore(100000,'\n');
-            }
-
-        } while (!is_number || difficulty == 0 || difficulty > 4);
-        difficulty--; // Zero indexed for internal use
-        system("CLS"); // Clear screen before leaving, otherwise menu looks funny when exiting game
-    }
-
-
-    bool Console::print_menu(std::string menuItems[], int itemsSize, int currentMenuItem, bool userInputNeeded) {
+    bool Console::print_menu(std::string menuItems[], int itemsSize, int currentMenuItem, UserInput * userInfo, bool userInputNeeded) {
         COORD coordinateBufferSize, topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
@@ -258,11 +201,18 @@ namespace MyAscii {
             );
         }
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
-        if (userInputNeeded) get_player_info(START_POSITION);
+        if (userInputNeeded) {
+            COORD cursorCoord;
+            set_coords(&cursorCoord, (START_POSITION + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
+            (*userInfo).set_player_name(&defaultScreenBuffer, cursorCoord);
+            cursorCoord.Y += 2;
+            (*userInfo).set_game_difficulty(&defaultScreenBuffer, cursorCoord);
+            system("CLS");
+        }
         return succes;
     }
 
-    bool Console::print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY) {
+    bool Console::print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY, int difficulty) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT playfieldRect;
@@ -344,7 +294,8 @@ namespace MyAscii {
         const int FRAME_HEIGHT = 40;
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
-        std::vector<std::string> about_page = read_textfile("about.txt");
+        std::vector<std::string> about_page = FileReader::read_plaintext("about.txt");
+
         COORD cursorCoord;
         set_coords(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
@@ -444,7 +395,7 @@ namespace MyAscii {
         return std::to_string(minutes) + "." + std::to_string(tens_seconds) + std::to_string(hundreds_seconds) + " min."; 
     }
 
-    void Console::print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime) {
+    void Console::print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime, Player * player) {
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
 
         const int SCORE_CARD_WIDTH = 70;
@@ -473,7 +424,7 @@ namespace MyAscii {
         cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
 
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
-        std::cout << "Hi " << userName << ",";
+        std::cout << "Hi " << (*player).get_name() << ",";
         cursorCoord.Y += 1;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << gameOverText << found_plural << std::to_string(correct_guesses) << out_of_plural << " sets!";
@@ -495,7 +446,7 @@ namespace MyAscii {
      * The only way i found to easily print text to the console screen during the game
      * and to make the game run smoothly is to build these custom methods to do it.
     */
-    bool Console::show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game) {
+    bool Console::show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game, int difficulty, std::string userName) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT srcWriteRect;

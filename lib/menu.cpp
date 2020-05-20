@@ -15,24 +15,24 @@ namespace MyAscii {
     /**
      * Show the menu
      */
-    Screen Menu::show(void) {
+    Screen Menu::show(UserInput * userInfo) {
         int currentMenuItem = 0;
-        console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
+        console->print_menu(menuItems, menuItemsSize, currentMenuItem, userInfo, false);
 
         do {
             system("pause>nul");    // pause after keystroke
             if (GetAsyncKeyState(VK_UP) && currentMenuItem != 0) {
                 currentMenuItem--;
-                console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
+                console->print_menu(menuItems, menuItemsSize, currentMenuItem, userInfo, false);
             } else if (GetAsyncKeyState(VK_DOWN) && currentMenuItem < (menuItemsSize - 1)) {
                 currentMenuItem++;
-                console->print_menu(menuItems, menuItemsSize, currentMenuItem, false);
+                console->print_menu(menuItems, menuItemsSize, currentMenuItem, userInfo, false);
             }
             rosebud_easteregg();
         } while (!GetAsyncKeyState(VK_RETURN) && !GetAsyncKeyState(VK_SPACE));
 
         if (currentMenuItem == 0) {
-            console->print_menu(menuItems, menuItemsSize, currentMenuItem, true);
+            console->print_menu(menuItems, menuItemsSize, currentMenuItem, userInfo, true);
         }
 
         return (Screen)currentMenuItem;

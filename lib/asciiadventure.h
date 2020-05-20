@@ -14,6 +14,7 @@
 #include "score.h"
 #include <string>
 #include "screen.h"
+#include "userinput.h"
 
 namespace MyAscii {
 

@@ -12,12 +12,13 @@ namespace MyAscii {
         do {
             Console console("ASCII Adventure");
             int menuItemsSize = (sizeof(menuItems)/sizeof(std::string));
+            UserInput userInfo;
             Menu menu(&console, menuItems, menuItemsSize);
-            next = menu.show();
+            next = menu.show(&userInfo);
 
             if (next == Screen::PLAY_GAME) {
-                std::string userName = console.getUserName();
-                int difficulty = console.getDifficulty();
+                std::string userName = userInfo.get_player_name();
+                int difficulty = userInfo.get_game_difficulty();
                 Player player;
                 player.set_name(userName);
                 PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
