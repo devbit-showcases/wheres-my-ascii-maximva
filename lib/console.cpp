@@ -68,7 +68,6 @@ namespace MyAscii {
             NULL);
     }
 
-    // hidden char in console?
 
     void Console::toggleHiddenCharSecret(void) {
         hidden_char_secret = !hidden_char_secret;
