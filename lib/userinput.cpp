@@ -2,18 +2,18 @@
 
 namespace MyAscii {
 
-    void UserInput::set_player_name(HANDLE * screenBuffer, COORD cursorCoord) {
+    void UserInput::set_player_name(HANDLE * screenBuffer, COORD * cursorCoord) {
         do {
-            SetConsoleCursorPosition(screenBuffer, cursorCoord);
+            SetConsoleCursorPosition((*screenBuffer), (*cursorCoord));
             std::cout << "Who's playing? ";
             std::getline(std::cin, playerName);
         } while (playerName.length() == 0);
     }
 
-    void UserInput::set_game_difficulty(HANDLE * screenBuffer, COORD cursorCoord) {
+    void UserInput::set_game_difficulty(HANDLE * screenBuffer, COORD * cursorCoord) {
         bool is_number = false;
         do {
-            SetConsoleCursorPosition(screenBuffer, cursorCoord);
+            SetConsoleCursorPosition((*screenBuffer), (*cursorCoord));
             std::cout << "What can you handle (1 - 4)? ";
             std::cin >> difficulty;
 

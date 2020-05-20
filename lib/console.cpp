@@ -68,6 +68,7 @@ namespace MyAscii {
             NULL);
     }
 
+    // hidden char in console?
 
     void Console::toggleHiddenCharSecret(void) {
         hidden_char_secret = !hidden_char_secret;
@@ -204,9 +205,9 @@ namespace MyAscii {
         if (userInputNeeded) {
             COORD cursorCoord;
             set_coords(&cursorCoord, (START_POSITION + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
-            (*userInfo).set_player_name(&defaultScreenBuffer, cursorCoord);
+            (*userInfo).set_player_name(&defaultScreenBuffer, &cursorCoord);
             cursorCoord.Y += 2;
-            (*userInfo).set_game_difficulty(&defaultScreenBuffer, cursorCoord);
+            (*userInfo).set_game_difficulty(&defaultScreenBuffer, &cursorCoord);
             system("CLS");
         }
         return succes;
