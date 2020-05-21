@@ -17,12 +17,10 @@ namespace MyAscii {
             next = menu.show(&userInfo);
 
             if (next == Screen::PLAY_GAME) {
-                std::string userName = userInfo.get_player_name();
-                int difficulty = userInfo.get_game_difficulty();
                 Player player;
-                player.set_name(userName);
+                player.set_name(userInfo.get_player_name());
+                Game game(&player, &console, userInfo.get_game_difficulty());
                 PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-                Game game(&player, &console, difficulty);
                 game.start();
                 PlaySound(NULL, 0, 0); // Stops the music
             } else  if (next == Screen::SHOW_SCORES) {

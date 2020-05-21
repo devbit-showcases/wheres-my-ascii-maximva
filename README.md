@@ -1,4 +1,4 @@
-# Where's My ASCII
+# ASCII Adventure
 
 ASCII ADVENTURE is a game about finding your luck, about persistance. It's about letters on tiles, and finding all the sets to complete the game. Be sure to take a look at the about page in the game. There are a few cheats/power-ups/easter-eggs you can try out!
 

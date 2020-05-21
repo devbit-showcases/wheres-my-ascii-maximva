@@ -24,7 +24,7 @@ namespace MyAscii {
                 std::cin.ignore(100000,'\n');
             }
 
-        } while (!is_number || difficulty == 0 || difficulty > 4);
+        } while (!is_number || difficulty < 1 || difficulty > 4);
         difficulty--; // Zero indexed for internal use
     }
 
