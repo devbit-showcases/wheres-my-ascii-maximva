@@ -53,14 +53,15 @@ Use the arrow keys to move around and return or space to flip a tile.
 To be able to run this game you will need the following:
 
 - an MS Windows machine with the following minimum system requirements
+  - Intel Core i9-7900X
   - Nvidia GeForce RTX 2060 Super (2060S)
-  - 16GB RAM
-  - 1TB SSD (to install the game)
+  - 64GB RAM
+  - 1TB SSD
   - ...
   - just kidding, on board graphics and the minimum specs to run Windows will do fine
 - the 'g++' compiler
 
-Then clone the project to an directory of you liking like so:
+Then clone the project to an directory of you're liking:
 
 ```shell
 git clone git@github.com:vives-oop3-2020/wheres-my-ascii-maximva.git
