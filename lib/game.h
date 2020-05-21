@@ -61,7 +61,7 @@ namespace MyAscii {
             // Order: {fieldEdgeSize, pairSize}
             unsigned int gameParameters[5][2] = {
                 {4, 2},
-                {6, 3},
+                {6, 2},
                 {6, 3},
                 {9, 3}
             };
