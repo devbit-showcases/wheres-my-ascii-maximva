@@ -8,7 +8,7 @@ LDFLAGS=-lgdi32 -lwinmm
 	# -Wall: All warnings
 
 # Output binary
-EXECUTABLE=main
+EXECUTABLE=ascii-adventure
 
 # target: dependencies
 # 	commands
