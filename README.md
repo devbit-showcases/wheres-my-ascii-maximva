@@ -48,6 +48,16 @@ Use the arrow keys to move around and return or space to flip a tile.
 
 ![game-logic-flowchart](./img/game-logic-flowchart.png)
 
+## Some screenshots
+
+### The main menu
+
+![main menu](./img/main-menu.png)
+
+### The high-scores page
+
+![high scores](./img/high-scores.png)
+
 ## How to install
 
 To be able to run this game you will need the following:

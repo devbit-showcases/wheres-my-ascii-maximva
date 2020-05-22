@@ -324,7 +324,6 @@ namespace MyAscii {
         const int NAME_COLUMN_OFFSET = 10;
         const int SCORE_COLUMN_OFFSET = 17;
         const int TIME_COLUMN_OFFSET = 20;
-        const int MINUTE_MARK_OFFSET = 5;
         const int DIFFICULTY_COLUMN_OFFSET = 20;
 
         COORD cursorCoord;
@@ -345,7 +344,7 @@ namespace MyAscii {
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Time it took";
 
-        cursorCoord.X += DIFFICULTY_COLUMN_OFFSET + MINUTE_MARK_OFFSET;
+        cursorCoord.X += DIFFICULTY_COLUMN_OFFSET;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Difficulty level";
         cursorCoord.Y += 2;
