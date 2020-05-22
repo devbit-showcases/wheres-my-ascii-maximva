@@ -85,3 +85,38 @@ Hit it, and be ready to waste some time!
 ## Screencast
 
 ToDo
+
+## Sources / References
+
+<https://www.cplusplus.com/forum/beginner/132595/>
+
+To add music
+
+- <https://docs.microsoft.com/en-us/previous-versions//ms712879(v=vs.85)?redirectedfrom=MSDN>
+- <https://stackoverflow.com/questions/1565439/how-to-playsound-in-c-using-windows-api>
+
+Used music
+
+- <https://www.free-stock-music.com/deoxys-beats-simply-me.html>
+
+For different key combinations (for cheats)
+
+- <https://stackoverflow.com/questions/6331868/using-getkeystate>
+- <https://stackoverflow.com/questions/13196945/keycode-values-for-numeric-keypad>
+
+Other references
+
+- <https://ss64.com/nt/color.html>
+- <https://docs.microsoft.com/en-us/windows/console/console-functions>
+- <https://docs.microsoft.com/en-us/windows/console/console-screen-buffers>
+- <https://www.cplusplus.com/forum/beginner/3304/>
+- <https://docs.microsoft.com/nl-nl/windows/win32/inputdev/virtual-key-codes>
+
+For sorting the scores on correct_tile_sets and elapsed_time
+
+- <https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects>
+- <https://stackoverflow.com/questions/6771374/sorting-an-stl-vector-on-two-values>
+
+Inspiration
+
+- <https://codegolf.stackexchange.com/questions/124049/display-random-colored-pixels>
