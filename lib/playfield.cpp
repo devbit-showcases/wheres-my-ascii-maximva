@@ -18,7 +18,7 @@ namespace MyAscii {
         this->setSize = setSize;
         this->difficulty = difficulty;
         this->secret = secret;
-        this->monochromeTiles = (difficulty == 2 || difficulty == 3);
+        this->monochromeTiles = (difficulty > 1);
         this->preventDuplicateChars = (difficulty < 3);
         playfieldSize = playfieldEdgesize * playfieldEdgesize;
         generate_playfield();
@@ -54,7 +54,7 @@ namespace MyAscii {
             charCount[charAlphabetPosition]++;
 
             while (preventDuplicateChars && charCount[charAlphabetPosition] > 1) {
-                add_unique_character(&tile, charAlphabetPosition);
+                add_unique_character(&tile, &charAlphabetPosition);
             }
             
             create_tile_set(&tile);
@@ -66,11 +66,11 @@ namespace MyAscii {
     /**
      * Add a character to the tile thats unique for this playfield
      */
-    void PlayField::add_unique_character(Tile * tile, int charAlphabetPosition) {
-        charCount[charAlphabetPosition]--;
+    void PlayField::add_unique_character(Tile * tile, int * charAlphabetPosition) {
+        charCount[*charAlphabetPosition]--;
         (*tile).set_random_char();
-        charAlphabetPosition = (*tile).get_flipped_char() - 'A';
-        charCount[charAlphabetPosition]++;
+        (*charAlphabetPosition) = (*tile).get_flipped_char() - 'A';
+        charCount[*charAlphabetPosition]++;
     }
 
 

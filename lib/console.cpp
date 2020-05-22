@@ -456,8 +456,8 @@ namespace MyAscii {
         const int SCORECARD_SIZE = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
         CHAR_INFO map[SCORECARD_SIZE];
 
-        bool uniqueChars = !(difficulty == 2 || difficulty == 3);
-        int difficultyLevel = difficulty + 1;
+        bool uniqueChars = (difficulty < 3);
+        int difficultyLevel = (difficulty + 1);
 
         // Print the empty scorecard box
         print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 0);

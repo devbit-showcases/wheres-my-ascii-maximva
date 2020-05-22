@@ -22,7 +22,7 @@ namespace MyAscii {
             void generate_playfield(void);
             void randomize_playfield(void);
             void create_tile_set(Tile * tile);
-            void add_unique_character(Tile *tile, int charAlphabetPosition);
+            void add_unique_character(Tile *tile, int * charAlphabetPosition);
         
         private:
             unsigned int playfieldEdgesize = 2;
