@@ -76,7 +76,7 @@ Then clone the project to an directory of you're liking:
 ```shell
 git clone git@github.com:vives-oop3-2020/wheres-my-ascii-maximva.git
 cd wheres-my-ascii-maximva
-make
+make | make clean
 ```
 
 If everything went well then you should find the `ascii-adventure` executable in the project directory.
