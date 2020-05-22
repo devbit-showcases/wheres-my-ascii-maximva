@@ -459,6 +459,9 @@ namespace MyAscii {
         bool uniqueChars = (difficulty < 3);
         int difficultyLevel = (difficulty + 1);
 
+        std::string setsizeText = "Size of a set: " + std::to_string(setSize);
+        std::string difficultylevelText = "Difficulty level: " + std::to_string(difficultyLevel);
+
         // Print the empty scorecard box
         print_scorecard_structure(map, ScoreCardStructure::TOP, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 0);
         for (int i = 1; i < NUMBER_OF_ROWS - 1; i++) {
@@ -472,8 +475,8 @@ namespace MyAscii {
             (char *)("Player: " + userName).c_str(),
             (char *)("Score: " + std::to_string(correct_guesses) + "/" + std::to_string(number_of_pairs)).c_str(),
             (char *)"",
-            (char *)("Difficulty level: " + std::to_string(difficultyLevel)).c_str(),
-            (char *)("Size of a set: " + std::to_string(setSize)).c_str(),
+            (char *)difficultylevelText.c_str(),
+            (char *)setsizeText.c_str(),
             (uniqueChars ? (char *)"Every set has a unique letter" : (char *)"Multiple sets can have the same letter"),
             (char *)"",
             (char *)"bottom-division",
@@ -661,10 +664,10 @@ namespace MyAscii {
      * Prints the structure of the in-game scorecard
      */
     void Console::print_scorecard_structure(CHAR_INFO map[], ScoreCardStructure type, int NUMBER_OF_COLUMNS, int NUMBER_OF_ROWS, int ROW_NUMBER) {
-        int type_index = (int) type;
-        int left_char = 0;
-        int fill_char = 1;
-        int right_char = 2;
+        int typeIndex = (int) type;
+        int leftChar = 0;
+        int fillChar = 1;
+        int rightChar = 2;
 
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
@@ -674,7 +677,7 @@ namespace MyAscii {
                     add_char_to_map(
                         map,
                         MAP_POSITION,
-                        scorecard_structure_chars[type_index][left_char],
+                        scorecard_structure_chars[typeIndex][leftChar],
                         scoreCardAttribute
                     );
                 // Print all fill characters in between
@@ -682,7 +685,7 @@ namespace MyAscii {
                     add_char_to_map(
                         map,
                         MAP_POSITION,
-                        scorecard_structure_chars[type_index][fill_char],
+                        scorecard_structure_chars[typeIndex][fillChar],
                         scoreCardAttribute
                     );
                 // And print the last character of the row
@@ -690,7 +693,7 @@ namespace MyAscii {
                     add_char_to_map(
                         map,
                         MAP_POSITION,
-                        scorecard_structure_chars[type_index][right_char],
+                        scorecard_structure_chars[typeIndex][rightChar],
                         scoreCardAttribute
                     );
                 }
