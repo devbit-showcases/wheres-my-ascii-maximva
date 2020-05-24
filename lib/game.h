@@ -11,6 +11,7 @@
 #include "scorecard.h"
 #include <time.h>
 #include "userinput.h"
+#include "timer.h"
 
 namespace MyAscii {
 

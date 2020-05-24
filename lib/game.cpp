@@ -12,31 +12,6 @@ namespace MyAscii {
         this->tiles = playfield.get_playfield();
     }
 
-    void Game::show_5tileflip_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
-        unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correctGuesses * setSize) - cardsTurned;
-        std::vector<int> usedIndexes = {};
-
-        for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
-            int randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
-
-            // Check if tile is turned or has been used in this show of cards allready
-            while (tiles[randomIndex].is_flipped() || std::count(usedIndexes.begin(), usedIndexes.end(), randomIndex)) {
-                randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
-            }
-            usedIndexes.push_back(randomIndex);
-            shortly_turn_tile(randomIndex, 500);
-        }
-    }
-
-    void Game::show_alltileflip_cheat(void) {
-        unsigned int cardsToTurn = (fieldEdgeSize * fieldEdgeSize);
-        for (unsigned int i = 0; i < cardsToTurn; i++) {
-            if (!tiles[i].is_flipped()) {
-                shortly_turn_tile(i, 300);
-            }
-        }
-    }
-
 
     /**
      * Starts the game
@@ -45,8 +20,8 @@ namespace MyAscii {
         console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY, difficulty);
         console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame, difficulty, (*player).get_name());
         
-        double endTime;
-        double startTime = GetTickCount();
+        Timer clock;
+        clock.start();
 
         do {
             clear_returns_and_spaces();
@@ -58,8 +33,8 @@ namespace MyAscii {
             unCompleteGame = (correctGuesses == numberOfSets ? false : true);
         } while (unCompleteGame && noEscape);
 
-        endTime = GetTickCount();
-        double elapsedTime = (endTime - startTime) / 1000;
+        clock.stop();
+        double elapsedTime = clock.get_elapsed_seconds();
         save_gamescore(elapsedTime);
         console->print_endgame_screen(numberOfSets, correctGuesses, elapsedTime, player);
     }
@@ -251,5 +226,31 @@ namespace MyAscii {
         fieldEdgeSize = gameParameters[difficulty][0];
         setSize = gameParameters[difficulty][1];
         numberOfSets = (fieldEdgeSize * fieldEdgeSize) / setSize;
+    }
+
+
+    void Game::show_5tileflip_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
+        unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correctGuesses * setSize) - cardsTurned;
+        std::vector<int> usedIndexes = {};
+
+        for (unsigned int i = 0; (i < cards_to_turn) && (i < 5); i++) {
+            int randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
+
+            // Check if tile is turned or has been used in this show of cards allready
+            while (tiles[randomIndex].is_flipped() || std::count(usedIndexes.begin(), usedIndexes.end(), randomIndex)) {
+                randomIndex = rand() % (fieldEdgeSize * fieldEdgeSize);
+            }
+            usedIndexes.push_back(randomIndex);
+            shortly_turn_tile(randomIndex, 500);
+        }
+    }
+
+    void Game::show_alltileflip_cheat(void) {
+        unsigned int cardsToTurn = (fieldEdgeSize * fieldEdgeSize);
+        for (unsigned int i = 0; i < cardsToTurn; i++) {
+            if (!tiles[i].is_flipped()) {
+                shortly_turn_tile(i, 300);
+            }
+        }
     }
 }
