@@ -39,7 +39,7 @@ namespace MyAscii {
             Player * player;
             Console * console;
             PlayField playfield;
-            bool unCompleteGame = true;
+            bool gameFinished = true;
             bool correctGuess = true;
             bool noEscape = true;
             bool konamiCheat = false;

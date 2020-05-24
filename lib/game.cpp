@@ -18,7 +18,7 @@ namespace MyAscii {
      */
     void Game::start() {
         console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY, difficulty);
-        console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame, difficulty, (*player).get_name());
+        console->show_scorecard(numberOfSets, setSize, correctGuesses, gameFinished, difficulty, (*player).get_name());
         
         Timer clock;
         clock.start();
@@ -30,8 +30,8 @@ namespace MyAscii {
             int currentSelectedTile = (selectedTileX) + (selectedTileY * playfield.get_playfield_edgesize());
             handle_current_tile(currentSelectedTile);
             console->print_playfield(&tiles, fieldEdgeSize, selectedTileX, selectedTileY, difficulty);
-            unCompleteGame = (correctGuesses == numberOfSets ? false : true);
-        } while (unCompleteGame && noEscape);
+            gameFinished = (correctGuesses == numberOfSets ? true : false);
+        } while (!gameFinished && noEscape);
 
         clock.stop();
         double elapsedTime = clock.get_elapsed_seconds();
@@ -189,7 +189,7 @@ namespace MyAscii {
                 guessPossitions.push_back(currentSelectedTile);
             } else if (cardsTurned == setSize && guessId == tiles[currentSelectedTile].get_id()) {
                 correctGuesses++;
-                console->show_scorecard(numberOfSets, setSize, correctGuesses, unCompleteGame, difficulty, (*player).get_name());
+                console->show_scorecard(numberOfSets, setSize, correctGuesses, gameFinished, difficulty, (*player).get_name());
                 reset_guess_parameters();
             } else {
                 guessPossitions.push_back(currentSelectedTile);
