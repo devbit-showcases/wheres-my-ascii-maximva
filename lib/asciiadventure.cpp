@@ -11,9 +11,9 @@ namespace MyAscii {
         Screen next;
         do {
             Console console("ASCII Adventure");
-            int menuItemsSize = (sizeof(menuItems)/sizeof(std::string));
             UserInput userInfo;
-            Menu menu(&console, menuItems, menuItemsSize);
+            int numberOfMenuItems = (sizeof(menuItems)/sizeof(std::string));
+            Menu menu(&console, menuItems, numberOfMenuItems);
             next = menu.show(&userInfo);
 
             if (next == Screen::PLAY_GAME) {
