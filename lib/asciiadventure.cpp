@@ -19,10 +19,10 @@ namespace MyAscii {
             if (next == Screen::PLAY_GAME) {
                 Player player;
                 player.set_name(userInfo.get_player_name());
+                Sound::start();
                 Game game(&player, &console, userInfo.get_game_difficulty());
-                PlaySound(TEXT("./sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
                 game.start();
-                PlaySound(NULL, 0, 0); // Stops the music
+                Sound::stop();
             } else  if (next == Screen::SHOW_SCORES) {
                 console.showScoreTable();
             } else if (next == Screen::ABOUT_PAGE) {

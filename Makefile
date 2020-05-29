@@ -15,8 +15,8 @@ EXECUTABLE=ascii-adventure
 
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o userinput.o filereader.o timer.o
-	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o filereader.o userinput.o timer.o -o $(EXECUTABLE) $(LDFLAGS)
+$(EXECUTABLE): main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o userinput.o filereader.o sound.o timer.o
+	$(CC) main.o game.o player.o score.o scorecard.o console.o menu.o playfield.o tile.o asciiadventure.o filereader.o userinput.o timer.o sound.o -o $(EXECUTABLE) $(LDFLAGS)
 
 main.o: ./src/main.cpp
 	$(CC) $(CFLAGS) ./src/main.cpp
@@ -56,6 +56,9 @@ userinput.o: ./lib/userinput.cpp
 
 timer.o: ./lib/timer.cpp
 	$(CC) $(CFLAGS) ./lib/timer.cpp
+
+sound.o: ./lib/sound.cpp
+	$(CC) $(CFLAGS) ./lib/sound.cpp
 
 clean:
 	del /f *.o $(EXECUTABLE)

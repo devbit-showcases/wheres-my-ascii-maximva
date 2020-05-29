@@ -15,6 +15,7 @@
 #include <string>
 #include "screen.h"
 #include "userinput.h"
+#include "sound.h"
 
 namespace MyAscii {
 
