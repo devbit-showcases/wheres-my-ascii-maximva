@@ -132,7 +132,7 @@ namespace MyAscii {
         CoordSetter::set(&tileCoord, (TITLE_CARD_START_POSITION + LEFT_MARGIN), TOP_MARGIN + 2);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
 
-        for (unsigned int i = 0; i < 6; i++) {  // for some reason tile.size() doesn't, reprints title every time...
+        for (unsigned int i = 0; i < title.size(); i++) {
             std::cout << title[i];
             tileCoord.Y++;
             SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
