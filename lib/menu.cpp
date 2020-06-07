@@ -57,7 +57,7 @@ namespace MyAscii {
                             if (GetKeyState(85) & 8000) {
                                 system("pause>nul");
                                 if (GetKeyState(68) & 8000) {
-                                    console->toggleHiddenCharSecret();
+                                    console->toggle_dollar_hidden_char();
                                 }
                             }
                         }

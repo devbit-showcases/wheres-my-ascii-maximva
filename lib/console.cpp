@@ -69,15 +69,25 @@ namespace MyAscii {
     }
 
 
-    void Console::toggleHiddenCharSecret(void) {
-        hidden_char_secret = !hidden_char_secret;
+    /**
+     * Toggles the hidden char state (rosebud cheat)
+     */
+    void Console::toggle_dollar_hidden_char(void) {
+        dollarHiddenChar = !dollarHiddenChar;
     }
 
-    bool Console::hidden_char_state(void) {
-        return hidden_char_secret;
+
+    /**
+     * Returns the state for the hidden char (rosebud cheat)
+     */
+    bool Console::dollar_hidden_char_state(void) {
+        return dollarHiddenChar;
     }
 
 
+    /**
+     * Prints the title to the console
+     */
     bool Console::print_title(void) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
@@ -105,7 +115,6 @@ namespace MyAscii {
         coordinateBufferSize.Y = TITLE_CARD_HEIGHT;
         coordinateBufferSize.X = TITLE_CARD_WIDTH;
         CoordSetter::reset(&topLeftCoordinate);
-
         titleRect.Top = TOP_MARGIN;
         titleRect.Left = TITLE_CARD_START_POSITION;
         titleRect.Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
@@ -119,7 +128,6 @@ namespace MyAscii {
             (&titleRect)
         );
 
-        // Print the title to the console
         COORD tileCoord;
         CoordSetter::set(&tileCoord, (TITLE_CARD_START_POSITION + LEFT_MARGIN), TOP_MARGIN + 2);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
@@ -158,6 +166,9 @@ namespace MyAscii {
     }
 
 
+    /**
+     * Prints the menu to the console
+     */
     bool Console::print_menu(std::string menuItems[], int itemsSize, int currentMenuItem, UserInput * userInfo, bool userInputNeeded) {
         COORD coordinateBufferSize, topLeftCoordinate;
         SMALL_RECT srcWriteRect;
@@ -178,11 +189,9 @@ namespace MyAscii {
         for (int y = 0; y < itemsSize; y++) {
             CHAR_INFO map[MENU_ITEM_SIZE];
             add_menu_item_to_map(map, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT, menuItems[y].c_str(), (y == currentMenuItem));
-            
             const int USER_INPUT_SPACER = ((userInputNeeded) && (y != 0) ? 5 : 0);
             CoordSetter::set(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             CoordSetter::reset(&topLeftCoordinate);
-
             srcWriteRect.Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
             srcWriteRect.Left = START_POSITION;
             srcWriteRect.Bottom = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1)) + MENU_ITEM_HEIGHT;
@@ -208,12 +217,15 @@ namespace MyAscii {
         return succes;
     }
 
+
+    /**
+     * Prints the playfield to the console
+     */
     bool Console::print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY, int difficulty) {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT playfieldRect;
         BOOL succes;
-
         const int TILE_WIDTH = difficulty_tile_size[difficulty][0];   // Has to be an uneven number  9 (min), 13, 17 (no exact center with even number)
         const int TILE_HEIGHT = difficulty_tile_size[difficulty][1];  // Has to be an uneven number  5 (min), 7, 9
         const int MAP_SIZE = TILE_WIDTH * TILE_HEIGHT;
@@ -261,7 +273,6 @@ namespace MyAscii {
 
                 CoordSetter::set(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
                 CoordSetter::reset(&topLeftCoordinate);
-
                 playfieldRect.Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
                 playfieldRect.Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
                 playfieldRect.Bottom = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING)) + TILE_HEIGHT;
@@ -276,11 +287,14 @@ namespace MyAscii {
                 );
             }
         }
-        
         SetConsoleActiveScreenBuffer(gameScreenBuffer);
         return succes;
     }
 
+
+    /**
+     * Show the about page in the console
+     */
     void Console::showAboutPage(void) {
         system("CLS");
         const int LEFT_PADDING = 10;
@@ -291,19 +305,20 @@ namespace MyAscii {
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - FRAME_WIDTH) / 2;
         std::vector<std::string> about_page = FileReader::read_plaintext("about.txt");
-
         COORD cursorCoord;
         CoordSetter::set(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
-
         for(unsigned int i = 0; i < about_page.size(); i++) {
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
             std::cout << about_page[i];
             cursorCoord.Y++;
         }
-
         draw_frame(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
+
+    /**
+     * Prints the highscores table to the console
+     */
     void Console::showScoreTable(void) {
         system("CLS");
         std::vector<Score> scores;
@@ -367,15 +382,12 @@ namespace MyAscii {
             cursorCoord.X += DIFFICULTY_COLUMN_OFFSET;
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
             std::cout << "(difficulty " << (scores[i].get_difficulty() + 1) << ")" << std::endl;
-
             cursorCoord.Y++;
         }
-
         cursorCoord.X = START_POSITION + LEFT_PADDING;
         cursorCoord.Y += 7;
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Press [ENTER] to go back to the main menu.";
-
         draw_frame(&defaultScreenBuffer, bufferWidth, FRAME_HEIGHT, FRAME_WIDTH, TOP_MARGIN, true);
     }
 
@@ -390,6 +402,10 @@ namespace MyAscii {
         return std::to_string(minutes) + "." + std::to_string(tens_seconds) + std::to_string(hundreds_seconds) + " min."; 
     }
 
+
+    /**
+     * Output game summary to console screen
+     */ 
     void Console::print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime, Player * player) {
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int SCORE_CARD_WIDTH = 70;
@@ -409,7 +425,6 @@ namespace MyAscii {
             gameOverText = "you didn't even try ...";
         }
 
-        // Output game summary to console screen
         COORD cursorCoord;
         CoordSetter::set(&cursorCoord, START_POSITION + LEFT_PADDING, TOP_MARGIN + TOP_PADDING);
 
@@ -425,7 +440,6 @@ namespace MyAscii {
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Press [ENTER] to go back to the main menu.";
 
-        // After outputting the text, draw a box around it
         draw_frame(&defaultScreenBuffer, bufferWidth, SCORE_CARD_HEIGHT, SCORE_CARD_WIDTH, TOP_MARGIN, sparkle);
     }
 

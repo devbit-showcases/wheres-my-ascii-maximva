@@ -33,11 +33,11 @@ namespace MyAscii {
             bool print_playfield(std::vector<Tile> * tiles, int fieldEdgeSize, int selectedTileX, int selectedTileY, int difficulty);
             bool show_scorecard(int number_of_pairs, int setSize, int correct_guesses, bool stay_in_game, int difficulty, std::string userName);
             bool print_menu(std::string items[], int items_size, int current_menu_item, UserInput * userInfo, bool user_input_needed);
-            bool hidden_char_state(void);
+            bool dollar_hidden_char_state(void);
             void print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime, Player * player);
             void showScoreTable(void);
             void showAboutPage(void);
-            void toggleHiddenCharSecret(void);
+            void toggle_dollar_hidden_char(void);
 
         private:
             int get_screenbuffer_width(HANDLE * screenbuffer);
@@ -65,7 +65,7 @@ namespace MyAscii {
             HANDLE defaultScreenBuffer;
             std::string windowTitle = "New window";
             int scoreCardAttribute = 0xEC;   // EC
-            bool hidden_char_secret = false;
+            bool dollarHiddenChar = false;
             std::vector<std::string> title;
             wchar_t scorecard_structure_chars[6][3] = {
                 {L'╔', L'═', L'╗'}, // Top

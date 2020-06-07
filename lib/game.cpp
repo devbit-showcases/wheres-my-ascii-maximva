@@ -7,8 +7,8 @@ namespace MyAscii {
         this->console = console;
         this->difficulty = difficulty;
         set_game_parameters(difficulty);
-        bool hidden_char_secret = console->hidden_char_state();
-        this->playfield = PlayField(fieldEdgeSize, setSize, difficulty, hidden_char_secret);
+        bool dollarHiddenChar = console->dollar_hidden_char_state();
+        this->playfield = PlayField(fieldEdgeSize, setSize, difficulty, dollarHiddenChar);
         this->tiles = playfield.get_playfield();
     }
 
