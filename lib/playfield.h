@@ -3,8 +3,6 @@
 #include <iostream>
 #include "tile.h"
 #include <vector>
-#include <time.h>
-#include <iterator>
 
 namespace MyAscii {
 

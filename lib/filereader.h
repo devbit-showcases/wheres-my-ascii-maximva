@@ -2,8 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
-#include <windows.h>
 #include "fstream"
 
 namespace MyAscii {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <time.h>
 
 namespace MyAscii {
     class Tile {
