@@ -14,12 +14,9 @@ namespace MyAscii {
      * Adds all scores to the provided score vector pointer
      */
     void ScoreCard::get_scoretable(std::vector<Score> * scores) {
-        std::ifstream scoreFile;
-        scoreFile.open(scoresFilename);
-
+        std::ifstream scoreFile = FileReader::open_file(scoresFilename);
         if (scoreFile.is_open()) {
             std::string name, difficulty, correctGuesses, numberOfSets, elapsedTime;
-
             while (getline(scoreFile, name, ',')){
                 getline(scoreFile, difficulty, ',');
                 getline(scoreFile, correctGuesses, ',');
@@ -38,9 +35,7 @@ namespace MyAscii {
      * Adds a score to the scores file
      */
     void ScoreCard::save_score(Score * score) {
-        std::ofstream scoreFile;
-        scoreFile.open(scoresFilename, std::ios::out | std::ios::app);
-
+        std::ofstream scoreFile = FileReader::open_file_to_append(scoresFilename);
         if (scoreFile.is_open()) {
             scoreFile  << score->get_name() << ","
                         << score->get_difficulty() << ","

@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include "filereader.h"
 
 namespace MyAscii {
     class ScoreCard {
