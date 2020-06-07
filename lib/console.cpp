@@ -544,21 +544,18 @@ namespace MyAscii {
         CoordSetter::set(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
         COORD verticalBufferSize;
         CoordSetter::set(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
-        
-        // Set position of all frame edges on screen
-        SMALL_RECT topRect;
-        set_smallrect_position(&topRect, topMargin, topMargin, START_POSITION, (START_POSITION + frameWidth));
-        SMALL_RECT bottomRect;
-        set_smallrect_position(&bottomRect, (topMargin + frameHeight - 1), (topMargin + frameHeight - 1), START_POSITION, (START_POSITION + frameWidth));
-        SMALL_RECT leftRect;
-        set_smallrect_position(&leftRect, topMargin, (topMargin + frameHeight), START_POSITION, (START_POSITION + 1));
-        SMALL_RECT rightRect;
-        set_smallrect_position(&rightRect, topMargin, (topMargin + frameHeight), (START_POSITION + frameWidth - 1), (START_POSITION + frameWidth));
 
         CHAR_INFO * horizontalMap = new CHAR_INFO[frameWidth * HORIZONTAL_BORDER];
+        SMALL_RECT horizontalRects[2];
+        set_smallrect_position(&horizontalRects[0], topMargin, topMargin, START_POSITION, (START_POSITION + frameWidth));
+        set_smallrect_position(&horizontalRects[1], (topMargin + frameHeight - 1), (topMargin + frameHeight - 1), START_POSITION, (START_POSITION + frameWidth));
+        
         CHAR_INFO * verticalMap = new CHAR_INFO[frameHeight * VERTICAL_BORDER];
-        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
+        SMALL_RECT verticalRects[2];
+        set_smallrect_position(&verticalRects[0], topMargin, (topMargin + frameHeight), START_POSITION, (START_POSITION + 1));
+        set_smallrect_position(&verticalRects[1], topMargin, (topMargin + frameHeight), (START_POSITION + frameWidth - 1), (START_POSITION + frameWidth));
 
+        SetConsoleActiveScreenBuffer(defaultScreenBuffer);
         do {
             // Set color of frame to sparkle or black depending if game was successfull
             for (int x = 0; x < frameWidth; x++) {
@@ -570,35 +567,25 @@ namespace MyAscii {
                 add_char_to_map(verticalMap, x, L' ', attribute);
             }
 
-            // Write all score-card frame sides to the console
-            succes = WriteConsoleOutputW(
-                defaultScreenBuffer,
-                horizontalMap,
-                horizontalBufferSize,
-                topLeftCoordinate,
-                (&topRect)
-            );
-            succes = WriteConsoleOutputW(
-                defaultScreenBuffer,
-                horizontalMap,
-                horizontalBufferSize,
-                topLeftCoordinate,
-                (&bottomRect)
-            );
-            succes = WriteConsoleOutputW(
-                defaultScreenBuffer,
-                verticalMap,
-                verticalBufferSize,
-                topLeftCoordinate,
-                (&leftRect)
-            );
-            succes = WriteConsoleOutputW(
-                defaultScreenBuffer,
-                verticalMap,
-                verticalBufferSize,
-                topLeftCoordinate,
-                (&rightRect)
-            );
+            for (unsigned int i = 0; i < (sizeof(horizontalRects) / sizeof(SMALL_RECT)); i++) {
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    horizontalMap,
+                    horizontalBufferSize,
+                    topLeftCoordinate,
+                    (&horizontalRects[i])
+                );
+            }
+
+            for (unsigned int i = 0; i < (sizeof(verticalRects) / sizeof(SMALL_RECT)); i++) {
+                succes = WriteConsoleOutputW(
+                    defaultScreenBuffer,
+                    verticalMap,
+                    verticalBufferSize,
+                    topLeftCoordinate,
+                    (&verticalRects[i])
+                );
+            }
 
             // Makes sure any remaining RETURNS are discarded
             GetAsyncKeyState(VK_RETURN);
