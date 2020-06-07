@@ -10,22 +10,28 @@ namespace MyAscii {
         } while (playerName.length() == 0);
     }
 
+
     void UserInput::set_game_difficulty(HANDLE * screenBuffer, COORD * cursorCoord) {
-        bool is_number = false;
+        bool validDifficulty = false;
         do {
             SetConsoleCursorPosition((*screenBuffer), (*cursorCoord));
             std::cout << "What can you handle (1 - 4)? ";
-            std::cin >> difficulty;
-
-            if (std::cin.good()){
-                is_number = true;
-            } else {
-                std::cin.clear();
-                std::cin.ignore(100000,'\n');
-            }
-
-        } while (!is_number || difficulty < 1 || difficulty > 4);
+            validDifficulty = get_difficulty_value();
+        } while (!validDifficulty);
         difficulty--; // Zero indexed for internal use
+    }
+
+
+    bool UserInput::get_difficulty_value(void) {
+        bool validValue = false;
+        std::cin >> difficulty;
+        if (std::cin.good()){
+            validValue = (difficulty < 1 || difficulty > 4 ? false : true);
+        } else {
+            std::cin.clear();
+            std::cin.ignore(100000,'\n');
+        }
+        return validValue;
     }
 
 
@@ -33,11 +39,9 @@ namespace MyAscii {
         return playerName;
     }
 
+
     int UserInput::get_game_difficulty(void) {
         return difficulty;
     }
-
-
-
 
 }

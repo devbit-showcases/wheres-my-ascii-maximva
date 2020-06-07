@@ -12,7 +12,9 @@ namespace MyAscii {
             void set_game_difficulty(HANDLE * screenBuffer, COORD * cursorCoord);
             std::string get_player_name(void);
             int get_game_difficulty(void);
-
+        
+        private:
+            bool get_difficulty_value(void);
 
         private:
             std::string playerName = "";
