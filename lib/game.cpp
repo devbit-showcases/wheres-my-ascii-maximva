@@ -2,6 +2,9 @@
 
 namespace MyAscii {
 
+    /**
+     * Creates a new instance of Game
+     */
     Game::Game(Player * player, Console * console, unsigned int difficulty) {
         this->player = player;
         this->console = console;
@@ -229,6 +232,9 @@ namespace MyAscii {
     }
 
 
+    /**
+     * Flips 5 random tiles for a short period of time
+     */
     void Game::show_5tileflip_cheat(int cardsTurned, int selectedTileX, int selectedTileY) {
         unsigned int cards_to_turn = (fieldEdgeSize * fieldEdgeSize) - (correctGuesses * setSize) - cardsTurned;
         std::vector<int> usedIndexes = {};
@@ -245,6 +251,10 @@ namespace MyAscii {
         }
     }
 
+
+    /**
+     * Flips all tiles for a brief period of time
+     */
     void Game::show_alltileflip_cheat(void) {
         unsigned int cardsToTurn = (fieldEdgeSize * fieldEdgeSize);
         for (unsigned int i = 0; i < cardsToTurn; i++) {
