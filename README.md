@@ -44,10 +44,6 @@ Use the arrow keys to move around and return or space to flip a tile.
 
 ![Level 4 playfield](./img/level4.png)
 
-## Game logic
-
-![game-logic-flowchart](./img/game-logic-flowchart.png)
-
 ## Some screenshots
 
 ### The main menu
@@ -85,6 +81,14 @@ Hit it, and be ready to waste some time!
 ## Screencast
 
 ToDo
+
+## Game logic
+
+![game-logic-flowchart](./img/game-logic-flowchart.png)
+
+## Application overview (UML diagram)
+
+![game-uml-diagram](./img/ascii-adventure-diagram.png)
 
 ## Sources / References
 
