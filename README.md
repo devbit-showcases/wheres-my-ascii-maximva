@@ -80,7 +80,7 @@ Hit it, and be ready to waste some time!
 
 ## Screencast
 
-ToDo
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/VDkP_Yb3foQ/0.jpg)](http://www.youtube.com/watch?v=VDkP_Yb3foQ "Video Title")
 
 ## Game logic
 
