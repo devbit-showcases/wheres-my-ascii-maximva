@@ -104,7 +104,7 @@ namespace MyAscii {
 
         coordinateBufferSize.Y = TITLE_CARD_HEIGHT;
         coordinateBufferSize.X = TITLE_CARD_WIDTH;
-        reset_coord(&topLeftCoordinate);
+        CoordSetter::reset(&topLeftCoordinate);
 
         titleRect.Top = TOP_MARGIN;
         titleRect.Left = TITLE_CARD_START_POSITION;
@@ -121,7 +121,7 @@ namespace MyAscii {
 
         // Print the title to the console
         COORD tileCoord;
-        set_coords(&tileCoord, (TITLE_CARD_START_POSITION + LEFT_MARGIN), TOP_MARGIN + 2);
+        CoordSetter::set(&tileCoord, (TITLE_CARD_START_POSITION + LEFT_MARGIN), TOP_MARGIN + 2);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
 
         for (unsigned int i = 0; i < 6; i++) {  // for some reason tile.size() doesn't, reprints title every time...
@@ -133,7 +133,7 @@ namespace MyAscii {
         tileCoord.Y += 4;
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
         std::cout << "Use the [UP] and [DOWN] arrow keys to navigate, [ENTER] to select.";
-        reset_coord(&tileCoord);
+        CoordSetter::reset(&tileCoord);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
         return succes;
     }
@@ -184,8 +184,8 @@ namespace MyAscii {
             add_menu_item_to_map(map, menuItems[y].c_str(), (y == currentMenuItem));
             
             const int USER_INPUT_SPACER = ((userInputNeeded) && (y != 0) ? 5 : 0);
-            set_coords(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
-            reset_coord(&topLeftCoordinate);
+            CoordSetter::set(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+            CoordSetter::reset(&topLeftCoordinate);
 
             srcWriteRect.Top = USER_INPUT_SPACER + MENU_TOP_MARGIN + (y * (MENU_ITEM_HEIGHT + 1));
             srcWriteRect.Left = START_POSITION;
@@ -203,7 +203,7 @@ namespace MyAscii {
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
         if (userInputNeeded) {
             COORD cursorCoord;
-            set_coords(&cursorCoord, (START_POSITION + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
+            CoordSetter::set(&cursorCoord, (START_POSITION + 1), (MENU_TOP_MARGIN + MENU_ITEM_HEIGHT + 1));
             (*userInfo).set_player_name(&defaultScreenBuffer, &cursorCoord);
             cursorCoord.Y += 2;
             (*userInfo).set_game_difficulty(&defaultScreenBuffer, &cursorCoord);
@@ -263,8 +263,8 @@ namespace MyAscii {
                     map[j].Attributes = TILE_SHOW_ATTRIBUTE;
                 }
 
-                set_coords(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
-                reset_coord(&topLeftCoordinate);
+                CoordSetter::set(&coordinateBufferSize, TILE_WIDTH, TILE_HEIGHT);
+                CoordSetter::reset(&topLeftCoordinate);
 
                 playfieldRect.Top = GAME_TOP_MARGIN + (y * (TILE_HEIGHT + VERTICAL_SPACING));
                 playfieldRect.Left = START_POSITION + (x * (TILE_WIDTH + HORIZONTAL_SPACING));
@@ -297,7 +297,7 @@ namespace MyAscii {
         std::vector<std::string> about_page = FileReader::read_plaintext("about.txt");
 
         COORD cursorCoord;
-        set_coords(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
+        CoordSetter::set(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
         for(unsigned int i = 0; i < about_page.size(); i++) {
             SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
@@ -327,7 +327,7 @@ namespace MyAscii {
         const int DIFFICULTY_COLUMN_OFFSET = 20;
 
         COORD cursorCoord;
-        set_coords(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
+        CoordSetter::set(&cursorCoord, (START_POSITION + LEFT_PADDING), (TOP_MARGIN + TOP_PADDING));
 
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Ranking";
@@ -502,8 +502,8 @@ namespace MyAscii {
         print_scorecard_text((char *)"CONTROLS", map, NUMBER_OF_COLUMNS, 14, 0xE9);
         print_scorecard_text_array(CONTROL_INFO, sizeof(CONTROL_INFO)/sizeof(const char *), map, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, 15, scoreCardAttribute);
 
-        set_coords(&coordinateBufferSize, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
-        reset_coord(&topLeftCoordinate);
+        CoordSetter::set(&coordinateBufferSize, NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+        CoordSetter::reset(&topLeftCoordinate);
         set_smallrect_position(&srcWriteRect, GAME_TOP_MARGIN, (GAME_TOP_MARGIN + NUMBER_OF_ROWS), MENU_X_START_POSITION, (MENU_X_START_POSITION + NUMBER_OF_COLUMNS));
 
         succes = WriteConsoleOutputW(
@@ -539,11 +539,11 @@ namespace MyAscii {
         BOOL succes = false;
 
         COORD topLeftCoordinate;
-        reset_coord(&topLeftCoordinate);
+        CoordSetter::reset(&topLeftCoordinate);
         COORD horizontalBufferSize;
-        set_coords(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
+        CoordSetter::set(&horizontalBufferSize, frameWidth, HORIZONTAL_BORDER);
         COORD verticalBufferSize;
-        set_coords(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
+        CoordSetter::set(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
         
         // Set position of all frame edges on screen
         SMALL_RECT topRect;
@@ -717,39 +717,6 @@ namespace MyAscii {
     void Console::add_char_to_map(CHAR_INFO map[], int position, wchar_t character, int attribute) {
         map[position].Char.UnicodeChar = character;
         map[position].Attributes = attribute;
-    }
-
-
-    /**
-     * Resets x and y coordinate values of the provided COORD object
-     */
-    void Console::reset_coord(COORD * coord) {
-        set_coords(coord, 0, 0);
-    }
-
-
-    /**
-     * Sets x and y coordinate values of the provided COORD object with provided values
-     */
-    void Console::set_coords(COORD * coord, int xPosition, int yPosition) {
-        set_x_coord(coord, xPosition);
-        set_y_coord(coord, yPosition);
-    }
-
-
-    /**
-     * Set x coordinate value of provided COORD object
-     */
-    void Console::set_x_coord(COORD * coord, int position) {
-        (*coord).X = position;
-    }
-
-
-    /**
-     * Set y coordinate value of provided COORD object
-     */
-     void Console::set_y_coord(COORD * coord, int position) {
-        (*coord).Y = position;
     }
 
 
