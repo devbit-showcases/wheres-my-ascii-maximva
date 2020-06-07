@@ -144,22 +144,15 @@ namespace MyAscii {
      */
     void Console::add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem) {
         for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
-            if (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2) {
-                int size = sizeof_text(menuItem);
+            int size = sizeof_text(menuItem);
+            bool middleRow = (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2);
+            bool textToPrint = (i - MENU_ITEM_WIDTH - 2 < size);
+            bool leftBorder = (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH);
+            wchar_t charToAdd = (middleRow && textToPrint ? menuItem[i - MENU_ITEM_WIDTH - 2] : L' ');
+            add_char_to_map(map, i, charToAdd, MENU_ITEM_ATTRIBUTE);
 
-                if (i - MENU_ITEM_WIDTH - 2 < size) {
-                    add_char_to_map(map, i, menuItem[i - MENU_ITEM_WIDTH - 2], MENU_ITEM_ATTRIBUTE);
-                } else {
-                    add_char_to_map(map, i, L' ', MENU_ITEM_ATTRIBUTE);
-                }
-            } else {
-                add_char_to_map(map, i, L' ', MENU_ITEM_ATTRIBUTE);
-            }
-
-            if (currentMenuItem) {
-                if (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH ) {
-                    add_char_to_map(map, i, L' ', 0x40);
-                }
+            if (currentMenuItem && leftBorder) {
+                add_char_to_map(map, i, L' ', 0x40);
             }
         }
     }
