@@ -82,7 +82,7 @@ namespace MyAscii {
         COORD coordinateBufferSize;
         COORD topLeftCoordinate;
         SMALL_RECT titleRect;
-        BOOL succes;
+        BOOL success;
 
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         int title_card_attribute = 0xEC;
@@ -111,7 +111,7 @@ namespace MyAscii {
         titleRect.Bottom = TOP_MARGIN + TITLE_CARD_HEIGHT;
         titleRect.Right = TITLE_CARD_START_POSITION + TITLE_CARD_WIDTH;
 
-        succes = WriteConsoleOutputW(
+        success = WriteConsoleOutputW(
             defaultScreenBuffer,
             title_card,
             coordinateBufferSize,
@@ -135,20 +135,20 @@ namespace MyAscii {
         std::cout << "Use the [UP] and [DOWN] arrow keys to navigate, [ENTER] to select.";
         CoordSetter::reset(&tileCoord);
         SetConsoleCursorPosition(defaultScreenBuffer, tileCoord);
-        return succes;
+        return success;
     }
 
 
     /**
      * Adds a menu item to the provided CHAR_INFO map
      */
-    void Console::add_menu_item_to_map(CHAR_INFO map[], const char * menuItem, bool currentMenuItem) {
-        for (int i = 0; i < MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH; i++) {
+    void Console::add_menu_item_to_map(CHAR_INFO map[], int menuItemWidth, int menuItemHeight, const char * menuItem, bool currentMenuItem) {
+        for (int i = 0; i < menuItemHeight * menuItemWidth; i++) {
             int size = sizeof_text(menuItem);
-            bool middleRow = (i > MENU_ITEM_WIDTH + 1 && i < (2 * MENU_ITEM_WIDTH) - 2);
-            bool textToPrint = (i - MENU_ITEM_WIDTH - 2 < size);
-            bool leftBorder = (i == 0 || i == MENU_ITEM_WIDTH || i == 2 * MENU_ITEM_WIDTH);
-            wchar_t charToAdd = (middleRow && textToPrint ? menuItem[i - MENU_ITEM_WIDTH - 2] : L' ');
+            bool middleRow = (i > menuItemWidth + 1 && i < (2 * menuItemWidth) - 2);
+            bool textToPrint = (i - menuItemWidth - 2 < size);
+            bool leftBorder = (i == 0 || i == menuItemWidth || i == 2 * menuItemWidth);
+            wchar_t charToAdd = (middleRow && textToPrint ? menuItem[i - menuItemWidth - 2] : L' ');
             add_char_to_map(map, i, charToAdd, MENU_ITEM_ATTRIBUTE);
 
             if (currentMenuItem && leftBorder) {
@@ -162,6 +162,9 @@ namespace MyAscii {
         COORD coordinateBufferSize, topLeftCoordinate;
         SMALL_RECT srcWriteRect;
         BOOL succes;
+        const int MENU_ITEM_HEIGHT = 3;
+        const int MENU_ITEM_WIDTH = 75;
+        const int MENU_ITEM_SIZE = MENU_ITEM_HEIGHT * MENU_ITEM_WIDTH;
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
         const int START_POSITION = (bufferWidth - MENU_ITEM_WIDTH) / 2;
         
@@ -174,7 +177,7 @@ namespace MyAscii {
         
         for (int y = 0; y < itemsSize; y++) {
             CHAR_INFO map[MENU_ITEM_SIZE];
-            add_menu_item_to_map(map, menuItems[y].c_str(), (y == currentMenuItem));
+            add_menu_item_to_map(map, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT, menuItems[y].c_str(), (y == currentMenuItem));
             
             const int USER_INPUT_SPACER = ((userInputNeeded) && (y != 0) ? 5 : 0);
             CoordSetter::set(&coordinateBufferSize, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
@@ -389,7 +392,6 @@ namespace MyAscii {
 
     void Console::print_endgame_screen(int number_of_pairs, int correct_guesses, double elapsedTime, Player * player) {
         int bufferWidth = get_screenbuffer_width(&defaultScreenBuffer);
-
         const int SCORE_CARD_WIDTH = 70;
         const int SCORE_CARD_HEIGHT = 16;
         const int TOP_MARGIN = 15;
@@ -397,23 +399,19 @@ namespace MyAscii {
         const int TOP_PADDING = 5;
         const int START_POSITION = (bufferWidth - SCORE_CARD_WIDTH) / 2;
         bool sparkle = (correct_guesses == number_of_pairs);
-
-        std::string gameOverText;
         std::string found_plural = (correct_guesses == number_of_pairs ? " You found all " : " You found ");
         std::string out_of_plural = (correct_guesses == number_of_pairs ? "" : " out of " + std::to_string(number_of_pairs));
+        std::string gameOverText = "try harder next time?";
 
         if (correct_guesses == number_of_pairs) {
             gameOverText = "nice job!";
         } else if (correct_guesses == 0) {
             gameOverText = "you didn't even try ...";
-        } else {
-            gameOverText = "try harder next time?";
         }
 
         // Output game summary to console screen
         COORD cursorCoord;
-        cursorCoord.X = START_POSITION + LEFT_PADDING;
-        cursorCoord.Y = TOP_MARGIN + TOP_PADDING;
+        CoordSetter::set(&cursorCoord, START_POSITION + LEFT_PADDING, TOP_MARGIN + TOP_PADDING);
 
         SetConsoleCursorPosition(defaultScreenBuffer, cursorCoord);
         std::cout << "Hi " << (*player).get_name() << ",";
@@ -539,14 +537,14 @@ namespace MyAscii {
         CoordSetter::set(&verticalBufferSize, VERTICAL_BORDER, frameHeight);
 
         CHAR_INFO * horizontalMap = new CHAR_INFO[frameWidth * HORIZONTAL_BORDER];
-        SMALL_RECT horizontalRects[2];
-        set_smallrect_position(&horizontalRects[0], topMargin, topMargin, START_POSITION, (START_POSITION + frameWidth));
-        set_smallrect_position(&horizontalRects[1], (topMargin + frameHeight - 1), (topMargin + frameHeight - 1), START_POSITION, (START_POSITION + frameWidth));
+        SMALL_RECT horizontalBorders[2];
+        set_smallrect_position(&horizontalBorders[0], topMargin, topMargin, START_POSITION, (START_POSITION + frameWidth));
+        set_smallrect_position(&horizontalBorders[1], (topMargin + frameHeight - 1), (topMargin + frameHeight - 1), START_POSITION, (START_POSITION + frameWidth));
         
         CHAR_INFO * verticalMap = new CHAR_INFO[frameHeight * VERTICAL_BORDER];
-        SMALL_RECT verticalRects[2];
-        set_smallrect_position(&verticalRects[0], topMargin, (topMargin + frameHeight), START_POSITION, (START_POSITION + 1));
-        set_smallrect_position(&verticalRects[1], topMargin, (topMargin + frameHeight), (START_POSITION + frameWidth - 1), (START_POSITION + frameWidth));
+        SMALL_RECT verticalBorders[2];
+        set_smallrect_position(&verticalBorders[0], topMargin, (topMargin + frameHeight), START_POSITION, (START_POSITION + 1));
+        set_smallrect_position(&verticalBorders[1], topMargin, (topMargin + frameHeight), (START_POSITION + frameWidth - 1), (START_POSITION + frameWidth));
 
         SetConsoleActiveScreenBuffer(defaultScreenBuffer);
         do {
@@ -560,23 +558,23 @@ namespace MyAscii {
                 add_char_to_map(verticalMap, x, L' ', attribute);
             }
 
-            for (unsigned int i = 0; i < (sizeof(horizontalRects) / sizeof(SMALL_RECT)); i++) {
+            for (unsigned int i = 0; i < (sizeof(horizontalBorders) / sizeof(SMALL_RECT)); i++) {
                 succes = WriteConsoleOutputW(
                     defaultScreenBuffer,
                     horizontalMap,
                     horizontalBufferSize,
                     topLeftCoordinate,
-                    (&horizontalRects[i])
+                    (&horizontalBorders[i])
                 );
             }
 
-            for (unsigned int i = 0; i < (sizeof(verticalRects) / sizeof(SMALL_RECT)); i++) {
+            for (unsigned int i = 0; i < (sizeof(verticalBorders) / sizeof(SMALL_RECT)); i++) {
                 succes = WriteConsoleOutputW(
                     defaultScreenBuffer,
                     verticalMap,
                     verticalBufferSize,
                     topLeftCoordinate,
-                    (&verticalRects[i])
+                    (&verticalBorders[i])
                 );
             }
 
@@ -606,7 +604,6 @@ namespace MyAscii {
         const unsigned int END_OF_LINE = (NUMBER_OF_COLUMNS * (ROW_NUMBER + 1)) - SCORECARD_RIGHT_MARGIN;
         unsigned int textSize = sizeof_text(TEXT);
         
-        // Print the text
         for (unsigned int i = START_POSITION; i < END_OF_LINE; i++) {
             if (!(i - START_POSITION > textSize)) {
                 add_char_to_map(map, i, TEXT[i - START_POSITION], text_attribute);
