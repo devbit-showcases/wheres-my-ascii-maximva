@@ -671,30 +671,28 @@ namespace MyAscii {
         for (int y = 0; y < NUMBER_OF_ROWS; y++) {
             for (int x = 0; x < NUMBER_OF_COLUMNS; x++) {
                 const int MAP_POSITION = x + (y * NUMBER_OF_COLUMNS);
-                // Print first character of the row
+                bool printChar = false;
+                int charToPrint = fillChar;
+
                 if (MAP_POSITION == NUMBER_OF_COLUMNS * ROW_NUMBER) {
-                    add_char_to_map(
-                        map,
-                        MAP_POSITION,
-                        scorecard_structure_chars[typeIndex][leftChar],
-                        scoreCardAttribute
-                    );
-                // Print all fill characters in between
+                    charToPrint = leftChar;
+                    printChar = true;
                 } else if (MAP_POSITION > NUMBER_OF_COLUMNS * ROW_NUMBER && MAP_POSITION < (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
-                    add_char_to_map(
-                        map,
-                        MAP_POSITION,
-                        scorecard_structure_chars[typeIndex][fillChar],
-                        scoreCardAttribute
-                    );
-                // And print the last character of the row
+                    charToPrint = fillChar;
+                    printChar = true;
                 } else if (MAP_POSITION == (NUMBER_OF_COLUMNS * ROW_NUMBER) + (NUMBER_OF_COLUMNS - 1)) {
+                    charToPrint = rightChar;
+                    printChar = true;
+                }
+
+                if (printChar) {
                     add_char_to_map(
                         map,
                         MAP_POSITION,
-                        scorecard_structure_chars[typeIndex][rightChar],
+                        scorecard_structure_chars[typeIndex][charToPrint],
                         scoreCardAttribute
                     );
+                    printChar = false;
                 }
             }
         }
